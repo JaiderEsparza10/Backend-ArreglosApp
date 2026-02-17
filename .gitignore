@@ -1,3 +1,21 @@
 /Proyecto_Arreglosapp/build/
 /Proyecto_Arreglosapp/nbproject/private/
 /Proyecto_Arreglosapp/dist/
+
+# Evitar archivos compilados
+/build/
+/dist/
+/target/
+/nbbuild/
+/nbdist/
+
+# Evitar configuraciones personales del IDE
+nbproject/private/
+.netbeans-derby/
+
+# Evitar archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Si usas Maven, estas carpetas se reconstruyen solas
+node_modules/
