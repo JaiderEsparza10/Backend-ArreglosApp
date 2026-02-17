@@ -1,0 +1,23 @@
+/* TITULO PRINCIPAL */
+.titulo-principal{
+    font-size: 25px;
+    font-family: var(--tipo-fuente);
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* DESCRIPCIÓN DE LOS TITULOS */
+.datos__titulo{
+    text-align: center;
+    font-size: 15px;
+    font-weight: var(--grosor-fuente);
+    margin-top: 10px;
+}
+
+/* CENTRADO DE LOS CUADROS DE TEXTO */
+.contenido-datos{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

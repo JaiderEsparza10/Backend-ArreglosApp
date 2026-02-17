@@ -1,0 +1,44 @@
+/* IMPORTAMOS LAS FUENTES QUE VAMOS A UTILIZAR Y LAS CUSTOM PROPERTIES */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url(utils/base.css);
+/* IMPORTAMOS LOS ESTILOS CSS PARA CADA PAGINA */
+@import url(pages/estilo-inicio-sesion.css);
+@import url(pages/estilos_registro.css);
+@import url(pages/estilos_recuperar_contrasena.css);
+@import url(pages/estilos_pagina_principal.css);
+@import url(pages/nueva-contrasena.css);
+@import url(pages/estilos_pagina_principal.css);
+@import url(pages/estilo-mi-seleccion.css);
+@import url(pages/estilos-mis-arreglos.css);
+@import url(pages/estilos-mis-pedidos.css);
+@import url(pages/estilos-mi-perfil.css);
+@import url(pages/estilos-detalles-costuras.css);
+@import url(pages/estilos-arreglos-medida.css);
+@import url(pages/estilos-vestidos-finos.css);
+@import url(pages/estilos-detalles-sastreria.css);
+@import url(pages/estilos-arreglo-bolsillos.css);
+@import url(pages/estilo-personalizar-arreglo.css);
+@import url(pages/estilos-eliminar-seleccion.css);
+@import url(pages/estilo-agendar-cita.css);
+@import url(pages/cambiar-contraseña.css);
+@import url(pages/estilos-terminos-condiciones.css);
+@import url(pages/mis-medidas.css);
+@import url(pages/estilos-dashboard-admin.css);
+@import url(pages/estilos-servicios-admin.css);
+@import url(pages/estilos-usuarios-admin.css);
+/* IMPORTAMOS LOS COMPONENTES QUE HAN SIDO CREADOS */
+@import url(Components/boton_inicio.css);
+@import url(Components/encabezado-logo.css);
+@import url(Components/flecha-atras.css);
+@import url(Components/icono-recuperar-contraseña.css);
+@import url(Components/input-contraseña.css);
+@import url(utils/grid-principal.css);
+@import url(Components/barra-navegacion.css);
+@import url(Components/seccion-encabezado.css);
+@import url(Components/cards-detalles.css);
+@import url(Components/boton-personalizar.css);
+@import url(Components/boton-eliminar.css);
+@import url(Components/ventana-emergente-eliminar.css);
+/* IMPORTAMOS LOS ESTILOS RESPONSIVOS PARA TABLET Y DESKTOP */
+@import url(utils/responsive-tablet.css);
+@import url(utils/responsive-desktop.css);

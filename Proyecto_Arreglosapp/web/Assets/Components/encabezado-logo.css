@@ -1,0 +1,15 @@
+/* SECCION LOGO DE LA PAGINA */
+.seccion-logo{
+    display: flex;
+    flex-direction: row;
+    align-items: var(--alinear-items);
+    margin-top: var(--margen-arriba);
+    margin-left: 10px;
+}
+.seccion-logo__logo{
+    width: var(--ancho-logo);
+}
+
+.seccion-logo__nombre{
+    font-weight: var(--grosor-fuente);
+}

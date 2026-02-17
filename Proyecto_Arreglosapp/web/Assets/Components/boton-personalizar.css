@@ -1,0 +1,23 @@
+/* ENLACE PARA ENVIAR HACIA EL APARTADO DE PERSONALIZAR ARREGLO */
+.informacion__enlace-personalizar{
+    width: var(--ancho-contenedores-informacion);
+    text-align: center;
+    background: var(--color-gradiente-enlace);
+    color: var(--color-fuente);
+    padding: 15px;
+    border-radius: 16px;
+}
+
+.formulario__seccion-boton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.informacion__enlace-personalizar--modificador {
+    border: 1px solid transparent;
+    color: var(--color-fuente);
+    margin-top: 30px;
+    font-family: var(--tipo-fuente);
+    font-size: 1rem;
+}

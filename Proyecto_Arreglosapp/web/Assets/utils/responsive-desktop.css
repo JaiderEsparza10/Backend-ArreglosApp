@@ -1,0 +1,924 @@
+/* ============================================
+   DESKTOP (1280px+) - Optimizado para 1920x1080
+   ============================================ */
+@media (min-width: 1280px) {
+
+    /* --- SIDEBAR DESKTOP --- */
+    .navbar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 220px;
+        height: 100vh;
+        z-index: 1000;
+    }
+
+    .navbar-inferior {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 220px;
+        height: 100vh;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        padding: 30px 20px;
+        gap: 10px;
+        border-radius: 0;
+        border: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 0;
+        background: linear-gradient(180deg, var(--color-boton) 0%, #4a1a6b 100%);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .navbar-inferior__item {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 15px 20px;
+        border-radius: 12px;
+        gap: 15px;
+        flex-grow: 0;
+        transition: all 0.3s ease;
+    }
+
+    .navbar-inferior__item:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        transform: translateX(5px);
+    }
+
+    .navbar-inferior__item--activo {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .navbar-inferior__icono {
+        width: 28px;
+        height: 28px;
+    }
+
+    .navbar-inferior__texto {
+        font-size: 1em;
+        font-weight: 500;
+        margin-top: 0;
+    }
+
+    /* --- AJUSTE CONTENIDO CON SIDEBAR --- */
+    body.grid-principal {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    .grid-principal {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+        max-width: none;
+        padding-bottom: 40px;
+        min-height: 100vh;
+    }
+
+    /* --- ENCABEZADO --- */
+    .seccion-encabezado {
+        justify-content: flex-start;
+        gap: 30px;
+        padding: 25px 60px;
+    }
+
+    .seccion-encabezado__logo {
+        width: 90px;
+    }
+
+    .encabezado__logo {
+        width: 90px;
+        margin-left: 15%;
+    }
+
+    .seccion-encabezado__nombre {
+        font-size: 1.8em;
+    }
+
+    .seccion-logo {
+        gap: 25px;
+    }
+
+    .seccion-logo__logo {
+        width: 90px;
+    }
+
+    .seccion-logo__nombre {
+        font-size: 1.8em;
+    }
+
+    /* --- PÁGINA PRINCIPAL - CATEGORÍAS --- */
+    .contenido {
+        max-width: 100%;
+        padding: 0 60px 40px;
+        align-items: center;
+    }
+
+    .contenido__barra-busqueda {
+        width: 50%;
+        max-width: 600px;
+    }
+
+    .contenido__barra-busqueda input {
+        height: 50px;
+        font-size: 18px;
+        padding: 25px 50px;
+    }
+
+    .contenido__barra-busqueda img {
+        width: 24px;
+        height: 24px;
+        left: 20px;
+    }
+
+    .contenido__titulo-seccion {
+        font-size: 1.8em;
+        max-width: 1000px;
+        margin-bottom: 30px;
+    }
+
+    .contenido__categorias {
+        max-width: 1000px;
+    }
+
+    .categorias__grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 35px;
+    }
+
+    .tarjeta-arreglo {
+        min-height: 280px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .tarjeta-arreglo:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .tarjeta-arreglo__imagen-contenedor {
+        height: 180px;
+    }
+
+    .tarjeta-arreglo__contenido {
+        padding: 15px 20px;
+    }
+
+    .tarjeta-arreglo__nombre {
+        font-size: 1.15em;
+        min-height: 50px;
+    }
+
+    .tarjeta-arreglo__footer {
+        margin-top: 20px;
+    }
+
+    .tarjeta-arreglo__precio {
+        font-size: 1.2em;
+    }
+
+    .tarjeta-arreglo__enlace {
+        font-size: 0.95em;
+        transition: color 0.2s ease;
+    }
+
+    .tarjeta-arreglo__enlace:hover {
+        color: var(--color-boton);
+    }
+
+    /* --- LOGIN / REGISTRO --- */
+    .contenedor-registro {
+        min-height: 100vh;
+    }
+
+    .contenedor-registro__titulo {
+        font-size: 28px;
+    }
+
+    .contenedor-login {
+        width: 520px;
+        padding: 50px;
+        margin-bottom: 10%;
+    }
+
+    .contenedor-login__imagen {
+        width: 130px;
+    }
+
+    .contenedor-login__campo label {
+        font-size: 17px;
+    }
+
+    .contenedor-login__campo input {
+        font-size: 16px;
+        padding: 10px 0;
+    }
+
+    .contenedor-login__formulario-recuperar {
+        font-size: 16px;
+    }
+
+    .contenedor-login__iniciar-sesion {
+        padding: 16px;
+        font-size: 18px;
+    }
+
+    .registrarse__pregunta,
+    .registrarse__formulario {
+        font-size: 16px;
+    }
+
+    /* --- MI SELECCIÓN --- */
+    .contenido-seleccion {
+        max-width: 100%;
+        padding: 0 60px 40px;
+        align-items: center;
+        gap: 25px;
+        min-height: calc(100vh - 120px);
+        margin-left: 10%;
+    }
+
+    .contenido-seleccion--eliminar {
+        margin-left: 22%;
+    }
+
+    .contenido__titulo-seleccion {
+        max-width: 900px;
+        font-size: 36px;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .contenido-seleccion__contenedor {
+        max-width: 900px;
+        width: 80%;
+        padding: 25px;
+        transition: box-shadow 0.3s ease;
+        margin: 0 auto;
+        gap: 25px;
+    }
+
+    .contenido-seleccion__contenedor:hover {
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .contenedor__imagen {
+        width: 160px;
+        height: 170px;
+    }
+
+    .contenido-seleccion__contenedor-informacion {
+        gap: 20px;
+    }
+
+    .informacion__titulo-arreglo {
+        font-size: 28px;
+    }
+
+    .informacion__descripcion {
+        font-size: 17px;
+        line-height: 1.5;
+    }
+
+    .contenedor-informacion__pago-enlace {
+        gap: 200px;
+        margin-top: 36px;
+    }
+
+    .pago-enlace__precio {
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .pago-enlace__enlace {
+        font-size: 18px;
+        padding: 14px 35px;
+    }
+
+    /* --- MIS ARREGLOS --- */
+    .contenido-arreglos {
+        max-width: 100%;
+        padding: 0 60px 40px;
+        align-items: center;
+        gap: 25px;
+        min-height: calc(100vh - 120px);
+    }
+
+    .contenedor-informacion__enlaces {
+        width: 100%;
+        max-width: 100%;
+        gap: 50px;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+        margin-top: 50px;
+    }
+
+    .enlaces__enlace-arreglos {
+        font-size: 25px;
+        gap: 8px;
+        padding: 6px;
+        margin-top: 0;
+    }
+
+    .enlace__imagen-icono {
+        width: 32px;
+        padding: 4px;
+    }
+
+    .enlace__cita-usuario {
+        font-size: 20px;
+        padding: 10px 20px;
+        width: auto;
+        min-width: auto;
+        text-align: center;
+        margin-top: 0;
+    }
+
+    /* --- PERSONALIZAR ARREGLO --- */
+    .contenido-personalizar {
+        max-width: 100%;
+        padding: 0 60px 40px;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 120px);
+    }
+
+    .contenido-personalizar__enlace-volver {
+        max-width: 800px;
+        width: 100%;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .enlace-volver__titulo {
+        font-size: 32px;
+        text-align: center;
+    }
+
+    .contenedor__titulo {
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: 25px;
+        position: relative;
+        top: auto;
+        left: auto;
+        max-width: 800px;
+    }
+
+    .contenido-personalizar__contenedor {
+        max-width: 800px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .contenedor__formulario {
+        gap: 15px;
+    }
+
+    .formulario__seleccion {
+        padding: 25px;
+        transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .formulario__seleccion:hover {
+        border-color: var(--color-boton);
+        transform: translateY(-2px);
+    }
+
+    .seleccion__texto {
+        font-size: 1.3em;
+    }
+
+    .formulario__descripcion {
+        height: 150px;
+        font-size: 1.2em;
+        padding: 20px;
+    }
+
+    .formulario__titulo {
+        font-size: 24px;
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .formulario__subir-foto .subir-foto__agregar {
+        padding: 20px 30px;
+        font-size: 1.2em;
+        justify-content: center;
+    }
+
+    .subir-foto__icono {
+        width: 35px;
+        height: 35px;
+    }
+
+    .formulario__seccion-boton {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .informacion__enlace-personalizar--modificador {
+        font-size: 20px;
+        padding: 20px 60px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .informacion__enlace-personalizar--modificador:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    /* --- AGENDAR CITA --- */
+    .contenido-agendar {
+        max-width: 100%;
+        padding: 0 60px 40px;
+        align-items: center;
+        min-height: calc(100vh - 120px);
+    }
+
+    .formulario__calendario,
+    .contenido-arreglo__horario,
+    .calendario__lugar-entrega {
+        max-width: 85%;
+        padding: 30px;
+    }
+
+    .calendario__mes {
+        font-size: 26px;
+    }
+
+    .calendario__dias {
+        max-width: 550px;
+    }
+
+    .dias__dia {
+        font-size: 15px;
+        padding: 10px;
+    }
+
+    .dia__numero {
+        padding: 10px;
+        font-size: 15px;
+    }
+
+    .horario__titulo,
+    .lugar-entrega__titulo {
+        font-size: 24px;
+    }
+
+    .horario__descripcion {
+        font-size: 15px;
+    }
+
+    .horario__ingresar,
+    .input__caja-texto {
+        font-size: 18px;
+        padding: 16px;
+    }
+
+    /* --- MIS MEDIDAS --- */
+    .titulo-principal {
+        font-size: 36px;
+        margin-bottom: 15px;
+        margin-left: 15%;
+    }
+
+    .datos__titulo {
+        font-size: 18px;
+        max-width: 700px;
+        margin-left: 33%;
+    }
+
+    .contenido-datos {
+        gap: 20px;
+        padding: 0 60px;
+        min-height: calc(100vh - 120px);
+        align-items: center;
+        margin-left: 18%;
+    }
+
+    .contenido-datos .formulario__calendario {
+        max-width: 800px;
+        padding: 30px;
+    }
+
+    .contenido-datos .horario__titulo {
+        font-size: 22px;
+    }
+
+    .contenido-datos .horario__ingresar {
+        font-size: 18px;
+        padding: 16px;
+    }
+
+    /* --- PEDIDOS --- */
+    .contenido-pedidos {
+        max-width: 100%;
+        padding: 0 60px 40px;
+        min-height: calc(100vh - 120px);
+        align-items: center;
+    }
+
+    .contenido-pedidos__activos {
+        max-width: 900px;
+    }
+
+    .contenido-pedidos__enlaces {
+        gap: 80px;
+        margin-bottom: 30px;
+    }
+
+    .enlaces__enlace {
+        font-size: 32px;
+    }
+
+    .estado-pedido__estado,
+    .estado-pedido__historial {
+        font-size: 18px;
+    }
+
+    .estado-pedido__cancelar {
+        font-size: 15px;
+        padding: 10px 20px;
+    }
+
+    /* --- PERFIL --- */
+    .contenido-perfil {
+        max-width: 100%;
+        padding: 0 60px 40px;
+        align-items: center;
+        min-height: calc(100vh - 120px);
+    }
+
+    .contenido-perfil__titulo-principal {
+        font-size: 38px;
+        margin-bottom: 25px;
+    }
+
+    .contenido-perfil__contenido-datos .formulario__calendario {
+        width: 100%;
+        max-width: 700px;
+        padding: 30px;
+        margin-bottom: 20px;
+    }
+
+    .contenido-perfil__contenido-datos .horario__titulo {
+        font-size: 22px;
+    }
+
+    .contenido-perfil__contenido-datos .horario__ingresar {
+        font-size: 18px;
+        padding: 14px;
+        width: 100%;
+    }
+
+    .contenido-perfil__opciones-navegacion {
+        max-width: 700px;
+        gap: 20px;
+    }
+
+    .contenido-arreglo__enlace-medidas {
+        padding: 18px 30px;
+        font-size: 20px;
+        justify-content: center;
+    }
+
+    .enlace-medidas__icono {
+        width: 45px;
+    }
+
+    .historial-pedidos__enlaces {
+        font-size: 22px;
+        padding: 12px 0;
+    }
+
+    .enlaces__iconos {
+        width: 28px;
+    }
+
+    .contenido-perfil__cerrar-sesion {
+        margin-top: 50px;
+        padding: 16px 40px;
+        font-size: 20px;
+        align-self: center;
+    }
+
+    /* --- DETALLES DE ARREGLOS --- */
+    .contenedor-encabezado-detalles {
+        display: flex;
+        flex-direction: row;
+        min-height: 100vh;
+    }
+
+    .contenedor-encabezado-detalles__encabezado {
+        position: fixed;
+        left: 220px;
+        top: 0;
+        right: 0;
+        padding: 15px 40px;
+        z-index: 100;
+        height: auto;
+        margin-right: 17%;
+    }
+
+    .contenido-detalles {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+        min-height: 100vh;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-top: 60px;
+    }
+
+    .contenido-detalles_informacion-detalles {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 50px;
+        height: auto;
+        min-height: auto;
+        padding: 40px 60px;
+        border-radius: 20px;
+        max-width: 950px;
+        position: relative;
+        top: auto;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        margin-right: 18%;
+    }
+
+    .informacion-detalles__imagen-arreglo,
+    .informacion-detalles__imagen-costuras,
+    .informacion-detalles__imagen-sastreria {
+        position: relative;
+        top: auto;
+        width: 300px;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .informacion-detalles__informacion {
+        max-width: 400px;
+        gap: 15px;
+        text-align: left;
+    }
+
+    .informacion__titulo {
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+
+    .informacion__parrafo {
+        font-size: 15px;
+        line-height: 1.5;
+        color: #666;
+    }
+
+    .informacion__enlace {
+        padding: 12px 25px;
+        font-size: 15px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+    }
+
+    .informacion__enlace:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .informacion__tiempo-estimado {
+        display: flex;
+        gap: 8px;
+        font-size: 14px;
+    }
+
+    .informacion__enlace-personalizar {
+        padding: 14px 35px;
+        font-size: 20px;
+        border-radius: 25px;
+    }
+
+    .informacion__enlace-personalizar:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .input__imagen {
+        width: 40px;
+    }
+
+    /* --- MODALES --- */
+    .modal-contenido {
+        width: 450px;
+        padding: 35px;
+    }
+
+    .modal__imagen {
+        width: 80px;
+    }
+
+    .modal__titulo {
+        font-size: 22px;
+    }
+
+    .modal__descripcion {
+        font-size: 15px;
+    }
+
+    .btn-modal {
+        font-size: 16px;
+    }
+
+    /* --- SERVICIOS ADMIN - CARDS MÁS GRANDES --- */
+    .servicios__lista {
+        gap: 20px;
+    }
+
+    .servicio-card {
+        border-radius: 25px;
+    }
+
+    .servicio-card__imagen {
+        width: 180px;
+        min-height: 160px;
+        border-top: 6px solid var(--color-fondo-encabezado);
+    }
+
+    .servicio-card__info {
+        padding: 20px 25px;
+        gap: 8px;
+    }
+
+    .servicio-card__nombre {
+        font-size: 22px;
+    }
+
+    .servicio-card__descripcion {
+        font-size: 14px;
+    }
+
+    .servicio-card__precio {
+        font-size: 28px;
+    }
+
+    .servicio-card__acciones {
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 12px;
+        padding: 20px;
+    }
+
+    .servicio-card__btn {
+        padding: 12px 24px;
+        font-size: 15px;
+        border-radius: 8px;
+    }
+
+    .dashboard__titulo-seccion {
+        font-size: 28px;
+        margin-bottom: 25px;
+    }
+
+    .dashboard__btn-agregar {
+        padding: 16px 30px;
+        font-size: 18px;
+        border-radius: 12px;
+        margin-top: 25px;
+    }
+
+    .dashboard__btn-agregar-icono {
+        width: 22px;
+    }
+}
+
+/* ============================================
+   DESKTOP FULL HD (1920px+)
+   ============================================ */
+@media (min-width: 1920px) {
+
+    /* Sidebar más ancho para pantallas grandes */
+    .navbar {
+        width: 260px;
+    }
+
+    .navbar-inferior {
+        width: 260px;
+        padding: 40px 25px;
+    }
+
+    .navbar-inferior__item {
+        padding: 18px 25px;
+    }
+
+    .navbar-inferior__icono {
+        width: 32px;
+        height: 32px;
+    }
+
+    .navbar-inferior__texto {
+        font-size: 1.1em;
+    }
+
+    /* Ajustar contenido para sidebar más ancho */
+    body.grid-principal,
+    .grid-principal {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+    }
+
+    .contenido {
+        max-width: 100%;
+        padding: 0 100px 40px;
+    }
+
+    .contenido__categorias {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .contenido-seleccion {
+        max-width: 100%;
+        padding: 0 100px 40px;
+        align-items: center;
+    }
+
+    .contenido-seleccion__contenedor {
+        max-width: 1000px;
+    }
+
+    .contenido-personalizar {
+        max-width: 100%;
+        padding: 0 100px 40px;
+        align-items: center;
+    }
+
+    .contenido-personalizar__contenedor {
+        max-width: 900px;
+    }
+
+    .contenido-agendar {
+        max-width: 100%;
+        padding: 0 100px 40px;
+    }
+
+    .formulario__calendario {
+        max-width: 800px;
+    }
+
+    .contenido-pedidos {
+        max-width: 100%;
+        padding: 0 100px 40px;
+        align-items: center;
+    }
+
+    .contenido-perfil {
+        max-width: 100%;
+        padding: 0 100px 40px;
+        align-items: center;
+    }
+
+    /* Detalles para pantallas grandes */
+    .contenedor-encabezado-detalles__encabezado {
+        left: 260px;
+    }
+
+    .contenido-detalles {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+    }
+
+    .contenido-detalles_informacion-detalles {
+        max-width: 1100px;
+        gap: 80px;
+    }
+
+    .informacion-detalles__imagen-arreglo,
+    .informacion-detalles__imagen-costuras,
+    .informacion-detalles__imagen-sastreria {
+        width: 380px;
+        height: 380px;
+    }
+
+    .informacion-detalles__informacion {
+        max-width: 500px;
+    }
+
+    .informacion__titulo {
+        font-size: 34px;
+    }
+}

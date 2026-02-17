@@ -1,0 +1,10 @@
+.grid-principal {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+        "header header header header header"
+        "main main main main main"
+        "footer footer footer footer footer";
+    padding-bottom: 75px;
+}

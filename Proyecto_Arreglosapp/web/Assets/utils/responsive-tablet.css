@@ -1,0 +1,602 @@
+/* ============================================
+   TABLET (768px - 1279px)
+   ============================================ */
+@media (min-width: 768px) {
+
+    /* --- GRID PRINCIPAL --- */
+    .grid-principal {
+        max-width: 100%;
+        margin: 0 auto;
+        padding-bottom: 100px;
+    }
+
+    /* --- ENCABEZADO --- */
+    .seccion-encabezado {
+        justify-content: left;
+        gap: 25px;
+        padding: 25px 40px;
+    }
+
+    .seccion-encabezado__logo {
+        width: 80px;
+    }
+
+    .seccion-encabezado__nombre {
+        font-size: 1.4em;
+    }
+
+    .seccion-logo {
+        justify-content: left;
+        gap: 20px;
+    }
+
+    /* --- PÁGINA PRINCIPAL - CATEGORÍAS --- */
+    .contenido {
+        max-width: 100%;
+        padding: 0 30px;
+        padding-bottom: 100px;
+    }
+
+    .contenido__barra-busqueda {
+        width: 60%;
+        max-width: 500px;
+    }
+
+    .contenido__barra-busqueda input {
+        height: 45px;
+        font-size: 16px;
+    }
+
+    .contenido__titulo-seccion {
+        position: relative;
+        top: auto;
+        left: auto;
+        font-size: 1.5em;
+        margin-bottom: 25px;
+        text-align: left;
+        width: 100%;
+        max-width: 76%;
+    }
+
+    .contenido__categorias {
+        width: 100%;
+        max-width: 720px;
+    }
+
+    .categorias__grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        padding: 0;
+    }
+
+    .tarjeta-arreglo {
+        min-height: 220px;
+    }
+
+    .tarjeta-arreglo__imagen-contenedor {
+        height: 130px;
+    }
+
+    .tarjeta-arreglo__imagen-contenedor img {
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .tarjeta-arreglo__contenido {
+        padding: 12px 15px;
+    }
+
+    .tarjeta-arreglo__nombre {
+        font-size: 1em;
+        min-height: 40px;
+    }
+
+    .tarjeta-arreglo__precio {
+        font-size: 1.1em;
+    }
+
+    /* --- LOGIN / REGISTRO --- */
+    .contenedor-registro {
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .contenedor-login {
+        width: 480px;
+        padding: 40px;
+    }
+
+    .contenedor-login__imagen {
+        width: 120px;
+    }
+
+    .contenedor-login__formulario-recuperar {
+        margin-left: auto;
+        font-size: 16px;
+    }
+
+    .contenedor-login__iniciar-sesion {
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    /* --- MI SELECCIÓN --- */
+    .contenido-seleccion {
+        max-width: 100%;
+        padding: 0 30px;
+        padding-bottom: 100px;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .contenido__titulo-seleccion {
+        margin-right: 0;
+        text-align: left;
+        width: 100%;
+        max-width: 700px;
+        font-size: 30px;
+        margin-bottom: 10px;
+    }
+
+    .contenido-seleccion__contenedor {
+        width: 100%;
+        max-width: 700px;
+        padding: 20px;
+        margin: 10px auto;
+        gap: 20px;
+    }
+
+    .contenedor__imagen {
+        width: 130px;
+        height: 135px;
+    }
+
+    .contenido-seleccion__contenedor-informacion {
+        gap: 15px;
+    }
+
+    .informacion__titulo-arreglo {
+        font-size: 25px;
+    }
+
+    .informacion__descripcion {
+        font-size: 15px;
+        line-height: 1.4;
+    }
+
+    .contenedor-informacion__pago-enlace {
+        gap: 80px;
+        margin-top: 15px;
+    }
+
+    .pago-enlace__precio {
+        font-size: 26px;
+        font-weight: var(--grosor-fuente);
+    }
+
+    .pago-enlace__enlace {
+        font-size: 17px;
+        padding: 12px 25px;
+        border-radius: 15px;
+    }
+
+    /* Icono eliminar debajo de las cards */
+    .contenido-seleccion__enlace {
+        order: 999;
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .enlace__icono-eliminar {
+        width: 50px;
+        height: 50px;
+        margin-right: 100px;
+    }
+
+    .icono_volver--modificar {
+        margin-top: 200px;
+        margin-left: 400%;
+    }
+
+    .contenido-seleccion__enlaces {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-left: 55%;
+
+    }
+
+
+    /* --- MIS ARREGLOS --- */
+    .contenido-arreglos {
+        max-width: 100%;
+        padding: 0 30px;
+        padding-bottom: 100px;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .contenedor-informacion__enlaces {
+        width: 100%;
+        max-width: 100%;
+        gap: 10px;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .enlaces__enlace-arreglos {
+        font-size: 14px;
+        gap: 6px;
+        padding: 4px;
+        margin-top: 0;
+    }
+
+    .enlace__imagen-icono {
+        width: 26px;
+        padding: 3px;
+    }
+
+    .enlace__cita-usuario {
+        font-size: 14px;
+        padding: 8px 14px;
+        width: auto;
+        min-width: auto;
+        text-align: center;
+        margin-top: 0;
+    }
+
+    /* --- PERSONALIZAR ARREGLO --- */
+    .contenido-personalizar {
+        max-width: 100%;
+        padding: 0 30px;
+        padding-bottom: 100px;
+    }
+
+    .contenido-personalizar__enlace-volver {
+        width: 100%;
+        max-width: 90%;
+        padding: 20px 0;
+    }
+
+    .enlace-volver__titulo {
+        font-size: 26px;
+    }
+
+    .contenido-personalizar__contenedor {
+        width: 100%;
+        max-width: 90%;
+    }
+
+    .contenedor__titulo {
+        position: relative;
+        font-size: 18px;
+        top: 0;
+        left: 0;
+        margin-right: 67%;
+    }
+
+    .formulario__seleccion {
+        padding: 18px;
+        width: 100%;
+    }
+
+    .seleccion__texto {
+        font-size: 1.2em;
+    }
+
+    .formulario__descripcion {
+        height: 120px;
+        font-size: 1.1em;
+        width: 100%;
+    }
+
+    .formulario__titulo {
+        font-size: 18px;
+        margin-top: 15px;
+        text-align: left;
+    }
+
+    .formulario__subir-foto .subir-foto__agregar {
+        width: 100%;
+        padding: 18px;
+    }
+
+    .formulario__seccion-boton {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 25px;
+    }
+
+    .informacion__enlace-personalizar {
+        padding: 14px 40px;
+        font-size: 16px;
+        margin: 0 auto;
+    }
+
+    /* --- AGENDAR CITA --- */
+    .contenido-agendar {
+        max-width: 100%;
+        padding: 0 30px;
+        padding-bottom: 100px;
+        align-items: center;
+    }
+
+    .formulario__calendario,
+    .contenido-arreglo__horario,
+    .calendario__lugar-entrega {
+        width: 100%;
+        max-width: 600px;
+        padding: 25px;
+    }
+
+    .calendario__mes {
+        font-size: 24px;
+    }
+
+    .calendario__dias {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .dias__dia {
+        font-size: 13px;
+    }
+
+    .dia__numero {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .horario__titulo,
+    .lugar-entrega__titulo {
+        font-size: 22px;
+    }
+
+    .horario__descripcion {
+        font-size: 14px;
+    }
+
+    .horario__ingresar,
+    .input__caja-texto {
+        font-size: 16px;
+        padding: 14px;
+        width: 100%;
+    }
+
+    /* --- MIS MEDIDAS / TÉRMINOS Y CONDICIONES --- */
+    .terminos-condiciones {
+        padding: 0 30px;
+        padding-bottom: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .terminos-condiciones__titulo-principal {
+        font-size: 28px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .terminos-condiciones__informacion {
+        width: 100%;
+        max-width: 700px;
+        padding: 25px;
+        margin-left: 30%;
+    }
+
+    .informacion__contenido {
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 20px;
+        text-align: justify;
+    }
+
+    .titulo-principal {
+        font-size: 30px;
+        margin-bottom: 10px;
+    }
+
+    .datos__titulo {
+        font-size: 16px;
+        max-width: 600px;
+        margin: 0 auto 20px;
+    }
+
+    .contenido-datos {
+        gap: 15px;
+        padding: 0 30px;
+    }
+
+    .contenido-datos .formulario__calendario {
+        width: 100%;
+        max-width: 650px;
+        padding: 25px;
+    }
+
+    .contenido-pedidos__activos {
+        width: 100%;
+        max-width: 700px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .contenido-pedidos__enlaces {
+        gap: 60px;
+    }
+
+    .enlaces__enlace {
+        font-size: 28px;
+    }
+
+    .estado-pedido__estado,
+    .estado-pedido__historial {
+        font-size: 18px;
+    }
+
+    .estado-pedido__cancelar {
+        font-size: 14px;
+        padding: 10px 16px;
+        width: auto;
+    }
+
+    /* --- PERFIL --- */
+    .contenido-perfil {
+        max-width: 100%;
+        padding: 0 30px;
+        padding-bottom: 100px;
+        align-items: center;
+    }
+
+    .contenido-perfil__titulo-principal {
+        font-size: 32px;
+        margin-bottom: 20px;
+    }
+
+    .contenido-perfil__contenido-datos {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .contenido-perfil__contenido-datos .formulario__calendario {
+        width: 100%;
+        max-width: 600px;
+        padding: 25px;
+        margin-bottom: 15px;
+    }
+
+    .contenido-perfil__contenido-datos .horario__titulo {
+        font-size: 20px;
+    }
+
+    .contenido-perfil__contenido-datos .horario__ingresar {
+        font-size: 16px;
+        padding: 12px;
+        width: 100%;
+    }
+
+    .contenido-perfil__opciones-navegacion {
+        width: 100%;
+        max-width: 600px;
+        gap: 15px;
+    }
+
+    .contenido-arreglo__enlace-medidas {
+        padding: 15px 25px;
+        font-size: 18px;
+        justify-content: center;
+    }
+
+    .enlace-medidas__icono {
+        width: 40px;
+    }
+
+    .historial-pedidos__enlaces {
+        font-size: 18px;
+        padding: 10px 0;
+    }
+
+    .contenido-perfil__cerrar-sesion {
+        margin-right: 0;
+        align-self: center;
+        margin-top: 40px;
+        padding: 14px 30px;
+        font-size: 18px;
+    }
+
+    .enlaces__icono,
+    .icono__tamano,
+    .icono__terminos-tamano {
+        margin-left: auto;
+    }
+
+    /* --- DETALLES DE ARREGLOS --- */
+    .informacion-detalles {
+        padding: 0 30px;
+        padding-bottom: 100px;
+    }
+
+    .informacion-detalles__imagen {
+        width: 300px;
+        height: 300px;
+    }
+
+    .informacion-detalles__informacion {
+        width: 100%;
+        max-width: 550px;
+        gap: 25px;
+    }
+
+    .informacion__titulo {
+        font-size: 36px;
+    }
+
+    .informacion__parrafo {
+        font-size: 17px;
+        line-height: 1.6;
+    }
+
+    .informacion__enlace-seleccion {
+        padding: 14px 30px;
+        font-size: 17px;
+    }
+
+    .informacion__tiempo-espera {
+        font-size: 16px;
+    }
+
+    .informacion__enlace {
+        margin-right: 0;
+        padding: 14px 40px;
+        font-size: 17px;
+    }
+
+    /* --- NAVBAR TABLET --- */
+    .navbar {
+        display: flex;
+        justify-content: center;
+    }
+
+    .navbar-inferior {
+        width: 90%;
+        max-width: 700px;
+        height: 70px;
+        border-radius: 35px;
+        padding: 10px 30px;
+    }
+
+    .navbar-inferior__item {
+        padding: 8px 15px;
+    }
+
+    .navbar-inferior__icono {
+        width: 28px;
+        height: 28px;
+    }
+
+    .navbar-inferior__texto {
+        font-size: 0.8em;
+        margin-top: 5px;
+    }
+
+    /* --- MODALES --- */
+    .modal-contenido {
+        width: 400px;
+        padding: 30px;
+    }
+
+    .modal__titulo {
+        font-size: 20px;
+    }
+
+    .modal__descripcion {
+        font-size: 14px;
+    }
+}

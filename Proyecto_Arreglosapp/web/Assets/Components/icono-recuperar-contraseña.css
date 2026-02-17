@@ -1,0 +1,20 @@
+/* =====================================================
+   ICONO RECUPERAR CONTRASEÑA
+   ===================================================== */
+.contenedor-principal__logo-recuperar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: var(--margen-abajo);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--color-fondo-recuperar);
+    position: relative;
+    top: 60px;
+}
+
+.contenedor-principal__imagen {
+    width: 90px;
+}

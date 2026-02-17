@@ -1,0 +1,119 @@
+/* CONTENEDOR PRINCIPAL CALENDARIO */
+.formulario__calendario{
+    border: 2px solid black;
+    padding: 10px;
+    background-color: #D9D9D9;
+    border-radius: 14px;
+    width: 410px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+/* MODIFICACIÓN TITULO MES */
+.calendario__mes{
+    text-align: center;
+    padding: 5px;
+    font-size: 19px;
+    font-weight: var(--grosor-fuente);
+}
+/* DIAS DEL CALENDARIO */
+.calendario__dias{
+    width: 325px;
+}
+/* LISTA DE DATOS */
+.ol{
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+/* DIA DE LA SEMANA */
+.dias__dia{
+    background-color: #D9D9D9;
+    color: black;
+    padding: 5px;
+    text-align: right;
+}
+/* NUMERO DE LOS DIAS DEL MES */
+.dia__numero{
+    text-align: center;
+    padding: 3px;
+    color: black;
+    border: 1px solid black;
+}
+
+
+/* SECCIÓN HORARIO DISPONIBLE */
+.contenido-arreglo__horario{
+    border: 2px solid black;
+    padding: 15px;
+    background-color: #D9D9D9;
+    border-radius: 14px;
+    width: 410px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: revert;
+    margin-top: 10px;
+}
+
+/* TITULO PRINCIPAL */
+.horario__titulo{
+    font-size: 17px;
+    font-weight: var(--grosor-fuente);
+}
+/* DESCRIPCIÓN */
+.horario__descripcion{
+    font-size: 10px;
+    font-weight: var(--grosor-fuente);
+    color: #4c4c4cd9;
+}
+/* INPUT PARA INGRESAR */
+.horario__ingresar{
+    padding: 5px;
+    border: none;
+    border-bottom: 2px solid black;
+    font-size: 10px;
+    font-family: var(--tipo-fuente);
+    background-color: #d9d9d9d9;
+    margin-top: 5px;
+}
+
+/* LUGAR DE ENTREGA Y RECOGIDA PRODUCTOS */
+.calendario__lugar-entrega{
+    border: 2px solid black;
+    padding: 15px;
+    background-color: #D9D9D9;
+    border-radius: 14px;
+    width: 410px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: revert;
+    margin-top: 10px;
+}
+
+
+.lugar-entrega__titulo{
+    font-size: 17px;
+    font-weight: var(--grosor-fuente);
+}
+
+.lugar-entrega__input{
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.input__imagen{
+    width: 30px;
+}
+
+.input__caja-texto{
+    width: 250px;
+    background-color: #D9D9D9;
+    border: 1px solid black;
+    padding: 5px;
+    font-family: var(--tipo-fuente);
+}

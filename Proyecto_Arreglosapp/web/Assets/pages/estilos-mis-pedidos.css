@@ -1,0 +1,108 @@
+/* CONTENEDOR PRINCIPAL PEDIDOS */
+.contenido-pedidos {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: var(--alinear-items);
+    padding-bottom: 75px;
+}
+
+/* CONTENEDOR ENLACES - SECCIÓN SUPERIOR */
+.contenido-pedidos__enlaces {
+    display: flex;
+    gap: 40px;
+}
+
+/* ENLACES PARA LAS VISTAS */
+.enlaces__enlace {
+    font-size: 25px;
+    padding: 10px 10px;
+    font-family: var(--tipo-fuente);
+    font-weight: bold;
+    color: var(--color-enlace-seleccion);
+}
+
+.enlaces__enlace:hover {
+    border-bottom: 2px solid var(--color-bordes);
+}
+
+/* VISTAS DE LOS ACTIVOS */
+.lugar-entrega__numero {
+    font-size: 10px;
+    color: var(--color-texto-gris);
+}
+
+.activos__estado-pedido {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.estado-pedido__estado {
+    font-size: 15px;
+    font-weight: var(--grosor-fuente);
+    color: var(--color-estado-amarillo);
+}
+
+.estado-pedido__cancelar {
+    background-color: var(--color-fondo-cancelar);
+    padding: 5px;
+    border-radius: 16px;
+    font-size: 12px;
+    width: 105px;
+    text-align: center;
+    color: var(--color-fuente);
+    font-weight: bold;
+}
+
+/* ESTILOS PARA LA NAVEGACIÓN (TABS) */
+.enlaces__enlace {
+    /* ... Tus estilos anteriores ... */
+    font-size: 25px;
+    padding: 10px 10px;
+    font-family: var(--tipo-fuente);
+    font-weight: bold;
+    color: var(--color-enlace-seleccion);
+}
+
+/* Estilo para el enlace seleccionado (por defecto o al hacer clic) */
+.enlaces__enlace.active {
+    border-bottom: 2px solid var(--color-bordes);
+}
+
+.enlaces__enlace:hover {
+    border-bottom: 2px solid var(--color-bordes);
+}
+
+/* --- LÓGICA DE MOSTRAR/OCULTAR CONTENIDO --- */
+
+/* 1. Ocultar ambas secciones por defecto */
+#activos,
+#historial {
+    display: none;
+    /* Asegúrate de que los estilos de 'contenido-pedidos__activos' sean consistentes si necesitas otros como width/margin. */
+}
+
+/* 2. Mostrar la sección que coincida con el fragmento de URL */
+#activos:target,
+#historial:target {
+    display: flex;
+    flex-direction: column;
+    /* Asumiendo que quieres que se apilen verticalmente */
+}
+
+/* 3. **IMPORTANTE:** Mostrar la sección de activos por defecto si no hay fragmento en la URL */
+/* Esto asegura que al cargar la página se vea el contenido de 'activos' */
+/* Se selecciona #activos que es la primera sección, y si el body no tiene :target (no se ha hecho clic), se muestra */
+.contenido-pedidos:not(:has(:target)) #activos {
+    display: flex;
+    flex-direction: column;
+}
+
+/* MODIFICAR COLOR */
+.estado-pedido__historial {
+    font-size: 15px;
+    font-weight: var(--grosor-fuente);
+    color: var(--color-estado-taller);
+}

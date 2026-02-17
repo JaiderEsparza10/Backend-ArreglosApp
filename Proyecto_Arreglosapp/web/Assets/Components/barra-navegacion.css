@@ -1,0 +1,55 @@
+/* SECCIÓN FOOTER Y BARRA DE NAVEGACIÓN*/
+.navbar {
+  grid-area: footer;
+  width: 95vw;
+  justify-self: center;
+}
+.navbar-inferior {
+  position: fixed;
+  bottom: 0;
+  width: 95%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 60px;
+  background-color: var(--color-boton); /* Fondo morado oscuro */
+  border-radius: 32.5px;
+  border: 1px solid;
+  padding: 15px;
+  margin-bottom: 7px;
+}
+
+.navbar-inferior__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-fuente);
+  flex-grow: 1; /* Distribuye el espacio equitativamente */
+  padding: 5px 0;
+}
+
+.navbar-inferior__item--activo {
+  position: relative;
+  padding-top: 6px;
+}
+
+/* Simulación de la banda morada en el ítem activo */
+.navbar-inferior__item--activo::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.navbar-inferior__icono {
+  width: 24px;
+  font-size: 1.2em;
+}
+
+.navbar-inferior__texto {
+  font-size: 0.65em;
+  margin-top: 3px;
+}

@@ -1,0 +1,120 @@
+/* SECCIÓN DE FORMULARIO */
+.contenedor-registro{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: var(--alinear-items);
+}
+
+.contenedor-registro__titulo{
+    font-weight: var(--grosor-fuente);
+    margin-top: var(--distancia-titulo);
+}
+
+/* Contenedor Principal con fondo morado */
+.contenedor-login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: var(--alinear-items);
+    background: var(--color-fondo-formulario); /* Un color morado similar al de la imagen */
+    padding: var(--padding-contenedor-login);
+    width: var(--ancho-contenedor-login);
+    border-radius: var(--borde-contenedor-login); 
+    padding-top: 60px;
+}
+
+/* Estilos de cada campo (Usuario, Contraseña) */
+.contenedor-login__campo {
+    width: var(--ancho-lineas-formulario);
+}
+
+/* LOGO DE LA IMAGEN */
+
+.contenedor-login__imagen{
+    width: var(--tamano-imagen-login);
+    position: relative;
+    top: 35px;
+}
+
+/* Contiene el Icono y el Label/Texto */
+.campo__usuario {
+    display: flex; /* Alinea el ícono y el texto horizontalmente */
+    align-items: var(--alinear-items);
+    color: var(--color-fuente); /* Color del texto y el icono */
+    margin-bottom: 7px;
+    font-family: var(--tipo-fuente);
+    font-size: var(--tamano-fuente-formulario);
+}
+
+.campo__label {
+    margin-top: var(--margen-arriba);
+}
+
+.campo__icono {
+    width: var(--ancho-general);
+    margin-right: 10px;
+    margin-top: 4px;
+}
+
+.contenedor-login__campo input {
+    width: var(--ancho-input);
+    border: none;
+    background: transparent; /* Fondo transparente para que se vea el morado */
+    color: var(--color-fuente); /* El texto que escribas será blanco */
+    padding: 5px 0;
+    outline: none; /* Quitar el borde de enfoque por defecto */
+    font-size: var(--tamano-fuente-input);
+}
+
+/* SECCION CONTRASEÑA */
+.campo__contrasena {
+    display: flex;
+    flex-direction: row; 
+    align-items: var(--alinear-items); 
+    color: var(--color-fuente);
+}
+
+/* Los estilos de label ya están en .campo__label */
+
+/* Los estilos de icono ya están en .campo__icono */
+
+
+/* Estilo para la línea separadora */
+.linea-separadora {
+    height: 1px;
+    background-color: white;
+    margin-bottom: 25px;
+}
+
+
+/* SECCION OLVIDAR CONTRASEÑA */
+.contenedor-login__formulario-recuperar{
+    text-decoration: none;
+    font-size: 15px;
+    color: var(--color-fuente-secundario);
+    margin-left: 144px;
+    margin-bottom: var(--margen-abajo);
+}
+
+
+/* SECCION REGISTRARSE */
+.contenedor-login__registrarse{
+    display: flex;
+    justify-content: center;
+    align-items: var(--alinear-items);
+    gap: 10px;
+}
+
+.registrarse__pregunta{
+    color: var(--color-fuente);
+    font-size: 15px;
+    font-weight: var(--grosor-fuente);
+    margin-top: var(--margen-arriba);
+}
+
+.registrarse__formulario{
+    text-decoration: none;
+    color: var(--color-fuente-secundario);
+    margin-top: var(--margen-arriba);
+}

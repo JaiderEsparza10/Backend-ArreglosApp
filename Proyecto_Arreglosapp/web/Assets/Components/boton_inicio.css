@@ -1,0 +1,23 @@
+/* =====================================================
+   BOTÓN DE INICIO DE SESIÓN
+   ===================================================== */
+.contenedor-login__iniciar-sesion {
+    background: var(--color-gradiente-enlace);
+    width: var(--ancho-boton-login);
+    text-align: center;
+    text-decoration: none;
+    color: var(--color-fuente);
+    font-weight: var(--grosor-fuente);
+    padding: 10px;
+    border: 1px solid white;
+    border-radius: 4px;
+    margin-top: 3px;
+    font-family: var(--tipo-fuente);
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.contenedor-login__iniciar-sesion:hover {
+    background: var(--color-hover-boton);
+    cursor: pointer;
+}

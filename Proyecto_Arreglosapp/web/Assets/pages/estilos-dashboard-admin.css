@@ -1,0 +1,407 @@
+/* =====================================================
+   ESTILOS DASHBOARD ADMINISTRADOR
+   Metodología BEM - Estructura Semántica - Mobile First
+   ===================================================== */
+
+/* CONTENEDOR PRINCIPAL DASHBOARD */
+.dashboard {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    padding-bottom: 80px;
+    gap: 20px;
+    background-color: var(--color-fondo-gris-claro);
+}
+
+/* SECCIÓN DE ESTADÍSTICAS */
+.dashboard__estadisticas {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+}
+
+/* TARJETA DE ESTADÍSTICA INDIVIDUAL */
+.estadistica {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #7F84E2;
+    border-radius: var(--radio-card);
+    padding: 15px 25px;
+    min-width: 140px;
+    color: var(--color-fuente);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.estadistica__contenido {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.estadistica__valor {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.estadistica__icono {
+    width: 18px;
+    height: 18px;
+    filter: brightness(0) invert(1);
+}
+
+.estadistica__label {
+    font-size: 11px;
+    font-weight: var(--grosor-fuente);
+    margin-top: 5px;
+    text-align: center;
+}
+
+/* SECCIÓN DE PEDIDOS */
+.dashboard__seccion-pedidos {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pedidos__titulo {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--color-precio-titulos);
+}
+
+/* LISTA DE PEDIDOS */
+.pedidos__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* TARJETA DE PEDIDO INDIVIDUAL - ESTILO NUEVO */
+.pedido {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 15px 18px;
+    border: 1px solid var(--color-borde-gris-claro);
+    box-shadow: var(--sombra-card);
+}
+
+.pedido__contenido {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+}
+
+.pedido__id {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-precio-titulos);
+}
+
+.pedido__info-cliente {
+    display: flex;
+    flex-direction: column;
+}
+
+.pedido__cliente-row {
+    display: flex;
+    gap: 5px;
+}
+
+.pedido__label {
+    font-size: 12px;
+    color: var(--color-precio-titulos);
+    font-weight: 600;
+}
+
+.pedido__cliente {
+    font-size: 12px;
+    color: var(--color-precio-titulos);
+    font-weight: var(--grosor-fuente);
+}
+
+.pedido__cita {
+    font-size: 10px;
+    color: #888888;
+    font-style: italic;
+}
+
+/* BOTONES DE ACCIÓN DEL PEDIDO */
+.pedido__acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+}
+
+.pedido__estado {
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 500;
+    border: none;
+    text-align: center;
+    min-width: 70px;
+}
+
+.pedido__estado--en-taller {
+    background-color: var(--color-estado-taller);
+    color: var(--color-fuente);
+}
+
+.pedido__estado--pendiente {
+    background-color: var(--color-estado-pendiente);
+    color: var(--color-fuente);
+}
+
+.pedido__estado--entregado {
+    background-color: var(--color-estado-entregado);
+    color: var(--color-fuente);
+}
+
+.pedido__enlace {
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 500;
+    background-color: var(--color-fondo-encabezado);
+    color: var(--color-fuente);
+    text-align: center;
+    min-width: 70px;
+}
+
+/* CONTENEDOR PRINCIPAL DETALLE */
+.detalle-pedido {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    padding-bottom: 80px;
+    gap: 15px;
+    background-color: var(--color-fondo-gris-claro);
+}
+
+/* BOTÓN DE RETROCESO */
+.detalle-pedido__volver {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--color-precio-titulos);
+    font-size: 20px;
+    width: fit-content;
+}
+
+.detalle-pedido__volver-icono {
+    width: 15px;
+}
+
+/* SECCIÓN DE INFORMACIÓN */
+.info-seccion {
+    background-color: #ffffff;
+    border-radius: var(--radio-card);
+    padding: 18px;
+    border: 1px solid var(--color-borde-gris-claro);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.info-seccion__titulo {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-precio-titulos);
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--color-borde-gris-claro);
+    padding-bottom: 8px;
+}
+
+/* CAMPOS DE INFORMACIÓN */
+.info-seccion__campo {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+.info-seccion__campo--inline {
+    flex-direction: row;
+    gap: 5px;
+}
+
+.info-seccion__label {
+    font-size: 12px;
+    color: var(--color-precio-titulos);
+    font-weight: 600;
+}
+
+.info-seccion__valor {
+    font-size: 12px;
+    color: var(--color-texto-gris);
+}
+
+/* SECCIÓN SERVICIO SOLICITADO */
+.servicio-info__descripcion {
+    font-size: 12px;
+    color: var(--color-texto-gris);
+    line-height: 1.5;
+    margin-top: 3px;
+}
+
+/* SECCIÓN ESTADO DEL PEDIDO */
+.estado-pedido {
+    background-color: #ffffff;
+    border-radius: var(--radio-card);
+    padding: 18px;
+    border: 1px solid var(--color-borde-gris-claro);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.estado-pedido__titulo {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-precio-titulos);
+    margin-bottom: 12px;
+}
+
+/* ESTADO ACTUAL */
+.estado-pedido__actual {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.estado-pedido__actual-label {
+    font-size: 13px;
+    color: var(--color-precio-titulos);
+    font-weight: 500;
+}
+
+/* BADGES DE ESTADO */
+.estado-badge {
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.estado-badge--pendiente {
+    background-color: var(--color-estado-pendiente);
+    color: var(--color-fuente);
+}
+
+.estado-badge--en-taller {
+    background-color: var(--color-estado-taller);
+    color: var(--color-fuente);
+}
+
+.estado-badge--entregado {
+    background-color: var(--color-estado-entregado);
+    color: var(--color-fuente);
+}
+
+/* BOTÓN ACTUALIZAR - ESTILO OUTLINE */
+.estado-pedido__boton {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: transparent;
+    color: var(--color-precio-titulos);
+    border: 2px solid var(--color-fondo-encabezado);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--tipo-fuente);
+    cursor: pointer;
+    margin-top: 20px;
+    text-align: center;
+    width: fit-content;
+}
+
+.estado-pedido__boton:hover {
+    background-color: var(--color-fondo-encabezado);
+    color: var(--color-fuente);
+}
+
+.modal-exito {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-exito__contenido {
+    background-color: white;
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    max-width: 300px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-exito__icono {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+}
+
+.modal-exito__titulo {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-precio-titulos);
+    margin-bottom: 20px;
+    line-height: 1.3;
+}
+
+.modal-exito__boton {
+    padding: 10px 30px;
+    background-color: var(--color-fondo-encabezado);
+    color: var(--color-fuente);
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: var(--tipo-fuente);
+    cursor: pointer;
+}
+
+.contenido-personalizar {
+    margin-left: 0;
+}
+
+/* =====================================================
+   OPCIONES DE ESTADO CLICKEABLES
+   ===================================================== */
+
+.estado-pedido__opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.estado-pedido__opcion-enlace {
+    text-decoration: none;
+}
+
+.estado-pedido__opcion-enlace .estado-badge {
+    display: block;
+    padding: 10px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.estado-pedido__opcion-enlace .estado-badge:hover {
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}

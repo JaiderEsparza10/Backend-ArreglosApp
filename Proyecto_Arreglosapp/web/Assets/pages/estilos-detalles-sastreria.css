@@ -1,0 +1,8 @@
+/* ESTILOS PARA LAS IMAGENES DE LOS DETALLES */
+.informacion-detalles__imagen-sastreria{
+    width: var(--ancho-contenedores-informacion);
+    height: 300px;
+    position: absolute;
+    top: -215px;
+    border-radius: var(--borde-imagenes);
+}

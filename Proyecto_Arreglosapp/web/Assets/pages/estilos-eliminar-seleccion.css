@@ -1,0 +1,14 @@
+/* =====================================================
+   ESTILOS ELIMINAR SELECCIÓN
+   ===================================================== */
+.contenido-seleccion__enlace-volver {
+  margin-top: -12%;
+  margin-left: 58%;
+}
+
+.enlace__icono-volver {
+  width: 50px;
+  position: relative;
+  bottom: 50px;
+  left: 90px;
+}

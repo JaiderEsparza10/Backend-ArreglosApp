@@ -1,0 +1,17 @@
+/* SECCIÓN DEL ENCABEZADO DE LA PAGINA */
+.seccion-encabezado{
+    grid-area: header;
+    display: flex;
+    flex-direction: row;
+    align-items: var(--alinear-items);
+    background-color: var(--color-fondo-encabezado);
+    padding: var(--padding-contenedor-encabezado);
+}
+.seccion-encabezado__logo{
+    width: var(--ancho-logo);
+}
+
+.seccion-encabezado__nombre{
+    font-weight: var(--grosor-fuente);
+    color: var(--color-fuente);
+}

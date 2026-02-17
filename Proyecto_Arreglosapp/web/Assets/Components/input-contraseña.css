@@ -1,0 +1,15 @@
+/* SECCION CONTRASEÑA */
+.campo__contrasena {
+    display: flex;
+    flex-direction: row; 
+    align-items: var(--alinear-items); 
+    color: var(--color-fuente);
+}
+.campo__contrasena label {
+    margin-top: var(--margen-arriba);
+}
+.campo__contrasena .campo__contrasena__icono {
+    margin-top: 8px;
+    width: var(--ancho-general);
+    margin-right: 4%;
+}

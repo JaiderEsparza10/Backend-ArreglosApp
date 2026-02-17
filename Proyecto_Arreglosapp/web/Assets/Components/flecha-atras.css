@@ -1,0 +1,10 @@
+/* ESTE ES EL CSS DE LA FLECHA PARA DEVOLVER */
+.contenedor-principal__flecha-atras{
+    margin-top: 30px;
+    align-self: flex-start;
+    margin-left: 40px;
+}
+
+.contenedor-principal__flecha-atras .flecha-atras__imagen{
+    width: 30px;
+}

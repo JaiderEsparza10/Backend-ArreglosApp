@@ -1,0 +1,153 @@
+/* CONTENEDOR EL ENLACE PARA VOLVER ATRAS */
+.contenido-personalizar {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: var(--alinear-items);
+    padding-bottom: 75px;
+}
+
+.contenido-personalizar__enlace-volver {
+    display: flex;
+    justify-content: space-between;
+    padding: 25px;
+    height: var(--tamano-header);
+    width: 100vw;
+}
+
+.enlace-volver__enlace {
+    margin-top: 7px;
+}
+
+.enlace-volver__titulo {
+    font-size: var(--tamano-fuente);
+}
+
+/* CONTENEDOR PRINCIPAL ALMACENAMIENTO INFORMACIÓN */
+.contenedor__titulo {
+    font-size: var(--tamano-fuente-titulos);
+    position: absolute;
+    top: 23%;
+    left: 5%;
+}
+
+/* FORMULARIO DE PERSONALIZACIÓN DEL ARREGLO */
+.contenido-personalizar__contenedor {
+    display: flex;
+    flex-direction: column;
+    margin-top: 45px;
+    justify-content: center;
+    width: 90vw;
+}
+
+.contenedor__formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* CHECKBOX EN DONDE SE SELECCIONA EL ARREGLO */
+.formulario__seleccion {
+    display: flex;
+    align-items: var(--alinear-items);
+    border: 1px solid var(--color-borde-checkbox);
+    border-radius: var(--borde-cajas);
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: var(--color-fondo-detalles);
+    cursor: pointer;
+}
+
+.seleccion__circulo {
+    display: none;
+}
+
+.seleccion__texto {
+    flex-grow: 1;
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    font-size: 1em;
+    color: var(--color-fuente-label);
+}
+
+.seleccion__texto::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: var(--ancho-general);
+    height: var(--alto-circulo-seleccion);
+    border: 2px solid var(--color-borde-checkbox);
+    border-radius: var(--borde-label);
+    background-color: var(--color-fondo-detalles);
+    transition: 0.2s;
+}
+
+.seleccion__circulo:checked+.seleccion__texto::before {
+    border-color: var(--color-boton);
+}
+
+.seleccion__circulo:checked+.seleccion__texto::after {
+    content: '';
+    position: absolute;
+    left: 1px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: var(--borde-label);
+    background-color: var(--color-boton);
+}
+
+/* APARTADO DE DESCRIPCIÓN DEL USUARIO */
+.formulario__descripcion {
+    width: 100%;
+    height: 80px;
+    padding: 15px;
+    border: 1px solid var(--color-borde-checkbox);
+    border-radius: var(--borde-cajas);
+    box-sizing: border-box;
+    background-color: #f0f0f0;
+    resize: none;
+    font-size: 0.8em;
+    color: #555;
+    font-family: var(--tipo-fuente);
+}
+
+/* SECCIÓN DE EVIDENCIA DE SUBIR FOTOS */
+.formulario__titulo {
+    font-size: var(--tamano-fuente-titulos);
+}
+
+.subir-foto__foto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+}
+
+.formulario__subir-foto .subir-foto__agregar {
+    display: flex;
+    align-items: var(--alinear-items);
+    justify-content: flex-start;
+    width: var(--ancho-input);
+    padding: 15px;
+    border: none;
+    border-radius: var(--borde-cajas);
+    background-color: var(--color-fondo-detalles);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    font-size: 1em;
+    color: var(--color-enlace-seleccion);
+    cursor: pointer;
+}
+
+/* --- 3. Estilizar la Imagen/Icono --- */
+.formulario__subir-foto .subir-foto__icono {
+    width: 28px;
+    height: 28px;
+    margin-right: 10px;
+}

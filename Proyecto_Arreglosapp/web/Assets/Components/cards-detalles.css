@@ -1,0 +1,53 @@
+/* ESTILOS PARA LA INFORMACIÓN QUE SE ALMACENA EN LOS DETALLES */
+.informacion-detalles__informacion {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+  margin-right: 3px;
+  width: var(--ancho-contenedores-informacion);
+  gap: 25px;
+  margin-top: var(--distancia-titulo);
+}
+
+.informacion__titulo {
+  font-size: 30px;
+}
+
+.informacion__parrafo {
+  font-size: 13px;
+  color: var(--color-parrafo-detalles);
+}
+
+.informacion__enlace {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid var(--color-borde);
+  border-radius: 10px;
+  margin-right: 97px;
+  color: var(--color-enlace-seleccion);
+  font-weight: var(--grosor-fuente);
+  padding: 6px;
+  font-size: 13px;
+}
+
+.informacion__enlace:focus {
+  background-color: var(--color-boton);
+  color: var(--color-fuente);
+}
+
+.enlace__icono {
+  width: 30px;
+  margin-right: 6px;
+}
+
+.informacion__tiempo-estimado {
+  display: flex;
+  gap: var(--margen-arriba);
+}
+
+.tiempo-estimado__dias {
+  color: var(--color-boton);
+}

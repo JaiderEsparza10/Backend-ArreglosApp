@@ -1,0 +1,18 @@
+/* CONTENEDOR PRINCIPAL EN DONDE SE ALMACENARA LA INFORMACIÓN */
+.terminos-condiciones__titulo-principal{
+    font-size: 25px;
+    font-family: var(--tipo-fuente);
+    margin-top: 10px;
+    text-align: center;
+}
+/* CONFIGURACIÓN DE LOS TERMINOS Y CONDICIONES */
+.terminos-condiciones__informacion{
+    width: 90vw;
+    margin: 0 auto;
+    margin-top: 10px;
+    text-align: justify;
+    border: 1px solid var(--color-borde);
+    padding: 10px;
+    border-radius: 11px;
+    margin-bottom: 50px;
+}

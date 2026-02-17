@@ -1,0 +1,43 @@
+/* CONTENEDOR PRINCIPAL */
+.contenido-arreglos {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 75px;
+}
+
+/* SECCIÓN DE OPCIONES EN MIS ARREGLOS */
+.contenedor-informacion__enlaces{
+  width: 300px;
+  display: flex;
+  gap: 5px;
+}
+/* SECCIÓN DE LOS ENLACES INFERIORES */
+.enlaces__enlace-arreglos{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 12px;
+  gap: 5px;
+  color: var(--color-boton);
+}
+/* DISEÑO PARA LAS IMAGENES */
+.enlace__imagen-icono{
+  width: 25px;
+  border: 2px solid var(--color-boton);
+  border-radius: 50%;
+  padding: 2px;
+}
+/* DISEÑO PARA EL ENLACE AGENDAR CITA */
+.enlace__cita-usuario{
+    background-color: var(--color-fondo-encabezado);
+    color: var(--color-fuente);
+    padding: 8px;
+    border-radius: 15px;
+    width: 110px;
+    font-size: 12px;
+    margin-top: 10px;
+}
