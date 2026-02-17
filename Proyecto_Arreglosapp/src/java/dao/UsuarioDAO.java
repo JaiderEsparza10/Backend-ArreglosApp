@@ -12,26 +12,27 @@ import java.sql.SQLException;
 
 public class UsuarioDAO {
 
-    public boolean insertar(Usuario user) {
-        // SQL sin el campo user_id porque es AUTO_INCREMENT
+    public boolean insertar(Usuario user) throws Exception {
         String sql = "INSERT INTO USUARIOS (user_email, user_password_hash, user_nombre, user_ubicacion_direccion, rol_id) VALUES (?, ?, ?, ?, ?)";
         
-        try (Connection con = ConectionDB.getConexion(); 
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConectionDB.getConexion()) {
+            if (con == null) {
+                throw new Exception("ERROR: La conexión con la BD es nula. Revisa tu clase ConectionDB y el Driver MySQL.");
+            }
 
-            // Seteamos los valores en orden (?)
-            ps.setString(1, user.getEmail());
-            ps.setString(2, user.getPassword());
-            ps.setString(3, user.getNombre());
-            ps.setString(4, user.getDireccion());
-            ps.setInt(5, user.getRolId());
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, user.getEmail());
+                ps.setString(2, user.getPassword());
+                ps.setString(3, user.getNombre());
+                ps.setString(4, user.getDireccion());
+                ps.setInt(5, user.getRolId());
 
-            int filasInsertadas = ps.executeUpdate();
-            return filasInsertadas > 0; // Retorna true si se insertó correctamente
-
+                int filas = ps.executeUpdate();
+                return filas > 0;
+            }
         } catch (SQLException e) {
-            System.err.println("Error al insertar usuario: " + e.getMessage());
-            return false;
+            // Esto atrapará errores de nombres de columnas o llaves foráneas
+            throw new Exception("ERROR SQL (" + e.getErrorCode() + "): " + e.getMessage());
         }
     }
 }

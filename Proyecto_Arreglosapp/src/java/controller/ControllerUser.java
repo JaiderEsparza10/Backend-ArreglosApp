@@ -4,46 +4,54 @@
  */
 package controller;
 
-/**
- *
- * @author Propietario
- */
-
 import dao.UsuarioDAO;
 import modelo.Usuario;
+import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import java.io.IOException;
+import org.mindrot.jbcrypt.BCrypt; 
 
 @WebServlet("/ControllerUser")
 public class ControllerUser extends HttpServlet {
-
-    UsuarioDAO dao = new UsuarioDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // 1. Recibir datos del formulario (los 'name' del JSP)
-        String nom = request.getParameter("txtNombre");
-        String em = request.getParameter("txtEmail");
-        String ps = request.getParameter("txtPass");
-        String dir = request.getParameter("txtDireccion");
-        int rol = Integer.parseInt(request.getParameter("txtRol"));
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        
+        try {
+            // 1. Captura de datos originales del JSP
+            String em = request.getParameter("txtEmail");
+            String passwordPlano = request.getParameter("txtPass"); // Contraseña tal cual la escribió el usuario
+            String nom = request.getParameter("txtNombre");
+            String dir = request.getParameter("txtDireccion");
+            int rol = Integer.parseInt(request.getParameter("txtRol"));
 
-        // 2. Crear el objeto modelo
-        Usuario u = new Usuario(em, ps, nom, dir, rol);
+            // 2. ENCRIPTACIÓN: 
+            // BCrypt.hashpw toma la clave y genera una sal (salt) automática.
+            // El resultado es un string de 60 caracteres que es imposible de "revertir".
+            String passwordEncriptado = BCrypt.hashpw(passwordPlano, BCrypt.gensalt());
 
-        // 3. Intentar guardar
-        boolean exito = dao.insertar(u);
+            // 3. Crear el modelo con la contraseña YA encriptada
+            Usuario user = new Usuario(em, passwordEncriptado, nom, dir, rol);
+            UsuarioDAO dao = new UsuarioDAO();
 
-        // 4. Responder al usuario
-        if (exito) {
-            response.getWriter().println("<h1>Usuario guardado correctamente en la BD!</h1>");
-            response.getWriter().println("<a href='registro.jsp'>Volver</a>");
-        } else {
-            response.getWriter().println("<h1>Error al guardar. Revisa la consola de NetBeans.</h1>");
+            // 4. Guardar en la base de datos
+            if (dao.insertar(user)) {
+                out.println("<script>");
+                out.println("alert('✅ Usuario registrado con seguridad (BCrypt)!');");
+                out.println("window.location='registro.jsp';");
+                out.println("</script>");
+            }
+            
+        } catch (Exception e) {
+            out.println("<h2 style='color:red'>Error en el registro seguro:</h2>");
+            out.println("<p style='background:#fee; padding:10px; border:1px solid red;'>" + e.getMessage() + "</p>");
+            out.println("<a href='registro.jsp'>Regresar</a>");
         }
     }
 }
