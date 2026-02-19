@@ -16,18 +16,20 @@ public class Usuario {
     private String nombre;
     private String direccion;
     private int rolId;
+    private double telefono;
 
     // 1. Constructor vacío (Obligatorio para frameworks y Reflection)
     public Usuario() {
     }
 
     // 2. Constructor para INSERTAR (Sin el ID, porque la DB lo genera solo)
-    public Usuario(String email, String password, String nombre, String direccion, int rolId) {
+    public Usuario(String email, String password, String nombre, String direccion, int rolId, double telefono) {
         this.email = email;
         this.password = password;
         this.nombre = nombre;
         this.direccion = direccion;
         this.rolId = rolId;
+        this.telefono = telefono;
     }
 
     // 3. Getters y Setters (Para acceder a los datos desde el DAO o JSP)
@@ -48,4 +50,7 @@ public class Usuario {
 
     public int getRolId() { return rolId; }
     public void setRolId(int rolId) { this.rolId = rolId; }
+    
+    public double getTelefono() { return telefono; }
+    public void setTelegono(double telefono) { this.telefono = telefono; }
 }

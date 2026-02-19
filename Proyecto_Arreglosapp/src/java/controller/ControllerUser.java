@@ -13,45 +13,33 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import org.mindrot.jbcrypt.BCrypt; 
 
-@WebServlet("/ControllerUser")
+@WebServlet("/UsuarioServlet")
 public class ControllerUser extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Capturar datos del formulario
+        String nombre = request.getParameter("txtNombre");
+        String email = request.getParameter("txtEmail");
+        String pass = request.getParameter("txtPassword");
+        String direccion = request.getParameter("txtDireccion");
+        String telefono = request.getParameter("txtTelefono");
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        
+        // Crear objeto modelo
+        Usuario user = new Usuario();
+        user.setNombre(nombre);
+        user.setEmail(email);
+        user.setPassword(pass);
+        user.setDireccion(direccion);
+
+        UsuarioDAO dao = new UsuarioDAO();
         try {
-            // 1. Captura de datos originales del JSP
-            String em = request.getParameter("txtEmail");
-            String passwordPlano = request.getParameter("txtPass"); // Contraseña tal cual la escribió el usuario
-            String nom = request.getParameter("txtNombre");
-            String dir = request.getParameter("txtDireccion");
-            int rol = Integer.parseInt(request.getParameter("txtRol"));
-
-            // 2. ENCRIPTACIÓN: 
-            // BCrypt.hashpw toma la clave y genera una sal (salt) automática.
-            // El resultado es un string de 60 caracteres que es imposible de "revertir".
-            String passwordEncriptado = BCrypt.hashpw(passwordPlano, BCrypt.gensalt());
-
-            // 3. Crear el modelo con la contraseña YA encriptada
-            Usuario user = new Usuario(em, passwordEncriptado, nom, dir, rol);
-            UsuarioDAO dao = new UsuarioDAO();
-
-            // 4. Guardar en la base de datos
-            if (dao.insertar(user)) {
-                out.println("<script>");
-                out.println("alert('✅ Usuario registrado con seguridad (BCrypt)!');");
-                out.println("window.location='registro.jsp';");
-                out.println("</script>");
+            if (dao.registrarUsuarioCompleto(user, telefono)) {
+                response.sendRedirect("index.jsp?msg=exito");
+            } else {
+                response.sendRedirect("registro.jsp?msg=error");
             }
-            
         } catch (Exception e) {
-            out.println("<h2 style='color:red'>Error en el registro seguro:</h2>");
-            out.println("<p style='background:#fee; padding:10px; border:1px solid red;'>" + e.getMessage() + "</p>");
-            out.println("<a href='registro.jsp'>Regresar</a>");
+            e.printStackTrace();
+            response.sendRedirect("registro.jsp?msg=" + e.getMessage());
         }
     }
 }
