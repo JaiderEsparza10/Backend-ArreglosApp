@@ -1,35 +1,42 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../Assets/estilos.css">
-    <title>Recuperar Contraseña</title>
-</head>
-<body>
-    <header class="seccion-logo">
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
+  <% String msg=request.getParameter("msg"); %>
+    <!DOCTYPE html>
+    <html lang="es">
+
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="../../Assets/estilos.css">
+      <title>Recuperar Contraseña</title>
+    </head>
+
+    <body>
+      <header class="seccion-logo">
         <img class="seccion-logo__logo" src="../../Assets/image/logo-app.png" alt="logo de la aplicación">
         <h1 class="seccion-logo__nombre">Arreglos App</h1>
-    </header>
-    <main class="contenedor-principal">
-        <a class="contenedor-principal__flecha-atras" href="../../index.html"> <img class="flecha-atras__imagen" src="../../Assets/icons/arrow.png" alt="flecha hacia atras"></a>
-        <div class="contenedor-principal__logo-recuperar">
-            <img class="contenedor-principal__imagen" src="../../Assets/icons/icono-recuperar-usuario.png" alt="imagen de recuperar contraseña">
-        </div>
-        <div class="contenedor-principal__formulario-recuperar">
-            <h1 class="formulario-recuperar__titulo">Recuperar Contraseña</h1>
-            <p class="formulario-recuperar__mensaje-recuperar">¡Que triste! pero no te preocupes hemos enviado un codigo a la siguiente cuenta de gmail: xen*****@gmail.com</p>
-            <form class="formulario-recuperar__campos" action="../../Public/auth/nueva-contrasena.html" method="get">
-                <div class="campos__label-codigo">
-                    <input type="text" class="label-codigo__input-codigo" name="digito1" maxlength="1" required>
-                    <input type="text" class="label-codigo__input-codigo" name="digito2" maxlength="1" required>
-                    <input type="text" class="label-codigo__input-codigo" name="digito3" maxlength="1" required>
-                    <input type="text" class="label-codigo__input-codigo" name="digito4" maxlength="1" required>
-                    <input type="text" class="label-codigo__input-codigo" name="digito5" maxlength="1" required>
-                </div>
-                <button class="contenedor-login__iniciar-sesion" type="submit" class="boton-verificar">Cambiar Contraseña</button>
-            </form>
-        </div> 
-    </main>
-</body>
-</html>
+      </header>
+      <main class="contenedor-registro">
+        <h1 class="contenedor-registro__titulo">RECUPERAR CONTRASEÑA</h1>
+        <img class="contenedor-login__imagen" src="../../Assets/icons/user-inicio.png" alt="logo de usuario">
+
+        <form class="contenedor-login" action="${pageContext.request.contextPath}/RecuperarServlet" method="post">
+          <div class="contenedor-login__campo">
+            <div class="campo__usuario">
+              <img class="campo__icono" src="../../Assets/icons/correo-electronico.png" alt="icono de correo">
+              <label class="campo__label" for="email">Correo Electronico</label>
+            </div>
+            <input type="email" id="email" name="email" placeholder="Ingresa tu correo electrónico">
+            <div class="linea-separadora"></div>
+          </div>
+
+          <button type="submit" class="contenedor-login__iniciar-sesion">ENVIAR CÓDIGO DE RECUPERACIÓN</button>
+          <div class="contenedor-login__registrarse">
+            <h3 class="registrarse__pregunta">¿Ya tienes cuenta?</h3>
+            <a class="registrarse__formulario" href="../../index.jsp">Iniciar Sesion</a>
+          </div>
+        </form>
+      </main>
+      <script src="../../Assets/JavaScript/alerts.js"></script>
+    </body>
+
+    </html>

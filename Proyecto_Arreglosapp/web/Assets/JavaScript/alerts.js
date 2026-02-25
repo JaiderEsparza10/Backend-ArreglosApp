@@ -7,6 +7,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const params = new URLSearchParams(window.location.search);
     const msg = params.get("msg");
 
+    // Depuración: mostrar en consola el mensaje recibido
+    console.log("Mensaje recibido:", msg);
+
     if (!msg) return;
 
     const mensajes = {
@@ -18,11 +21,28 @@ document.addEventListener("DOMContentLoaded", function () {
         credenciales:  { tipo: "error",   texto: "Correo o contraseña incorrectos." },
         sesionCerrada: { tipo: "info",    texto: "Sesión cerrada correctamente." },
         emailExiste:   { tipo: "warning", texto: "El correo electrónico ya está registrado." },
-        telefonoExiste:{ tipo: "warning", texto: "El número de teléfono ya está registrado." }
+        telefonoExiste:{ tipo: "warning", texto: "El número de teléfono ya está registrado." },
+        emailNoExiste: { tipo: "error",   texto: "El correo electrónico no está registrado." },
+        passwordIncorrecta: { tipo: "error",   texto: "La contraseña es incorrecta." },
+        codigoEnviado: { tipo: "success", texto: "Código enviado a tu correo electrónico." },
+        codigoInvalido: { tipo: "error",   texto: "El código debe tener 5 dígitos numéricos." },
+        codigoIncorrecto: { tipo: "error",   texto: "El código ingresado es incorrecto." },
+        codigoExpirado: { tipo: "error",   texto: "El código ha expirado. Solicita uno nuevo." },
+        sesionExpirada: { tipo: "error",   texto: "La sesión ha expirado. Inicia el proceso nuevamente." },
+        accesoDenegado: { tipo: "error",   texto: "Acceso denegado. Verifica el código primero." },
+        contrasenasNoCoinciden: { tipo: "error",   texto: "Las contraseñas no coinciden." },
+        contrasenaInvalida: { tipo: "error",   texto: "La contraseña debe tener mínimo 8 caracteres, una mayúscula y un número." },
+        contrasenaActualizada: { tipo: "success", texto: "¡Contraseña actualizada exitosamente!" },
+        errorActualizar: { tipo: "error",   texto: "Error al actualizar la contraseña. Intenta de nuevo." }
     };
 
     const alerta = mensajes[msg];
-    if (!alerta) return;
+    console.log("Alerta encontrada:", alerta); // Depuración
+    
+    if (!alerta) {
+        console.log("No se encontró alerta para el mensaje:", msg); // Depuración
+        return;
+    }
 
     mostrarAlerta(alerta.tipo, alerta.texto);
 

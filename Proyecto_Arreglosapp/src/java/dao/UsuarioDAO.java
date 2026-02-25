@@ -37,9 +37,67 @@ public class UsuarioDAO {
         return false;
     }
 
+    // Autenticar usuario
+    public Usuario autenticarUsuario(String email, String password) throws Exception {
+        String sql = "SELECT user_id, user_email, user_password_hash, user_nombre, user_ubicacion_direccion, rol_id "
+                   + "FROM USUARIOS WHERE user_email = ?";
+        
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, email);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String storedHash = rs.getString("user_password_hash");
+                    
+                    // Verificar contraseña con BCrypt
+                    if (BCrypt.checkpw(password, storedHash)) {
+                        Usuario usuario = new Usuario();
+                        usuario.setId(rs.getInt("user_id"));
+                        usuario.setEmail(rs.getString("user_email"));
+                        usuario.setNombre(rs.getString("user_nombre"));
+                        usuario.setDireccion(rs.getString("user_ubicacion_direccion"));
+                        usuario.setRolId(rs.getInt("rol_id"));
+                        return usuario;
+                    } else {
+                        // Contraseña incorrecta
+                        throw new Exception("PASSWORD_INCORRECT");
+                    }
+                } else {
+                    // Email no existe
+                    throw new Exception("EMAIL_NOT_FOUND");
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al autenticar usuario: " + e.getMessage());
+        }
+    }
+
+    // Actualizar contraseña de usuario
+    public boolean actualizarPassword(String email, String nuevaPassword) throws Exception {
+        String sql = "UPDATE USUARIOS SET user_password_hash = ? WHERE user_email = ?";
+        
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            // Hashear la nueva contraseña
+            String passwordHash = BCrypt.hashpw(nuevaPassword, BCrypt.gensalt());
+            
+            ps.setString(1, passwordHash);
+            ps.setString(2, email);
+            
+            int filasActualizadas = ps.executeUpdate();
+            return filasActualizadas > 0;
+            
+        } catch (SQLException e) {
+            throw new Exception("Error al actualizar contraseña: " + e.getMessage());
+        }
+    }
+
     public boolean registrarUsuarioCompleto(Usuario user, String telefono) throws Exception {
         String sqlUser = "INSERT INTO USUARIOS (user_email, user_password_hash, user_nombre, user_ubicacion_direccion, rol_id) "
-                       + "VALUES (?, ?, ?, ?, ?)";
+                        + "VALUES (?, ?, ?, ?, ?)";
         String sqlTel  = "INSERT INTO TELEFONOS (user_id, telefono_numero, telefono_es_principal) VALUES (?, ?, ?)";
 
         Connection con = null;
