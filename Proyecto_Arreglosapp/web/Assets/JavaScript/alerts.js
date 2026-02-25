@@ -16,7 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
         errorServidor: { tipo: "error",   texto: "Error interno del servidor. Intenta más tarde." },
         exitoLogin:    { tipo: "success", texto: "¡Bienvenido!" },
         credenciales:  { tipo: "error",   texto: "Correo o contraseña incorrectos." },
-        sesionCerrada: { tipo: "info",    texto: "Sesión cerrada correctamente." }
+        sesionCerrada: { tipo: "info",    texto: "Sesión cerrada correctamente." },
+        emailExiste:   { tipo: "warning", texto: "El correo electrónico ya está registrado." },
+        telefonoExiste:{ tipo: "warning", texto: "El número de teléfono ya está registrado." }
     };
 
     const alerta = mensajes[msg];

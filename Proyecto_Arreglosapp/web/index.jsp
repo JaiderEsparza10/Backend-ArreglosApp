@@ -13,7 +13,7 @@
 <body>
 
     <%-- Mensaje de registro exitoso --%>
-    <% if (msg != null && msg.equals("exito")) { %>
+    <% if (msg != null && msg.equals("exitoRegistro")) { %>
     <div id="mensajeExito" style="
         position: fixed; top: 20px; right: 20px;
         background-color: #4CAF50; color: white;

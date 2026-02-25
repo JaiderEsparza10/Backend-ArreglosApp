@@ -2,13 +2,44 @@ package dao;
 
 import config.ConectionDB;
 import modelo.Usuario;
+import org.mindrot.jbcrypt.BCrypt;
 import java.sql.*;
 
 public class UsuarioDAO {
 
+    // Verificar si el email ya existe
+    public boolean existeEmail(String email) throws Exception {
+        String sql = "SELECT COUNT(*) FROM USUARIOS WHERE user_email = ?";
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al verificar email: " + e.getMessage());
+        }
+        return false;
+    }
+
+    // Verificar si el teléfono ya existe
+    public boolean existeTelefono(String telefono) throws Exception {
+        String sql = "SELECT COUNT(*) FROM TELEFONOS WHERE telefono_numero = ?";
+        try (Connection con = ConectionDB.getConexion();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, telefono);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al verificar teléfono: " + e.getMessage());
+        }
+        return false;
+    }
+
     public boolean registrarUsuarioCompleto(Usuario user, String telefono) throws Exception {
-        String sqlUser = "INSERT INTO USUARIOS (user_email, user_password_hash, user_nombre, user_ubicacion_direccion, rol_id) " +
-                         "VALUES (?, ?, ?, ?, ?)";
+        String sqlUser = "INSERT INTO USUARIOS (user_email, user_password_hash, user_nombre, user_ubicacion_direccion, rol_id) "
+                       + "VALUES (?, ?, ?, ?, ?)";
         String sqlTel  = "INSERT INTO TELEFONOS (user_id, telefono_numero, telefono_es_principal) VALUES (?, ?, ?)";
 
         Connection con = null;
@@ -16,29 +47,37 @@ public class UsuarioDAO {
             con = ConectionDB.getConexion();
             con.setAutoCommit(false);
 
+            // ← FIX 1: Hashear la contraseña aquí en el DAO
+            String passwordHash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+
             int generatedUserId = -1;
 
             // 1. Insertar usuario
             try (PreparedStatement psUser = con.prepareStatement(sqlUser, Statement.RETURN_GENERATED_KEYS)) {
                 psUser.setString(1, user.getEmail());
-                psUser.setString(2, user.getPassword()); // Ya viene hasheado desde el Servlet
+                psUser.setString(2, passwordHash); // ← Hash correcto
                 psUser.setString(3, user.getNombre());
                 psUser.setString(4, user.getDireccion());
                 psUser.setInt(5, 2); // rol_id = 2 (CLIENTE)
                 psUser.executeUpdate();
 
-                ResultSet rs = psUser.getGeneratedKeys();
-                if (rs.next()) {
-                    generatedUserId = rs.getInt(1);
+                try (ResultSet rs = psUser.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        generatedUserId = rs.getInt(1);
+                    } else {
+                        throw new Exception("No se obtuvo el ID del usuario.");
+                    }
                 }
             }
 
-            // 2. Insertar teléfono
-            try (PreparedStatement psTel = con.prepareStatement(sqlTel)) {
-                psTel.setInt(1, generatedUserId);
-                psTel.setString(2, telefono);
-                psTel.setBoolean(3, true);
-                psTel.executeUpdate();
+            // ← FIX 2: Solo insertar teléfono si no viene vacío
+            if (telefono != null && !telefono.trim().isEmpty()) {
+                try (PreparedStatement psTel = con.prepareStatement(sqlTel)) {
+                    psTel.setInt(1, generatedUserId);
+                    psTel.setString(2, telefono.trim());
+                    psTel.setBoolean(3, true);
+                    psTel.executeUpdate();
+                }
             }
 
             con.commit();

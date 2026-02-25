@@ -13,7 +13,7 @@ function validarFormulario() {
     const direccion = document.getElementById("txtDireccion").value.trim();
     const telefono  = document.getElementById("txtTelefono").value.trim();
 
-    // 1. Campos obligatorios vacíos
+    // 1. Campos obligatorios vacíos (teléfono no es obligatorio)
     if (!nombre || !email || !password || !confirmar || !direccion) {
         mostrarAlerta("warning", "Por favor completa todos los campos obligatorios.");
         return false;

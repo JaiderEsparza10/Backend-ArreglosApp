@@ -6,11 +6,11 @@ import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import org.mindrot.jbcrypt.BCrypt;
 
 @WebServlet("/UsuarioServlet")
 public class ControllerUser extends HttpServlet {
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -20,42 +20,56 @@ public class ControllerUser extends HttpServlet {
         String direccion = request.getParameter("txtDireccion");
         String telefono  = request.getParameter("txtTelefono");
 
-        // Validaciones backend
-        if (nombre == null || nombre.trim().isEmpty() ||
-            email  == null || email.trim().isEmpty()  ||
-            pass   == null || pass.trim().isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/Public/auth/registrarse.jsp?msg=camposVacios");
+        // ← Ruta base del contexto para los redirects
+        String contextPath = request.getContextPath();
+        String rutaRegistro = contextPath + "/Public/auth/registrarse.jsp";
+        String rutaLogin    = contextPath + "/index.jsp";
+
+        // Validación campos vacíos
+        if (nombre == null || email == null || pass == null ||
+            nombre.trim().isEmpty() || email.trim().isEmpty() || pass.trim().isEmpty()) {
+            response.sendRedirect(rutaRegistro + "?msg=camposVacios");
             return;
         }
-
-        if (pass.length() < 6) {
-            response.sendRedirect(request.getContextPath() + "/Public/auth/registrarse.jsp?msg=passCorta");
-            return;
-        }
-
-        // Hashear contraseña
-        String passwordHash = BCrypt.hashpw(pass, BCrypt.gensalt());
-
-        Usuario user = new Usuario();
-        user.setNombre(nombre.trim());
-        user.setEmail(email.trim());
-        user.setPassword(passwordHash);
-        user.setDireccion(direccion != null ? direccion.trim() : "");
 
         UsuarioDAO dao = new UsuarioDAO();
         try {
-            if (dao.registrarUsuarioCompleto(user, telefono)) {
-                response.sendRedirect(request.getContextPath() + "/index.jsp?msg=exito");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/Public/auth/registrarse.jsp?msg=error");
+            // Verificar email duplicado
+            if (dao.existeEmail(email.trim())) {
+                response.sendRedirect(rutaRegistro + "?msg=emailExiste&nombre=" + 
+                    java.net.URLEncoder.encode(nombre.trim(), "UTF-8") + 
+                    "&direccion=" + java.net.URLEncoder.encode(direccion != null ? direccion.trim() : "", "UTF-8") +
+                    "&telefono=" + java.net.URLEncoder.encode(telefono != null ? telefono.trim() : "", "UTF-8"));
+                return;
             }
+
+            // Verificar teléfono duplicado
+            if (telefono != null && !telefono.trim().isEmpty()) {
+                if (dao.existeTelefono(telefono.trim())) {
+                    response.sendRedirect(rutaRegistro + "?msg=telefonoExiste&nombre=" + 
+                        java.net.URLEncoder.encode(nombre.trim(), "UTF-8") + 
+                        "&email=" + java.net.URLEncoder.encode(email.trim(), "UTF-8") +
+                        "&direccion=" + java.net.URLEncoder.encode(direccion != null ? direccion.trim() : "", "UTF-8"));
+                    return;
+                }
+            }
+
+            // Crear objeto usuario
+            Usuario user = new Usuario();
+            user.setNombre(nombre.trim());
+            user.setEmail(email.trim());
+            user.setPassword(pass); // Se hashea en el DAO
+            user.setDireccion(direccion != null ? direccion.trim() : "");
+
+            if (dao.registrarUsuarioCompleto(user, telefono)) {
+                response.sendRedirect(rutaLogin + "?msg=exitoRegistro");
+            } else {
+                response.sendRedirect(rutaRegistro + "?msg=error");
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
-            if (e.getMessage().contains("Duplicate entry")) {
-                response.sendRedirect(request.getContextPath() + "/Public/auth/registrarse.jsp?msg=emailDuplicado");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/Public/auth/registrarse.jsp?msg=error");
-            }
+            response.sendRedirect(rutaRegistro + "?msg=errorServidor");
         }
     }
 }
