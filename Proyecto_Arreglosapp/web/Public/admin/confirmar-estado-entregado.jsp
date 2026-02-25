@@ -22,17 +22,17 @@
 
         <!-- Información del Cliente -->
         <section class="info-seccion">
-            <h2 class="info-seccion__titulo">Información del Cliente</h2>
+            <h2 class="info-seccion__titulo">Informaci�n del Cliente</h2>
             <div class="info-seccion__campo info-seccion__campo--inline">
                 <span class="info-seccion__label">Cliente:</span>
-                <span class="info-seccion__valor">Jaider Andrés Esparza Arenas</span>
+                <span class="info-seccion__valor">Jaider Andres Esparza Arenas</span>
             </div>
             <div class="info-seccion__campo info-seccion__campo--inline">
-                <span class="info-seccion__label">Teléfono:</span>
+                <span class="info-seccion__label">Telefono:</span>
                 <span class="info-seccion__valor">3107566832</span>
             </div>
             <div class="info-seccion__campo info-seccion__campo--inline">
-                <span class="info-seccion__label">Correo Electrónico:</span>
+                <span class="info-seccion__label">Correo Electronico:</span>
                 <span class="info-seccion__valor">andresarenas3128@gmail.com</span>
             </div>
         </section>
