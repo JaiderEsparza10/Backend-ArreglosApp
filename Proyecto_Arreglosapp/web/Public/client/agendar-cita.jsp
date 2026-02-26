@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -84,9 +84,9 @@
             <div class="modal-fondo">
                 <div class="modal-contenido">
                     <img class="modal__imagen" src="../../Assets/icons/confirmacion-datos.png" alt="imagen de confirmado">
-                    <p class="modal__descripcion">¡La cita fue agendada con exito! Por favor no faltes</p>
+                    <p class="modal__descripcion">Â¡La cita fue agendada con exito! Por favor no faltes</p>
                     <div class="modal__acciones">
-                        <a href="pagina-principal.html" class="btn-modal btn-modal--cancelar">Volver al Inicio</a>
+                        <a href="pagina-principal.jsp" class="btn-modal btn-modal--cancelar">Volver al Inicio</a>
                     </div>
                 </div>
             </div>
@@ -94,23 +94,23 @@
     </main>
     <footer class="navbar">
         <nav class="navbar-inferior">
-            <a href="pagina-principal.html" class="navbar-inferior__item navbar-inferior__item--activo">
+            <a href="pagina-principal.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
                 <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono"></img> 
                 <span class="navbar-inferior__texto">Inicio</span>
             </a>
-            <a href="mi-seleccion.html" class="navbar-inferior__item">
+            <a href="mi-seleccion.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Mi Selección</span>
+                <span class="navbar-inferior__texto">Mi selección</span>
             </a>
-            <a href="mis-arreglos.html" class="navbar-inferior__item">
+            <a href="mis-arreglos.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono"></img> 
                 <span class="navbar-inferior__texto">Mis Arreglos</span>
             </a>
-            <a href="mis-pedidos.html" class="navbar-inferior__item">
+            <a href="mis-pedidos.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono"></img> 
                 <span class="navbar-inferior__texto">Pedidos</span>
             </a>
-            <a href="mi-perfil.html" class="navbar-inferior__item">
+            <a href="mi-perfil.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono"></img> 
                 <span class="navbar-inferior__texto">Perfil</span>
             </a>

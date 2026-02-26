@@ -1,7 +1,7 @@
 package dao;
 
 import config.ConectionDB;
-import modelo.Usuario;
+import model.Usuario;
 import org.mindrot.jbcrypt.BCrypt;
 import java.sql.*;
 
@@ -147,5 +147,54 @@ public class UsuarioDAO {
         } finally {
             if (con != null) con.close();
         }
+    }
+
+    // Crear administrador por defecto si no existe
+    public boolean crearAdministradorPorDefecto() throws Exception {
+        String emailAdmin = "admin@arreglosapp.com";
+        String passwordAdmin = "admin123";
+        String nombreAdmin = "Administrador";
+        String direccionAdmin = "Oficina Principal";
+        
+        // Verificar si ya existe el administrador
+        if (existeEmail(emailAdmin)) {
+            return false; // Ya existe
+        }
+        
+        String sql = "INSERT INTO USUARIOS (user_email, user_password_hash, user_nombre, user_ubicacion_direccion, rol_id) "
+                   + "VALUES (?, ?, ?, ?, ?)";
+        
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            // Hashear la contraseña del administrador
+            String passwordHash = BCrypt.hashpw(passwordAdmin, BCrypt.gensalt());
+            
+            ps.setString(1, emailAdmin);
+            ps.setString(2, passwordHash);
+            ps.setString(3, nombreAdmin);
+            ps.setString(4, direccionAdmin);
+            ps.setInt(5, 1); // rol_id = 1 (ADMINISTRADOR)
+            
+            int filasInsertadas = ps.executeUpdate();
+            return filasInsertadas > 0;
+            
+        } catch (SQLException e) {
+            throw new Exception("Error al crear administrador por defecto: " + e.getMessage());
+        }
+    }
+    
+    // Verificar si existe administrador
+    public boolean existeAdministrador() throws Exception {
+        String sql = "SELECT COUNT(*) FROM USUARIOS WHERE rol_id = 1";
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al verificar administrador: " + e.getMessage());
+        }
+        return false;
     }
 }

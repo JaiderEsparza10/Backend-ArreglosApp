@@ -1,9 +1,10 @@
 package controller;
 
 import dao.UsuarioDAO;
-import modelo.Usuario;
 import util.SimpleAuthUtil;
 import java.io.IOException;
+
+import model.Usuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;

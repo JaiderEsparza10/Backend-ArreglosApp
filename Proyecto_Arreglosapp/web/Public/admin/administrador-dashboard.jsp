@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -48,7 +48,7 @@
                     </div>
                     <div class="pedido__acciones">
                         <span class="pedido__estado pedido__estado--en-taller">En Taller</span>
-                        <a href="detalle-pedido-admin.html" class="pedido__enlace">Detalles</a>
+                        <a href="detalle-pedido-admin.jsp" class="pedido__enlace">Detalles</a>
                     </div>
                 </article>
 
@@ -66,7 +66,7 @@
                     </div>
                     <div class="pedido__acciones">
                         <span class="pedido__estado pedido__estado--pendiente">Pendiente</span>
-                        <a href="detalle-pedido-admin.html" class="pedido__enlace">Detalles</a>
+                        <a href="detalle-pedido-admin.jsp" class="pedido__enlace">Detalles</a>
                     </div>
                 </article>
 
@@ -84,7 +84,7 @@
                     </div>
                     <div class="pedido__acciones">
                         <span class="pedido__estado pedido__estado--entregado">Entregado</span>
-                        <a href="detalle-pedido-admin.html" class="pedido__enlace">Detalles</a>
+                        <a href="detalle-pedido-admin.jsp" class="pedido__enlace">Detalles</a>
                     </div>
                 </article>
 
@@ -102,7 +102,7 @@
                     </div>
                     <div class="pedido__acciones">
                         <span class="pedido__estado pedido__estado--en-taller">En Taller</span>
-                        <a href="detalle-pedido-admin.html" class="pedido__enlace">Detalles</a>
+                        <a href="detalle-pedido-admin.jsp" class="pedido__enlace">Detalles</a>
                     </div>
                 </article>
             </div>
@@ -111,19 +111,19 @@
 
     <footer class="navbar">
         <nav class="navbar-inferior">
-            <a href="administrador-dashboard.html" class="navbar-inferior__item navbar-inferior__item--activo">
+            <a href="administrador-dashboard.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
                 <img src="../../Assets/icons/diagrama-dashboard.png" class="navbar-inferior__icono">
                 <span class="navbar-inferior__texto">Dashboard</span>
             </a>
-            <a href="administrador-servicios.html" class="navbar-inferior__item">
+            <a href="administrador-servicios.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/catalogo-de-productos.png" class="navbar-inferior__icono">
                 <span class="navbar-inferior__texto">Servicios</span>
             </a>
-            <a href="administrador-usuarios.html" class="navbar-inferior__item">
+            <a href="administrador-usuarios.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/anadir-grupo.png" class="navbar-inferior__icono">
                 <span class="navbar-inferior__texto">Usuarios</span>
             </a>
-            <a href="../../index.html" class="navbar-inferior__item">
+            <a href="../../index.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/salir-aplicacion.png" class="navbar-inferior__icono">
                 <span class="navbar-inferior__texto">Salir</span>
             </a>

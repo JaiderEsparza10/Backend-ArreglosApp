@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -16,13 +16,13 @@
 
     <main class="detalle-pedido">
         <!-- Botón Volver -->
-        <a href="administrador-dashboard.html" class="detalle-pedido__volver">
+        <a href="administrador-dashboard.jsp" class="detalle-pedido__volver">
             <img src="../../Assets/icons/flecha-atras-negra.png" alt="volver" class="detalle-pedido__volver-icono">
         </a>
 
         <!-- Información del Cliente -->
         <section class="info-seccion">
-            <h2 class="info-seccion__titulo">Informaci�n del Cliente</h2>
+            <h2 class="info-seccion__titulo">Informaci�n del Cliente</h2>
             <div class="info-seccion__campo info-seccion__campo--inline">
                 <span class="info-seccion__label">Cliente:</span>
                 <span class="info-seccion__valor">Jaider Andres Esparza Arenas</span>
@@ -51,7 +51,7 @@
                 <img src="../../Assets/icons/confirmacion-datos.png" alt="éxito" class="modal__imagen">
                 <h2 class="modal__titulo">El estado fue actualizado con éxito</h2>
                 <div class="modal__acciones">
-                    <a href="administrador-dashboard.html" class="btn-modal btn-modal--cancelar">Volver</a>
+                    <a href="administrador-dashboard.jsp" class="btn-modal btn-modal--cancelar">Volver</a>
                 </div>
             </div>
         </div>
@@ -59,19 +59,19 @@
 
     <footer class="navbar">
         <nav class="navbar-inferior">
-            <a href="administrador-dashboard.html" class="navbar-inferior__item navbar-inferior__item--activo">
+            <a href="administrador-dashboard.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
                 <img src="../../Assets/icons/diagrama-dashboard.png" class="navbar-inferior__icono">
                 <span class="navbar-inferior__texto">Dashboard</span>
             </a>
-            <a href="administrador-servicios.html" class="navbar-inferior__item">
+            <a href="administrador-servicios.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/catalogo-de-productos.png" class="navbar-inferior__icono">
                 <span class="navbar-inferior__texto">Servicios</span>
             </a>
-            <a href="administrador-usuarios.html" class="navbar-inferior__item">
+            <a href="administrador-usuarios.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/anadir-grupo.png" class="navbar-inferior__icono">
                 <span class="navbar-inferior__texto">Usuarios</span>
             </a>
-            <a href="../../index.html" class="navbar-inferior__item">
+            <a href="../../index.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/salir-aplicacion.png" class="navbar-inferior__icono">
                 <span class="navbar-inferior__texto">Salir</span>
             </a>

@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../Assets/estilos.css">
-    <title>Terminos y Condiciones</title>
+    <title>Terminos y condiciones</title>
 </head>
 
 <body>
@@ -13,17 +13,17 @@
         <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png" alt="logo de la aplicación">
     </header>
     <main class="terminos-condiciones">
-        <h1 class="terminos-condiciones__titulo-principal">Terminos y Condiciones</h1>
+        <h1 class="terminos-condiciones__titulo-principal">Terminos y condiciones</h1>
         <div class="terminos-condiciones__informacion">
             <p class="informacion__contenido">
-                1. Aceptación de los Términos y Elegibilidad
-                Al acceder y usar ArreglosApp, usted acepta cumplir con todos nuestros Términos y Condiciones.
+                1. aceptación de los términos y Elegibilidad
+                Al acceder y usar ArreglosApp, usted acepta cumplir con todos nuestros términos y condiciones.
                 Debe tener al menos 18 años de edad para poder registrarse y utilizar nuestros servicios, asegurando que
                 tiene capacidad legal para aceptar estos términos.
             </p>
             <p class="informacion__contenido">
                 2. Su Cuenta de Usuario
-                Información Veraz: Es su responsabilidad proporcionar y mantener su información de cuenta (nombre,
+                información veraz: Es su responsabilidad proporcionar y mantener su información de cuenta (nombre,
                 correo, teléfono) siempre veraz, completa y actualizada a través de la sección "Perfil" de la
                 aplicación.
                 Seguridad: Usted es el único responsable de la confidencialidad de sus credenciales de acceso y de toda
@@ -34,7 +34,7 @@
             </p>
             <p class="informacion__contenido">
                 3. Nuestros Servicios y Personalización de Arreglos
-                Catálogo: ArreglosApp le ofrece un catálogo de servicios de arreglos de ropa. Los precios mostrados
+                catálogo: ArreglosApp le ofrece un catálogo de servicios de arreglos de ropa. Los precios mostrados
                 inicialmente son estimados y sirven como referencia.
                 Arreglos Personalizados: Puede configurar y guardar arreglos específicos según sus necesidades (ej.
                 ajustes de cintura, dobladillos). Estas configuraciones se gestionan en "Mis Arreglos".
@@ -52,23 +52,23 @@
     </main>
     <footer class="navbar">
         <nav class="navbar-inferior">
-            <a href="pagina-principal.html" class="navbar-inferior__item navbar-inferior__item--activo">
+            <a href="pagina-principal.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
                 <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono"></img>
                 <span class="navbar-inferior__texto">Inicio</span>
             </a>
-            <a href="mi-seleccion.html" class="navbar-inferior__item">
+            <a href="mi-seleccion.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono"></img>
-                <span class="navbar-inferior__texto">Mi Selección</span>
+                <span class="navbar-inferior__texto">Mi selección</span>
             </a>
-            <a href="mis-arreglos.html" class="navbar-inferior__item">
+            <a href="mis-arreglos.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono"></img>
                 <span class="navbar-inferior__texto">Mis Arreglos</span>
             </a>
-            <a href="mis-pedidos.html" class="navbar-inferior__item">
+            <a href="mis-pedidos.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono"></img>
                 <span class="navbar-inferior__texto">Pedidos</span>
             </a>
-            <a href="mi-perfil.html" class="navbar-inferior__item">
+            <a href="mi-perfil.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono"></img>
                 <span class="navbar-inferior__texto">Perfil</span>
             </a>
@@ -77,3 +77,4 @@
 </body>
 
 </html>
+

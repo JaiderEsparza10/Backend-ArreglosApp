@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -17,7 +17,7 @@
         </div>
         <h2 class="contenedor__titulo">Categoria Arreglo</h2>
         <section class="contenido-personalizar__contenedor">
-            <form class="contenedor__formulario" action="mis-arreglos.html" method="get">
+            <form class="contenedor__formulario" action="mis-arreglos.jsp" method="get">
                 <div class="formulario__seleccion">
                     <input type="radio" id="dobladillo" name="categoria" value="Dobladillo" class="seleccion__circulo">
                     <label for="dobladillo" class="seleccion__texto">Dobladillo</label>
@@ -40,30 +40,30 @@
                     </label>
                 </div>
                 <div class="formulario__seccion-boton">
-                    <button class="informacion__enlace-personalizar informacion__enlace-personalizar--modificador" href="personalizar-arreglo.html">Confirmar Arreglo</button>
+                    <button class="informacion__enlace-personalizar informacion__enlace-personalizar--modificador" type="submit">Confirmar Arreglo</button>
                 </div>
             </form>
         </section>
     </main>
     <footer class="navbar">
         <nav class="navbar-inferior">
-            <a href="pagina-principal.html" class="navbar-inferior__item navbar-inferior__item--activo">
+            <a href="pagina-principal.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
                 <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono"></img> 
                 <span class="navbar-inferior__texto">Inicio</span>
             </a>
-            <a href="mi-seleccion.html" class="navbar-inferior__item">
+            <a href="mi-seleccion.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Mi Selección</span>
+                <span class="navbar-inferior__texto">Mi selección</span>
             </a>
-            <a href="mis-arreglos.html" class="navbar-inferior__item">
+            <a href="mis-arreglos.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono"></img> 
                 <span class="navbar-inferior__texto">Mis Arreglos</span>
             </a>
-            <a href="mis-pedidos.html" class="navbar-inferior__item">
+            <a href="mis-pedidos.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono"></img> 
                 <span class="navbar-inferior__texto">Pedidos</span>
             </a>
-            <a href="mi-perfil.html" class="navbar-inferior__item">
+            <a href="mi-perfil.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono"></img> 
                 <span class="navbar-inferior__texto">Perfil</span>
             </a>

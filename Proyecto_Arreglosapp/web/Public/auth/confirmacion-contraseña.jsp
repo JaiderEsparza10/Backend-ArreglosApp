@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -17,7 +17,7 @@
         <div class="contenedor-principal__formulario-recuperar">
             <img class="formulario-recuperar__icono-confirmar" src="../../Assets/icons/confirmacion-datos.png" alt="confirmar cambio de contraseña">
             <h1 class="contenedor-principal__titulo">Su contraseña fue cambiada con exito</h1>
-            <a class="contenedor-login__iniciar-sesion" href="../../index.html">Volver al inicio de sesión</a>
+            <a class="contenedor-login__iniciar-sesion" href="../../index.jsp">Volver al inicio de sesión</a>
         </div> 
     </main>
 </body>

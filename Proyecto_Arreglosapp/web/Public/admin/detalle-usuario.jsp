@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -67,7 +67,7 @@
                 <h2 class="modal__titulo">¿Deseas eliminar esta cuenta?</h2>
                 <div class="modal__acciones">
                     <a href="#" class="btn-modal btn-modal--cancelar">Cancelar</a>
-                    <a href="usuario-eliminado.html" class="btn-modal btn-modal--eliminar">Eliminar</a>
+                    <a href="usuario-eliminado.jsp" class="btn-modal btn-modal--eliminar">Eliminar</a>
                 </div>
             </div>
         </div>
@@ -75,19 +75,19 @@
 
     <footer class="navbar">
         <nav class="navbar-inferior">
-            <a href="administrador-dashboard.html" class="navbar-inferior__item">
+            <a href="administrador-dashboard.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/diagrama-dashboard.png" class="navbar-inferior__icono">
                 <span class="navbar-inferior__texto">Dashboard</span>
             </a>
-            <a href="administrador-servicios.html" class="navbar-inferior__item">
+            <a href="administrador-servicios.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/catalogo-de-productos.png" class="navbar-inferior__icono">
                 <span class="navbar-inferior__texto">Servicios</span>
             </a>
-            <a href="administrador-usuarios.html" class="navbar-inferior__item navbar-inferior__item--activo">
+            <a href="administrador-usuarios.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
                 <img src="../../Assets/icons/anadir-grupo.png" class="navbar-inferior__icono">
                 <span class="navbar-inferior__texto">Usuarios</span>
             </a>
-            <a href="../../index.html" class="navbar-inferior__item">
+            <a href="../../index.jsp" class="navbar-inferior__item">
                 <img src="../../Assets/icons/salir-aplicacion.png" class="navbar-inferior__icono">
                 <span class="navbar-inferior__texto">Salir</span>
             </a>
