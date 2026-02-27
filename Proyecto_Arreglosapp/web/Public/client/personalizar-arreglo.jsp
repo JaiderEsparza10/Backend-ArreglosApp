@@ -17,7 +17,8 @@
         </div>
         <h2 class="contenedor__titulo">Categoria Arreglo</h2>
         <section class="contenido-personalizar__contenedor">
-            <form class="contenedor__formulario" action="mis-arreglos.jsp" method="get">
+            <form class="contenedor__formulario" action="../../PersonalizacionServlet" method="post">
+                <input type="hidden" name="accion" value="crear">
                 <div class="formulario__seleccion">
                     <input type="radio" id="dobladillo" name="categoria" value="Dobladillo" class="seleccion__circulo">
                     <label for="dobladillo" class="seleccion__texto">Dobladillo</label>
@@ -30,13 +31,14 @@
                     <input type="radio" id="recortar" name="categoria" value="recortar" class="seleccion__circulo">
                     <label for="recortar" class="seleccion__texto">Recortar</label>
                 </div>
-                <textarea class="formulario__descripcion" placeholder="Describe tu petición"></textarea>
+                <textarea name="descripcion" class="formulario__descripcion" placeholder="Describe tu petición"></textarea>
                 <h2 class="formulario__titulo">Material / Tela</h2>
+                <input type="text" name="materialTela" class="formulario__input-texto" placeholder="Ej: Algodón, Seda, Lino, etc.">
                 <div class="formulario__subir-foto">
-                    <input type="file" id="foto-referencia" class="subir-foto__foto">
-                    <label for="foto-referencia" class="subir-foto__agregar">
+                    <input type="text" name="imagenReferencia" class="subir-foto__foto" placeholder="URL de la imagen de referencia">
+                    <label for="imagenReferencia" class="subir-foto__agregar">
                         <img src="../../Assets/icons/agregar-imagen.png" alt="icono de agregar" class="subir-foto__icono">
-                        Subir Foto
+                        Agregar Foto
                     </label>
                 </div>
                 <div class="formulario__seccion-boton">

@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import model.Usuario;
-import util.SimpleAuthUtil;
+import util.JWTUtil;
 
 @WebFilter("/*")
 public class AuthFilter implements Filter {
@@ -43,7 +43,7 @@ public class AuthFilter implements Filter {
         }
         
         // Validar token y usuario
-        if (token == null || usuario == null || SimpleAuthUtil.validateToken(token) == null) {
+        if (token == null || usuario == null || JWTUtil.validateToken(token) == null) {
             // Redirigir al login
             httpResponse.sendRedirect(httpRequest.getContextPath() + "/index.jsp");
             return;

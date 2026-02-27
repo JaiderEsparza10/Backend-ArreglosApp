@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <% 
     // Obtener parámetros de la URL
     String msg = request.getParameter("msg"); 

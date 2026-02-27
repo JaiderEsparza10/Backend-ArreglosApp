@@ -27,10 +27,48 @@
                     <p>Tiempo de espera:</p>
                     <p class="tiempo-estimado__dias">5 a 7 dias</p>
                 </div>
-                <a class="informacion__enlace-personalizar" href="personalizar-arreglo.jsp">Personalizar Arreglo</a>
+                <div class="informacion__acciones">
+                    <a class="informacion__enlace-personalizar" href="personalizar-arreglo.jsp">Personalizar Arreglo</a>
+                    <button class="informacion__boton-favorito" onclick="agregarFavorito(1, 'Sastrería y Dobladillos', 'sastreria', 25000, '../../Assets/image/imagen-sastreria.jpg')">
+                        <img src="../../Assets/icons/corazon.png" alt="icono de favoritos" class="boton-favorito__icono">
+                        Agregar a Favoritos
+                    </button>
+                </div>
             </div>
         </div>   
     </main>
+    
+    <script>
+        function agregarFavorito(arregloId, nombreCategoria, categoria, precio, imagenUrl) {
+            // Enviar solicitud al servidor para agregar favorito
+            fetch('../../FavoritoServlet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'accion=agregar&arregloId=' + arregloId + 
+                       '&nombreCategoria=' + encodeURIComponent(nombreCategoria) + 
+                       '&categoria=' + encodeURIComponent(categoria) + 
+                       '&precio=' + precio + 
+                       '&imagenUrl=' + encodeURIComponent(imagenUrl)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ ' + nombreCategoria + ' agregado a favoritos');
+                    // Opcional: cambiar el botón a "agregado"
+                    event.target.innerHTML = '✓ Agregado a Favoritos';
+                    event.target.disabled = true;
+                } else {
+                    alert('❌ Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Error al agregar a favoritos');
+            });
+        }
+    </script>
 </body>
 </html>
 

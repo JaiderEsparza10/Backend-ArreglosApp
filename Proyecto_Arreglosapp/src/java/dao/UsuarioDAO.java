@@ -51,8 +51,18 @@ public class UsuarioDAO {
                 if (rs.next()) {
                     String storedHash = rs.getString("user_password_hash");
                     
-                    // Verificar contraseña con BCrypt
-                    if (BCrypt.checkpw(password, storedHash)) {
+                    // Verificar contraseña (texto plano para pruebas)
+                    if (password.equals(storedHash)) {
+                        Usuario usuario = new Usuario();
+                        usuario.setId(rs.getInt("user_id"));
+                        usuario.setEmail(rs.getString("user_email"));
+                        usuario.setNombre(rs.getString("user_nombre"));
+                        usuario.setDireccion(rs.getString("user_ubicacion_direccion"));
+                        usuario.setRolId(rs.getInt("rol_id"));
+                        return usuario;
+                    } 
+                    // Si no es texto plano, intentar con BCrypt
+                    else if (BCrypt.checkpw(password, storedHash)) {
                         Usuario usuario = new Usuario();
                         usuario.setId(rs.getInt("user_id"));
                         usuario.setEmail(rs.getString("user_email"));
