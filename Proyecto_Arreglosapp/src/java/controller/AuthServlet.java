@@ -1,7 +1,7 @@
 package controller;
 
 import dao.UsuarioDAO;
-import util.SimpleAuthUtil;
+import util.JWTUtil;
 import java.io.IOException;
 
 import model.Usuario;
@@ -36,7 +36,7 @@ public class AuthServlet extends HttpServlet {
             Usuario usuario = dao.autenticarUsuario(email.trim(), password);
             
             // Generar token
-            String token = SimpleAuthUtil.generateToken(
+            String token = JWTUtil.generateToken(
                 usuario.getEmail(), 
                 usuario.getId(), 
                 usuario.getRolId(), 
