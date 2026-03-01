@@ -2,8 +2,12 @@ package controller;
 
 import dao.PersonalizacionDAO;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.nio.file.Paths;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -12,6 +16,9 @@ import model.Usuario;
 import java.io.IOException;
 
 @WebServlet("/PersonalizacionServlet")
+@MultipartConfig(fileSizeThreshold = 1024 * 1024,
+                 maxFileSize = 1024 * 1024 * 5, 
+                 maxRequestSize = 1024 * 1024 * 5 * 5)
 public class PersonalizacionServlet extends HttpServlet {
 
     private PersonalizacionDAO personalizacionDAO = new PersonalizacionDAO();
@@ -40,7 +47,18 @@ public class PersonalizacionServlet extends HttpServlet {
                 String categoria = request.getParameter("categoria");
                 String descripcion = request.getParameter("descripcion");
                 String materialTela = request.getParameter("materialTela");
-                String imagenReferencia = request.getParameter("imagenReferencia");
+                
+                String imagenReferencia = null;
+                Part filePart = request.getPart("imagenReferencia");
+                if (filePart != null && filePart.getSize() > 0) {
+                    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                    String uploadPath = getServletContext().getRealPath("") + File.separator + "Assets" + File.separator + "uploads";
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) uploadDir.mkdirs();
+                    File file = new File(uploadPath + File.separator + fileName);
+                    filePart.write(file.getAbsolutePath());
+                    imagenReferencia = "../../Assets/uploads/" + fileName;
+                }
                 
                 // Validar campos obligatorios
                 if (categoria == null || categoria.trim().isEmpty()) {

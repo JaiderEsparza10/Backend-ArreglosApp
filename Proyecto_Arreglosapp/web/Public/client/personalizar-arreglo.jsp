@@ -17,7 +17,7 @@
         </div>
         <h2 class="contenedor__titulo">Categoria Arreglo</h2>
         <section class="contenido-personalizar__contenedor">
-            <form class="contenedor__formulario" action="../../PersonalizacionServlet" method="post">
+            <form class="contenedor__formulario" action="../../PersonalizacionServlet" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="accion" value="crear">
                 <div class="formulario__seleccion">
                     <input type="radio" id="dobladillo" name="categoria" value="Dobladillo" class="seleccion__circulo">
@@ -35,12 +35,18 @@
                 <h2 class="formulario__titulo">Material / Tela</h2>
                 <input type="text" name="materialTela" class="formulario__input-texto" placeholder="Ej: Algodón, Seda, Lino, etc.">
                 <div class="formulario__subir-foto">
-                    <input type="text" name="imagenReferencia" class="subir-foto__foto" placeholder="URL de la imagen de referencia">
-                    <label for="imagenReferencia" class="subir-foto__agregar">
+                    <input type="file" name="imagenReferencia" id="imagenReferencia" class="subir-foto__foto" accept="image/*" style="display: none;">
+                    <label for="imagenReferencia" class="subir-foto__agregar" style="cursor: pointer; width: 100%; text-align: center;">
                         <img src="../../Assets/icons/agregar-imagen.png" alt="icono de agregar" class="subir-foto__icono">
-                        Agregar Foto
+                        <span id="nombreArchivo">Agregar Foto</span>
                     </label>
                 </div>
+                <script>
+                    document.getElementById('imagenReferencia').addEventListener('change', function(e) {
+                        var fileName = e.target.files[0] ? e.target.files[0].name : 'Agregar Foto';
+                        document.getElementById('nombreArchivo').textContent = fileName;
+                    });
+                </script>
                 <div class="formulario__seccion-boton">
                     <button class="informacion__enlace-personalizar informacion__enlace-personalizar--modificador" type="submit">Confirmar Arreglo</button>
                 </div>
