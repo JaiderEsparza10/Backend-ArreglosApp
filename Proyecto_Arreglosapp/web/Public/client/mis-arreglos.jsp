@@ -1,132 +1,161 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../Assets/estilos.css">
-    <title>Mis Arreglos</title>
-</head>
-<body class="grid-principal">
-    <header class="seccion-encabezado">
-        <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png" alt="logo de la aplicación">
-        <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
-    </header>
-    <main class="contenido-arreglos">
-      <h1 class="contenido__titulo-seleccion">Mis Arreglos</h1>
-        <section class="contenido-seleccion__contenedor">
-          <img class="contenedor__imagen" src="../../Assets/image/imagen-costura.jpg" alt="Imagen de arreglos de vestidos">
-          <div class="contenido-seleccion__contenedor-informacion">
-            <div class="contenedor-informacion__informacion">
-              <h2 class="informacion__titulo-arreglo">Costura y reparación General</h2>
-              <p class="informacion__descripcion">Ultima actualización 08 - 10 - 2025</p>
-            </div>
-            <div class="contenedor-informacion__enlaces">
-              <a class="enlaces__enlace-arreglos" href="personalizar-arreglo.jsp">
-                <img class="enlace__imagen-icono" src="../../Assets/icons/lapiz.png" alt="imagen de un lapiz">
-                configuración
-              </a>
-              <a class="enlaces__enlace-arreglos" href="#modalEliminar">
-                <img class="enlace__imagen-icono" src="../../Assets/icons/bote-de-basura-morado.png" alt="imagen de un lapiz">
-                Eliminar
-              </a>
-              <a class="enlace__cita-usuario" href="agendar-cita.jsp">
-                Agendar Cita
-              </a>
-            </div>
-          </div>
-        </section>
-        <section class="contenido-seleccion__contenedor">
-          <img class="contenedor__imagen" src="../../Assets/image/imagen-sastreria.jpg" alt="Imagen de arreglos de vestidos">
-          <div class="contenido-seleccion__contenedor-informacion">
-            <div class="contenedor-informacion__informacion">
-              <h2 class="informacion__titulo-arreglo">Sastrería y Dobladillos Manuales</h2>
-              <p class="informacion__descripcion">Ultima actualización 09 - 11 - 2025 </p>
-            </div>
-            <div class="contenedor-informacion__enlaces">
-              <a class="enlaces__enlace-arreglos" href="personalizar-arreglo.jsp">
-                <img class="enlace__imagen-icono" src="../../Assets/icons/lapiz.png" alt="imagen de un lapiz">
-                configuración
-              </a>
-              <a class="enlaces__enlace-arreglos" href="#modalEliminar">
-                <img class="enlace__imagen-icono" src="../../Assets/icons/bote-de-basura-morado.png" alt="imagen de un lapiz">
-                Eliminar
-              </a>
-              <a class="enlace__cita-usuario" href="agendar-cita.jsp">
-                Agendar Cita
-              </a>
-            </div>
-          </div>
-        </section>
-        <section class="contenido-seleccion__contenedor">
-          <img class="contenedor__imagen" src="../../Assets/image/imagen-sastreria.jpg" alt="Imagen de arreglos de vestidos">
-          <div class="contenido-seleccion__contenedor-informacion">
-            <div class="contenedor-informacion__informacion">
-              <h2 class="informacion__titulo-arreglo">Arreglo de Medidas y Ajustes</h2>
-              <p class="informacion__descripcion">Ultima actualización 10 - 11 - 2025</p>
-            </div>
-            <div class="contenedor-informacion__enlaces">
-              <a class="enlaces__enlace-arreglos" href="personalizar-arreglo.jsp">
-                <img class="enlace__imagen-icono" src="../../Assets/icons/lapiz.png" alt="imagen de un lapiz">
-                configuración
-              </a>
-              <a class="enlaces__enlace-arreglos" href="#modalEliminar">
-                <img class="enlace__imagen-icono" src="../../Assets/icons/bote-de-basura-morado.png" alt="imagen de un lapiz">
-                Eliminar
-              </a>
-              <a class="enlace__cita-usuario" href="agendar-cita.jsp">
-                Agendar Cita
-              </a>
-            </div>
-          </div>
-          <div id="modalEliminar" class="modal">
-            <div class="modal-fondo">
-                <div class="modal-contenido">
-                    <h3 class="modal__titulo">Â¿Elimina de la lista?</h3>
-                    <p class="modal__descripcion">Â¿estás seguro que quieres eliminar este artículo de tus arreglos?</p>
-                    <div class="modal__acciones">
-                        <a href="#" class="btn-modal btn-modal--cancelar">CANCELAR</a>
-                        <a href="#modalEliminado" class="btn-modal btn-modal--eliminar">ELIMINAR</a>
-                    </div>
-                </div>
-            </div>
-          </div>
-          <div id="modalEliminado" class="modal">
-            <div class="modal-fondo">
-                <div class="modal-contenido">
-                    <img class="modal__imagen" src="../../Assets/icons/confirmacion-datos.png" alt="imagen de confirmado">
-                    <p class="modal__descripcion">Â¡El articulo fue eliminado con exito!</p>
-                    <div class="modal__acciones">
-                        <a href="#" class="btn-modal btn-modal--cancelar">Volver</a>
-                    </div>
-                </div>
-            </div>
-          </div>
-        </section>
-    </main>
-    <footer class="navbar">
-        <nav class="navbar-inferior">
-            <a href="pagina-principal.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
-                <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Inicio</span>
-            </a>
-            <a href="mi-seleccion.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Mi selección</span>
-            </a>
-            <a href="mis-arreglos.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Mis Arreglos</span>
-            </a>
-            <a href="mis-pedidos.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Pedidos</span>
-            </a>
-            <a href="mi-perfil.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Perfil</span>
-            </a>
-        </nav>
-    </footer>
-</body>
-</html>
+﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+  <%@ page import="java.util.List" %>
+    <%@ page import="model.Personalizacion" %>
+      <%@ page import="model.Usuario" %>
+        <%@ page import="dao.PersonalizacionDAO" %>
+          <%@ page import="java.time.format.DateTimeFormatter" %>
+            <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) {
+              usuario=(Usuario) sesion.getAttribute("usuario"); } if (usuario==null) {
+              response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } String mensajeOk=(String)
+              sesion.getAttribute("mensajePersonalizacion"); String mensajeErr=(String)
+              sesion.getAttribute("errorPersonalizacion"); sesion.removeAttribute("mensajePersonalizacion");
+              sesion.removeAttribute("errorPersonalizacion"); PersonalizacionDAO personalizacionDAO=new
+              PersonalizacionDAO(); List<Personalizacion> misArreglos = null;
+              try {
+              misArreglos = personalizacionDAO.obtenerPersonalizacionesPorUsuario(usuario.getId());
+              } catch (Exception e) {
+              e.printStackTrace();
+              }
 
+              DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd - MM - yyyy");
+              String ctx = request.getContextPath();
+              %>
+              <!DOCTYPE html>
+              <html lang="es">
+
+              <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link rel="stylesheet" href="../../Assets/estilos.css">
+                <title>Mis Arreglos</title>
+              </head>
+
+              <body class="grid-principal">
+                <header class="seccion-encabezado">
+                  <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
+                    alt="logo de la aplicación">
+                  <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
+                </header>
+
+                <!-- TOAST -->
+                <div id="toast" class="toast"></div>
+
+                <main class="contenido-arreglos">
+                  <h1 class="contenido__titulo-seleccion">Mis Arreglos</h1>
+
+                  <% if (misArreglos !=null && !misArreglos.isEmpty()) { %>
+                    <% for (Personalizacion arreglo : misArreglos) { %>
+                      <% String imgUrl=arreglo.getImagenReferencia(); if (imgUrl==null || imgUrl.trim().isEmpty()) {
+                        String cat=arreglo.getCategoria() !=null ? arreglo.getCategoria().toLowerCase() : "" ; if
+                        (cat.contains("dobladillo") || cat.contains("sastr")) {
+                        imgUrl="../../Assets/image/imagen-sastreria.jpg" ; } else if (cat.contains("estrech") ||
+                        cat.contains("ensanch")) { imgUrl="../../Assets/image/imagen-arreglos-de-vestidos-de-fiesta.jpg"
+                        ; } else if (cat.contains("recortar")) { imgUrl="../../Assets/image/image-arreglo-bolsillos.jpg"
+                        ; } else { imgUrl="../../Assets/image/imagen-costura.jpg" ; } } else if
+                        (!imgUrl.startsWith("http") && !imgUrl.startsWith("/") && !imgUrl.startsWith("../../")) {
+                        imgUrl=ctx + "/" + imgUrl; } String fechaTexto="Sin fecha" ; if (arreglo.getFechaCreacion()
+                        !=null) { fechaTexto=arreglo.getFechaCreacion().format(fmt); } String estado=arreglo.getEstado()
+                        !=null ? arreglo.getEstado() : "pendiente" ; String badgeClase="badge--pendiente" ; String
+                        estadoTexto="Pendiente" ; if (estado.equalsIgnoreCase("en_proceso")) {
+                        badgeClase="badge--proceso" ; estadoTexto="En proceso" ; } else if
+                        (estado.equalsIgnoreCase("completado")) { badgeClase="badge--completado" ;
+                        estadoTexto="Completado" ; } %>
+                        <section class="contenido-seleccion__contenedor arreglo-card">
+                          <img class="contenedor__imagen" src="<%= imgUrl %>" alt="Imagen del arreglo">
+                          <div class="contenido-seleccion__contenedor-informacion">
+                            <div class="contenedor-informacion__informacion">
+                              <div class="informacion__fila-titulo">
+                                <h2 class="informacion__titulo-arreglo">
+                                  <%= arreglo.getCategoria() %>
+                                </h2>
+                                <span class="informacion__badge <%= badgeClase %>">
+                                  <%= estadoTexto %>
+                                </span>
+                              </div>
+                              <% if (arreglo.getDescripcion() !=null && !arreglo.getDescripcion().trim().isEmpty()) { %>
+                                <p class="informacion__descripcion arreglo__descripcion">
+                                  <%= arreglo.getDescripcion().length()> 60
+                                    ? arreglo.getDescripcion().substring(0, 60) + "..."
+                                    : arreglo.getDescripcion() %>
+                                </p>
+                                <% } %>
+                                  <% if (arreglo.getMaterialTela() !=null &&
+                                    !arreglo.getMaterialTela().trim().isEmpty()) { %>
+                                    <p class="informacion__descripcion">
+                                      <strong>Tela:</strong>
+                                      <%= arreglo.getMaterialTela() %>
+                                    </p>
+                                    <% } %>
+                                      <p class="informacion__descripcion arreglo__fecha">Creado: <%= fechaTexto %>
+                                      </p>
+                            </div>
+                            <div class="contenedor-informacion__enlaces">
+                              <a class="enlaces__enlace-arreglos" href="personalizar-arreglo.jsp">
+                                <img class="enlace__imagen-icono" src="../../Assets/icons/lapiz.png" alt="editar">
+                                Editar
+                              </a>
+                              <a class="enlaces__enlace-arreglos" href="#"
+                                onclick="prepararEliminarArreglo(<%= arreglo.getPersonalizacionId() %>); return false;">
+                                <img class="enlace__imagen-icono" src="../../Assets/icons/bote-de-basura-morado.png"
+                                  alt="eliminar">
+                                Eliminar
+                              </a>
+                              <a class="enlace__cita-usuario" href="agendar-cita.jsp">
+                                Agendar Cita
+                              </a>
+                            </div>
+                          </div>
+                        </section>
+                        <% } %>
+                          <% } else { %>
+                            <div class="arreglos__vacio">
+                              <p class="arreglos__vacio-texto">No tienes arreglos personalizados aún.</p>
+                              <a href="pagina-principal.jsp" class="informacion__enlace-personalizar">
+                                Ver Servicios
+                              </a>
+                            </div>
+                            <% } %>
+                </main>
+
+                <!-- MODAL ELIMINAR -->
+                <div id="modalEliminarArreglo" class="modal">
+                  <div class="modal-contenido">
+                    <h3 class="modal__titulo">¿Eliminar arreglo?</h3>
+                    <p class="modal__descripcion">¿Estás seguro que quieres eliminar esta personalización? Esta acción
+                      no se puede deshacer.</p>
+                    <div class="modal__acciones">
+                      <button class="btn-modal btn-modal--cancelar" onclick="cerrarModalArreglo()">CANCELAR</button>
+                      <button class="btn-modal btn-modal--eliminar" id="btnConfirmarEliminarArreglo">ELIMINAR</button>
+                    </div>
+                  </div>
+                </div>
+
+                <footer class="navbar">
+                  <nav class="navbar-inferior">
+                    <a href="pagina-principal.jsp" class="navbar-inferior__item">
+                      <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono">
+                      <span class="navbar-inferior__texto">Inicio</span>
+                    </a>
+                    <a href="mi-seleccion.jsp" class="navbar-inferior__item">
+                      <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono">
+                      <span class="navbar-inferior__texto">Mi selección</span>
+                    </a>
+                    <a href="mis-arreglos.jsp" class="navbar-inferior__item">
+                      <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono">
+                      <span class="navbar-inferior__texto">Mis Arreglos</span>
+                    </a>
+                    <a href="mis-pedidos.jsp" class="navbar-inferior__item">
+                      <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono">
+                      <span class="navbar-inferior__texto">Pedidos</span>
+                    </a>
+                    <a href="mi-perfil.jsp" class="navbar-inferior__item">
+                      <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono">
+                      <span class="navbar-inferior__texto">Perfil</span>
+                    </a>
+                  </nav>
+                </footer>
+
+                <script src="../../Assets/JavaScript/mis-arreglos.js"></script>
+              </body>
+
+              </html>

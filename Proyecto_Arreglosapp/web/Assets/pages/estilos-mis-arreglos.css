@@ -3,41 +3,117 @@
   grid-area: main;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   padding-bottom: 75px;
+  width: 100%;
 }
 
-/* SECCIÓN DE OPCIONES EN MIS ARREGLOS */
-.contenedor-informacion__enlaces{
-  width: 300px;
-  display: flex;
-  gap: 5px;
+/* CARD — mismo sistema que mi-seleccion para consistencia */
+.arreglo-card {
+  width: 425px;
+  max-width: 95vw;
 }
-/* SECCIÓN DE LOS ENLACES INFERIORES */
-.enlaces__enlace-arreglos{
+
+/* FILA TÍTULO + BADGE */
+.informacion__fila-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* BADGE DE ESTADO */
+.informacion__badge {
+  font-size: 10px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+  font-family: var(--tipo-fuente);
+}
+
+.badge--pendiente {
+  background-color: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffcc80;
+}
+
+.badge--proceso {
+  background-color: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #90caf9;
+}
+
+.badge--completado {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+/* DESCRIPCIÓN TRUNCADA */
+.arreglo__descripcion {
+  font-style: italic;
+  color: #666;
+}
+
+/* FECHA */
+.arreglo__fecha {
+  font-size: 11px;
+  color: #999;
+  margin-top: 2px;
+}
+
+/* SECCIÓN DE ENLACES INFERIORES */
+.contenedor-informacion__enlaces {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.enlaces__enlace-arreglos {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
   font-size: 12px;
-  gap: 5px;
+  gap: 4px;
   color: var(--color-boton);
+  font-family: var(--tipo-fuente);
+  cursor: pointer;
 }
-/* DISEÑO PARA LAS IMAGENES */
-.enlace__imagen-icono{
-  width: 25px;
+
+.enlace__imagen-icono {
+  width: 24px;
   border: 2px solid var(--color-boton);
   border-radius: 50%;
   padding: 2px;
 }
-/* DISEÑO PARA EL ENLACE AGENDAR CITA */
-.enlace__cita-usuario{
-    background-color: var(--color-fondo-encabezado);
-    color: var(--color-fuente);
-    padding: 8px;
-    border-radius: 15px;
-    width: 110px;
-    font-size: 12px;
-    margin-top: 10px;
+
+/* BOTÓN AGENDAR CITA */
+.enlace__cita-usuario {
+  background-color: var(--color-fondo-encabezado);
+  color: var(--color-fuente);
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 11px;
+  font-family: var(--tipo-fuente);
+  white-space: nowrap;
+}
+
+/* ESTADO VACÍO */
+.arreglos__vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 60px;
+  text-align: center;
+}
+
+.arreglos__vacio-texto {
+  font-size: 1.2rem;
+  color: #555;
+  font-family: var(--tipo-fuente);
 }
