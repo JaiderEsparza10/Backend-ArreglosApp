@@ -1,34 +1,28 @@
 /* 1. Contenedor principal del modal (Fondo oscuro) */
 .modal {
-  /* Oculto por defecto y fuera del flujo */
   visibility: hidden;
   opacity: 0;
-
-  /* Ocupar toda la pantalla y permanecer fijo */
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-
-  /* Fondo oscuro translúcido */
   background: rgba(0, 0, 0, 0.4);
-  z-index: 9999; /* Asegura que esté por encima de todo */
-
-  /* Mecanismo de centrado y transición */
+  z-index: 9999;
   display: flex;
   justify-content: center;
   align-items: center;
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* 2. El poder del :target: Muestra el modal cuando su ID está en la URL */
-.modal:target {
+/* Mostrar modal con :target O con clase --activo (JS) */
+.modal:target,
+.modal--activo {
   visibility: visible;
   opacity: 1;
 }
 
-/* 3. Contenido del modal (El cuadro blanco/púrpura) */
+/* 3. Contenido del modal */
 .modal-contenido {
   background-color: #fff;
   padding: 25px 20px;
@@ -36,7 +30,6 @@
   width: 85%;
   max-width: 340px;
   text-align: center;
-  /* Estilo del borde púrpura, similar a la imagen */
   border: 2px solid #6a1b9a;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
@@ -56,7 +49,6 @@
   margin-bottom: 20px;
 }
 
-/* 4. Contenedor de botones */
 .modal__acciones {
   display: flex;
   justify-content: space-around;
@@ -64,7 +56,6 @@
   margin-top: 15px;
 }
 
-/* 5. Estilos para los botones dentro del modal */
 .btn-modal {
   padding: 10px 15px;
   border: none;
@@ -73,24 +64,22 @@
   font-weight: bold;
   text-transform: uppercase;
   font-size: 0.9em;
-  flex-grow: 1; /* Para que ocupen el espacio disponible */
-  text-decoration: none; /* Quita el subrayado en los enlaces */
+  flex-grow: 1;
+  text-decoration: none;
   display: inline-block;
   text-align: center;
 }
 
-/* Botón CANCELAR (Púrpura) */
 .btn-modal--cancelar {
   background-color: #9c27b0;
   color: var(--color-fuente);
 }
 
-/* Botón ELIMINAR (Rojo) */
 .btn-modal--eliminar {
   background-color: #ff0004;
   color: var(--color-fuente);
 }
 
-.modal__imagen{
+.modal__imagen {
   width: 100px;
 }

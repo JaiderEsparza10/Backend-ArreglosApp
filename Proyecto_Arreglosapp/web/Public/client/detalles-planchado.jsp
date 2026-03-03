@@ -36,41 +36,8 @@
             </div>
         </div>
     </main>
-    <script>
-        document.getElementById('btnAgregarSeleccion').addEventListener('click', function (e) {
-            e.preventDefault();
-            const data = new URLSearchParams();
-            data.append('accion', 'agregar');
-            data.append('arregloId', '3');
-            data.append('categoria', 'Planchado Profesional');
-            data.append('nombreCategoria', 'Servicios Planchado de Ropa');
-            data.append('precio', '8000');
-            data.append('imagenUrl', '../../Assets/image/imagen-planchado de ropa.jpg');
-
-            fetch('../../FavoritoServlet', {
-                method: 'POST',
-                body: data,
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            })
-                .then(response => {
-                    if (response.status === 401) {
-                        alert('Debes iniciar sesión para agregar a tu selección');
-                        window.location.href = '../../index.jsp';
-                        throw new Error('No autorizado');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert('✅ ' + data.message);
-                        window.location.href = 'mi-seleccion.jsp';
-                    } else {
-                        alert('❌ ' + data.message);
-                    }
-                })
-                .catch(error => { console.error('Error:', error); alert('❌ Error al comunicarse con el servidor. Si el error persiste, inicia sesión nuevamente.'); });
-        });
-    </script>
+    <div id="toast" class="toast"></div>
+    <script src="../../Assets/JavaScript/agregar-seleccion-planchado.js"></script>
 </body>
 
 </html>

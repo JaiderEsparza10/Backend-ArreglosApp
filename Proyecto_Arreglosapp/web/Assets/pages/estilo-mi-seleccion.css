@@ -3,65 +3,242 @@
   grid-area: main;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  padding-bottom: 75px;
+  padding: 20px 15px 75px;
+  gap: 20px;
 }
 
 .contenido__titulo-seleccion {
   font-family: var(--tipo-fuente);
-  font-size: 24px;
-  margin-top: 6%;
-  margin-right: 58%;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-precio-titulos);
+  margin-top: 15px;
+  align-self: center;
+  position: relative;
 }
 
-/* CONTENIDO QUE ESTÁ DENTRO DE LA CARD */
+.contenido__titulo-seleccion::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 3px;
+  background: var(--color-gradiente-enlace);
+  border-radius: 2px;
+  margin: 8px auto 0;
+}
+
+/* ========================================
+   CARD DE SELECCIÓN - DISEÑO PREMIUM
+   ======================================== */
 .contenido-seleccion__contenedor {
   display: flex;
-  width: 425px;
-  gap: 10px;
-  background-color: #d9d9d9;
-  padding: 10px;
-  border-radius: 14px;
-  border: 1px solid var(--color-enlace-seleccion);
-  margin-top: 15px;
-}
-.contenedor__imagen {
-  width: 95px;
-  height: 100px;
-  border-radius: 17px;
-  margin-top: 5px;
+  align-items: stretch;
+  width: 100%;
+  max-width: 480px;
+  gap: 15px;
+  background: linear-gradient(145deg, #ffffff, #f8f6fc);
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(106, 27, 154, 0.12);
+  box-shadow: 0 4px 15px rgba(106, 27, 154, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
 }
 
-/* SECCIÓN DE INFORMACION */
+.contenido-seleccion__contenedor::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--color-gradiente-enlace);
+  border-radius: 18px 0 0 18px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.contenido-seleccion__contenedor:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(106, 27, 154, 0.15),
+    0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.contenido-seleccion__contenedor:hover::before {
+  opacity: 1;
+}
+
+/* IMAGEN DE LA CARD */
+.contenedor__imagen {
+  width: 110px;
+  min-height: 115px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.contenido-seleccion__contenedor:hover .contenedor__imagen {
+  transform: scale(1.04);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
+}
+
+/* SECCIÓN DE INFORMACIÓN */
 .contenido-seleccion__contenedor-informacion {
   display: flex;
   flex-direction: column;
-  gap: 23px;
+  justify-content: space-between;
+  flex: 1;
+  gap: 10px;
+  padding: 3px 0;
 }
+
 .contenedor-informacion__informacion {
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
 .informacion__titulo-arreglo {
   font-family: var(--tipo-fuente);
   font-size: 16px;
+  font-weight: 600;
+  color: var(--color-precio-titulos);
+  line-height: 1.3;
+  letter-spacing: -0.2px;
 }
 
 .informacion__descripcion {
+  font-family: var(--tipo-fuente);
   font-size: 12px;
   text-align: left;
+  color: var(--color-texto-gris);
+  font-weight: 400;
+  line-height: 1.4;
 }
 
+/* SECCIÓN DE PRECIO Y ACCIONES */
 .contenedor-informacion__pago-enlace {
   display: flex;
-  justify-content: flex-start;
-  align-items: var(--alinear-items);
-  gap: 90px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .pago-enlace__precio {
-  font-size: 15px;
-  font-weight: var(--grosor-fuente);
+  font-family: var(--tipo-fuente);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-precio-titulos);
+  letter-spacing: -0.5px;
+}
+
+/* BOTÓN PERSONALIZAR - DENTRO DE LA CARD */
+.pago-enlace__enlace {
+  background: var(--color-gradiente-enlace);
+  padding: 10px 24px;
+  font-size: 13px;
+  color: white;
+  border-radius: 25px;
+  font-weight: 600;
+  font-family: var(--tipo-fuente);
+  letter-spacing: 0.3px;
+  box-shadow: 0 3px 10px rgba(112, 0, 206, 0.25);
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-align: center;
+  min-width: 130px;
+}
+
+.pago-enlace__enlace:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 18px rgba(112, 0, 206, 0.35);
+}
+
+.pago-enlace__enlace:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(112, 0, 206, 0.2);
+}
+
+.pago-enlace__enlace--eliminar {
+  background: linear-gradient(135deg, #ff4444, #cc0000);
+  box-shadow: 0 3px 10px rgba(255, 0, 0, 0.2);
+}
+
+.pago-enlace__enlace--eliminar:hover {
+  box-shadow: 0 5px 18px rgba(255, 0, 0, 0.3);
+}
+
+/* BOTÓN ELIMINAR FAVORITO */
+.btn-eliminar-favorito {
+  background: linear-gradient(135deg, #ff4444, #cc0000);
+  border: none;
+  padding: 10px 24px;
+  font-size: 13px;
+  color: white;
+  border-radius: 25px;
+  font-family: var(--tipo-fuente);
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  box-shadow: 0 3px 10px rgba(255, 0, 0, 0.25);
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-align: center;
+  min-width: 130px;
+}
+
+.btn-eliminar-favorito:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 18px rgba(255, 0, 0, 0.35);
+}
+
+.btn-eliminar-favorito:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(255, 0, 0, 0.2);
+}
+
+/* ========================================
+   ANIMACIÓN DE ENTRADA PARA LAS CARDS
+   ======================================== */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contenido-seleccion__contenedor {
+  animation: fadeInSlideUp 0.5s ease forwards;
+}
+
+.contenido-seleccion__contenedor:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+.contenido-seleccion__contenedor:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
+.contenido-seleccion__contenedor:nth-child(4) {
+  animation-delay: 0.15s;
+}
+
+.contenido-seleccion__contenedor:nth-child(5) {
+  animation-delay: 0.2s;
+}
+
+.contenido-seleccion__contenedor:nth-child(6) {
+  animation-delay: 0.25s;
 }

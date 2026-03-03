@@ -1,0 +1,55 @@
+/* ================================
+   TOAST - NOTIFICACIONES ANIMADAS
+   ================================ */
+.toast {
+    position: fixed;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-family: var(--tipo-fuente);
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    z-index: 99999;
+    opacity: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    min-width: 280px;
+    pointer-events: none;
+}
+
+.toast--exito {
+    background-color: #2e7d32;
+}
+
+.toast--error {
+    background-color: #c62828;
+}
+
+.toast--visible {
+    animation: toast-bajar 3s ease forwards;
+}
+
+@keyframes toast-bajar {
+    0% {
+        top: -120px;
+        opacity: 0;
+    }
+
+    15% {
+        top: 24px;
+        opacity: 1;
+    }
+
+    75% {
+        top: 24px;
+        opacity: 1;
+    }
+
+    100% {
+        top: -120px;
+        opacity: 0;
+    }
+}

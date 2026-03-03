@@ -32,84 +32,12 @@
                     <p>Tiempo de espera:</p>
                     <p class="tiempo-estimado__dias">5 a 7 dias</p>
                 </div>
-                <div class="informacion__acciones">
-                    <a class="informacion__enlace-personalizar" href="personalizar-arreglo.jsp">Personalizar Arreglo</a>
-                    <button class="informacion__boton-favorito"
-                        onclick="agregarFavorito(1, 'Sastrería y Dobladillos', 'sastreria', 25000, '../../Assets/image/imagen-sastreria.jpg')">
-                        <img src="../../Assets/icons/corazon.png" alt="icono de favoritos"
-                            class="boton-favorito__icono">
-                        Agregar a Favoritos
-                    </button>
-                </div>
+                <a class="informacion__enlace-personalizar" href="personalizar-arreglo.jsp">Personalizar Arreglo</a>
             </div>
         </div>
     </main>
-
-    <script>
-        document.getElementById('btnAgregarSeleccion').addEventListener('click', function (e) {
-            e.preventDefault();
-            const data = new URLSearchParams();
-            data.append('accion', 'agregar');
-            data.append('arregloId', '1');
-            data.append('categoria', 'Sastrería y Dobladillos');
-            data.append('nombreCategoria', 'Sastrería y Dobladillos');
-            data.append('precio', '25000');
-            data.append('imagenUrl', '../../Assets/image/imagen-sastreria.jpg');
-
-            fetch('../../FavoritoServlet', {
-                method: 'POST',
-                body: data,
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            })
-                .then(response => {
-                    if (response.status === 401) {
-                        alert('Debes iniciar sesión para agregar a tu selección');
-                        window.location.href = '../../index.jsp';
-                        throw new Error('No autorizado');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert('✅ ' + data.message);
-                        window.location.href = 'mi-seleccion.jsp';
-                    } else {
-                        alert('❌ ' + data.message);
-                    }
-                })
-                .catch(error => { console.error('Error:', error); alert('❌ Error al comunicarse con el servidor. Si el error persiste, inicia sesión nuevamente.'); });
-        });
-
-        function agregarFavorito(arregloId, nombreCategoria, categoria, precio, imagenUrl) {
-            // Enviar solicitud al servidor para agregar favorito
-            fetch('../../FavoritoServlet', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'accion=agregar&arregloId=' + arregloId +
-                    '&nombreCategoria=' + encodeURIComponent(nombreCategoria) +
-                    '&categoria=' + encodeURIComponent(categoria) +
-                    '&precio=' + precio +
-                    '&imagenUrl=' + encodeURIComponent(imagenUrl)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('✅ ' + nombreCategoria + ' agregado a favoritos');
-                        // Opcional: cambiar el botón a "agregado"
-                        event.target.innerHTML = '✓ Agregado a Favoritos';
-                        event.target.disabled = true;
-                    } else {
-                        alert('❌ Error: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('❌ Error al agregar a favoritos');
-                });
-        }
-    </script>
+    <div id="toast" class="toast"></div>
+    <script src="../../Assets/JavaScript/agregar-seleccion-sastreria.js"></script>
 </body>
 
 </html>

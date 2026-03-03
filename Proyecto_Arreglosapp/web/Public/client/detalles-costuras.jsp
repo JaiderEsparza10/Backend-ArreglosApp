@@ -21,7 +21,7 @@
                 alt="Imagen de detalles del arreglo">
             <div class="informacion-detalles__informacion">
                 <h1 class="informacion__titulo">Costura y reparación</h1>
-                <p class="informacion__parrafo"> Representa una amplia gama de servicios de costura, desde reparaciones
+                <p class="informacion__parrafo">Representa una amplia gama de servicios de costura, desde reparaciones
                     básicas hasta dobladillos y alteraciones que requieren el uso de maquinaria especializada.</p>
                 <a class="informacion__enlace" href="#" id="btnAgregarSeleccion">
                     <img class="enlace__icono" src="../../Assets/icons/agregar-recordatorio__color.png"
@@ -36,41 +36,8 @@
             </div>
         </div>
     </main>
-    <script>
-        document.getElementById('btnAgregarSeleccion').addEventListener('click', function (e) {
-            e.preventDefault();
-            const data = new URLSearchParams();
-            data.append('accion', 'agregar');
-            data.append('arregloId', '2');
-            data.append('categoria', 'Costuras Generales');
-            data.append('nombreCategoria', 'Costura y reparación');
-            data.append('precio', '15000');
-            data.append('imagenUrl', '../../Assets/image/imagen-costura.jpg');
-
-            fetch('../../FavoritoServlet', {
-                method: 'POST',
-                body: data,
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            })
-                .then(response => {
-                    if (response.status === 401) {
-                        alert('Debes iniciar sesión para agregar a tu selección');
-                        window.location.href = '../../index.jsp';
-                        throw new Error('No autorizado');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert('✅ ' + data.message);
-                        window.location.href = 'mi-seleccion.jsp';
-                    } else {
-                        alert('❌ ' + data.message);
-                    }
-                })
-                .catch(error => { console.error('Error:', error); alert('❌ Error al comunicarse con el servidor. Si el error persiste, inicia sesión nuevamente.'); });
-        });
-    </script>
+    <div id="toast" class="toast"></div>
+    <script src="../../Assets/JavaScript/agregar-seleccion-costuras.js"></script>
 </body>
 
 </html>

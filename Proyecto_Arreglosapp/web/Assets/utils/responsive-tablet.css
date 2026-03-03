@@ -123,8 +123,7 @@
     /* --- MI SELECCIÓN --- */
     .contenido-seleccion {
         max-width: 100%;
-        padding: 0 30px;
-        padding-bottom: 100px;
+        padding: 20px 30px 100px;
         align-items: center;
         gap: 20px;
     }
@@ -142,13 +141,13 @@
         width: 100%;
         max-width: 700px;
         padding: 20px;
-        margin: 10px auto;
+        margin: 0 auto;
         gap: 20px;
     }
 
     .contenedor__imagen {
-        width: 130px;
-        height: 135px;
+        width: 140px;
+        min-height: 145px;
     }
 
     .contenido-seleccion__contenedor-informacion {
@@ -156,28 +155,33 @@
     }
 
     .informacion__titulo-arreglo {
-        font-size: 25px;
+        font-size: 22px;
     }
 
     .informacion__descripcion {
-        font-size: 15px;
+        font-size: 14px;
         line-height: 1.4;
     }
 
     .contenedor-informacion__pago-enlace {
-        gap: 80px;
-        margin-top: 15px;
+        gap: 15px;
+        margin-top: 10px;
     }
 
     .pago-enlace__precio {
-        font-size: 26px;
-        font-weight: var(--grosor-fuente);
+        font-size: 24px;
+        font-weight: 700;
     }
 
     .pago-enlace__enlace {
-        font-size: 17px;
-        padding: 12px 25px;
-        border-radius: 15px;
+        font-size: 14px;
+        padding: 10px 22px;
+        border-radius: 25px;
+    }
+
+    .btn-eliminar-favorito {
+        font-size: 12px;
+        padding: 8px 16px;
     }
 
     /* Icono eliminar debajo de las cards */

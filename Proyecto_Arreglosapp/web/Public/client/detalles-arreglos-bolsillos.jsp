@@ -31,47 +31,14 @@
                 </a>
                 <div class="informacion__tiempo-estimado">
                     <p>Tiempo de espera:</p>
-                    <p class="tiempo-estimado__dias">3 dias </p>
+                    <p class="tiempo-estimado__dias">3 dias</p>
                 </div>
                 <a class="informacion__enlace-personalizar" href="personalizar-arreglo.jsp">Personalizar Arreglo</a>
             </div>
         </div>
     </main>
-    <script>
-        document.getElementById('btnAgregarSeleccion').addEventListener('click', function (e) {
-            e.preventDefault();
-            const data = new URLSearchParams();
-            data.append('accion', 'agregar');
-            data.append('arregloId', '2'); // Using 2 for Costuras y Remiendos based on SQL
-            data.append('categoria', 'Costuras Generales');
-            data.append('nombreCategoria', 'Arreglo de Bolsillos y Remiendos');
-            data.append('precio', '15000');
-            data.append('imagenUrl', '../../Assets/image/image-arreglo-bolsillos.jpg');
-
-            fetch('../../FavoritoServlet', {
-                method: 'POST',
-                body: data,
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            })
-                .then(response => {
-                    if (response.status === 401) {
-                        alert('Debes iniciar sesión para agregar a tu selección');
-                        window.location.href = '../../index.jsp';
-                        throw new Error('No autorizado');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert('✅ ' + data.message);
-                        window.location.href = 'mi-seleccion.jsp';
-                    } else {
-                        alert('❌ ' + data.message);
-                    }
-                })
-                .catch(error => { console.error('Error:', error); alert('❌ Error al comunicarse con el servidor. Si el error persiste, inicia sesión nuevamente.'); });
-        });
-    </script>
+    <div id="toast" class="toast"></div>
+    <script src="../../Assets/JavaScript/agregar-seleccion-bolsillos.js"></script>
 </body>
 
 </html>

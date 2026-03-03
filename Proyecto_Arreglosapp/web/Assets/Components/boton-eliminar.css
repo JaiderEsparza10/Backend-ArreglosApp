@@ -1,15 +1,16 @@
 /* BOTON NORMAL PARA PERSONALIZAR */
 .pago-enlace__enlace {
-  background-color: var(--color-boton);
-  padding: 4px;
-  font-size: 10px;
+  background: var(--color-gradiente-enlace);
+  padding: 10px 24px;
+  font-size: 13px;
   color: white;
-  margin-left: 10%;
-  border-radius: 3px;
-  font-weight: bold;
-  margin-bottom: 5px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-family: var(--tipo-fuente);
+  text-align: center;
+  min-width: 130px;
 }
 
 .pago-enlace__enlace--eliminar {
-  background-color: red;
+  background: linear-gradient(135deg, #ff4444, #cc0000);
 }
