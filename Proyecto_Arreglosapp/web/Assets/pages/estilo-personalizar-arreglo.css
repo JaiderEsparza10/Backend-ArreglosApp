@@ -1,44 +1,67 @@
-/* CONTENEDOR EL ENLACE PARA VOLVER ATRAS */
+/* CONTENEDOR PRINCIPAL */
 .contenido-personalizar {
     grid-area: main;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: var(--alinear-items);
+    align-items: center;
     padding-bottom: 75px;
+    width: 100%;
 }
 
-.contenido-personalizar__enlace-volver {
+/* ENCABEZADO CON BOTÓN VOLVER */
+.contenido-personalizar__encabezado {
     display: flex;
-    justify-content: space-between;
-    padding: 25px;
-    height: var(--tamano-header);
-    width: 100vw;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 25px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.enlace-volver__enlace {
-    margin-top: 7px;
+.encabezado__btn-volver {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--color-boton);
+    flex-shrink: 0;
+}
+
+.btn-volver__icono {
+    width: 18px;
+    height: 18px;
 }
 
 .enlace-volver__titulo {
     font-size: var(--tamano-fuente);
+    font-family: var(--tipo-fuente);
+    margin: 0;
 }
 
-/* CONTENEDOR PRINCIPAL ALMACENAMIENTO INFORMACIÓN */
-.contenedor__titulo {
-    font-size: var(--tamano-fuente-titulos);
-    position: absolute;
-    top: 23%;
-    left: 5%;
+/* ALERTA DE ERROR */
+.personalizar__alerta {
+    width: 90%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-family: var(--tipo-fuente);
+    margin-bottom: 10px;
 }
 
-/* FORMULARIO DE PERSONALIZACIÓN DEL ARREGLO */
+.personalizar__alerta--error {
+    background-color: #fdecea;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+/* CONTENEDOR DEL FORMULARIO */
 .contenido-personalizar__contenedor {
     display: flex;
     flex-direction: column;
-    margin-top: 45px;
-    justify-content: center;
-    width: 90vw;
+    width: 90%;
+    max-width: 500px;
 }
 
 .contenedor__formulario {
@@ -47,16 +70,36 @@
     gap: 10px;
 }
 
-/* CHECKBOX EN DONDE SE SELECCIONA EL ARREGLO */
+/* TÍTULOS DE SECCIÓN */
+.contenedor__titulo-seccion {
+    font-size: var(--tamano-fuente-titulos);
+    font-family: var(--tipo-fuente);
+    margin: 8px 0 4px 0;
+}
+
+.contenedor__subtitulo {
+    font-size: 0.8em;
+    color: #777;
+    margin: 0 0 8px 0;
+}
+
+/* CARDS DE CATEGORÍA */
 .formulario__seleccion {
     display: flex;
-    align-items: var(--alinear-items);
+    align-items: center;
     border: 1px solid var(--color-borde-checkbox);
     border-radius: var(--borde-cajas);
-    margin-bottom: 10px;
-    padding: 10px;
+    margin-bottom: 8px;
+    padding: 12px;
     background-color: var(--color-fondo-detalles);
     cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Card activa al seleccionar */
+.formulario__seleccion--activo {
+    border-color: var(--color-boton);
+    background-color: #f3e5f5;
 }
 
 .seleccion__circulo {
@@ -102,22 +145,59 @@
     background-color: var(--color-boton);
 }
 
-/* APARTADO DE DESCRIPCIÓN DEL USUARIO */
+/* DESCRIPCIÓN */
+.formulario__descripcion-contenedor {
+    position: relative;
+}
+
 .formulario__descripcion {
     width: 100%;
-    height: 80px;
+    height: 100px;
     padding: 15px;
     border: 1px solid var(--color-borde-checkbox);
     border-radius: var(--borde-cajas);
     box-sizing: border-box;
     background-color: #f0f0f0;
     resize: none;
-    font-size: 0.8em;
+    font-size: 0.85em;
     color: #555;
     font-family: var(--tipo-fuente);
+    transition: border-color 0.2s;
 }
 
-/* SECCIÓN DE EVIDENCIA DE SUBIR FOTOS */
+.formulario__descripcion:focus {
+    outline: none;
+    border-color: var(--color-boton);
+}
+
+.descripcion__contador {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 0.75em;
+    color: #555;
+}
+
+/* INPUT TEXTO MATERIAL */
+.formulario__input-texto {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--color-borde-checkbox);
+    border-radius: var(--borde-cajas);
+    box-sizing: border-box;
+    background-color: #f0f0f0;
+    font-size: 0.85em;
+    font-family: var(--tipo-fuente);
+    color: #555;
+    transition: border-color 0.2s;
+}
+
+.formulario__input-texto:focus {
+    outline: none;
+    border-color: var(--color-boton);
+}
+
+/* SUBIR FOTO */
 .formulario__titulo {
     font-size: var(--tamano-fuente-titulos);
 }
@@ -128,26 +208,77 @@
     height: 1px;
     padding: 0;
     margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
 }
 
 .formulario__subir-foto .subir-foto__agregar {
     display: flex;
-    align-items: var(--alinear-items);
+    align-items: center;
     justify-content: flex-start;
-    width: var(--ancho-input);
+    width: 100%;
     padding: 15px;
-    border: none;
+    border: 2px dashed var(--color-borde-checkbox);
     border-radius: var(--borde-cajas);
     background-color: var(--color-fondo-detalles);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     font-size: 1em;
     color: var(--color-enlace-seleccion);
     cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+    box-sizing: border-box;
 }
 
-/* --- 3. Estilizar la Imagen/Icono --- */
+.formulario__subir-foto .subir-foto__agregar:hover {
+    border-color: var(--color-boton);
+    background-color: #f3e5f5;
+}
+
 .formulario__subir-foto .subir-foto__icono {
     width: 28px;
     height: 28px;
     margin-right: 10px;
+}
+
+/* PREVIEW IMAGEN */
+.formulario__preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.preview__imagen {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: var(--borde-cajas);
+    border: 1px solid var(--color-borde-checkbox);
+}
+
+.preview__btn-eliminar {
+    background: none;
+    border: 1px solid #c62828;
+    color: #c62828;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 0.85em;
+    cursor: pointer;
+    font-family: var(--tipo-fuente);
+    transition: background-color 0.2s;
+}
+
+.preview__btn-eliminar:hover {
+    background-color: #fdecea;
+}
+
+/* BOTÓN CONFIRMAR */
+.formulario__seccion-boton {
+    margin-top: 16px;
+    margin-bottom: 10px;
+}
+
+.formulario__seccion-boton button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
