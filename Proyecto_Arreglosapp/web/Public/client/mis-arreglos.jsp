@@ -46,15 +46,16 @@
                     <% for (Personalizacion arreglo : misArreglos) { %>
                       <% String imgUrl=arreglo.getImagenReferencia(); if (imgUrl==null || imgUrl.trim().isEmpty()) {
                         String cat=arreglo.getCategoria() !=null ? arreglo.getCategoria().toLowerCase() : "" ; if
-                        (cat.contains("dobladillo") || cat.contains("sastr")) {
-                        imgUrl="../../Assets/image/imagen-sastreria.jpg" ; } else if (cat.contains("estrech") ||
-                        cat.contains("ensanch")) { imgUrl="../../Assets/image/imagen-arreglos-de-vestidos-de-fiesta.jpg"
-                        ; } else if (cat.contains("recortar")) { imgUrl="../../Assets/image/image-arreglo-bolsillos.jpg"
-                        ; } else { imgUrl="../../Assets/image/imagen-costura.jpg" ; } } else if
-                        (!imgUrl.startsWith("http") && !imgUrl.startsWith("/") && !imgUrl.startsWith("../../")) {
-                        imgUrl=ctx + "/" + imgUrl; } String fechaTexto="Sin fecha" ; if (arreglo.getFechaCreacion()
-                        !=null) { fechaTexto=arreglo.getFechaCreacion().format(fmt); } String estado=arreglo.getEstado()
-                        !=null ? arreglo.getEstado() : "pendiente" ; String badgeClase="badge--pendiente" ; String
+                        (cat.contains("dobladillo") || cat.contains("sastr")) { imgUrl=ctx
+                        + "/Assets/image/imagen-sastreria.jpg" ; } else if (cat.contains("estrech") ||
+                        cat.contains("ensanch")) { imgUrl=ctx
+                        + "/Assets/image/imagen-arreglos-de-vestidos-de-fiesta.jpg" ; } else if
+                        (cat.contains("recortar")) { imgUrl=ctx + "/Assets/image/image-arreglo-bolsillos.jpg" ; } else {
+                        imgUrl=ctx + "/Assets/image/imagen-costura.jpg" ; } } else if (!imgUrl.startsWith("http") &&
+                        !imgUrl.startsWith("/") && !imgUrl.startsWith("../../")) { imgUrl=ctx + "/" + imgUrl; } String
+                        fechaTexto="Sin fecha" ; if (arreglo.getFechaCreacion() !=null) {
+                        fechaTexto=arreglo.getFechaCreacion().format(fmt); } String estado=arreglo.getEstado() !=null ?
+                        arreglo.getEstado() : "pendiente" ; String badgeClase="badge--pendiente" ; String
                         estadoTexto="Pendiente" ; if (estado.equalsIgnoreCase("en_proceso")) {
                         badgeClase="badge--proceso" ; estadoTexto="En proceso" ; } else if
                         (estado.equalsIgnoreCase("completado")) { badgeClase="badge--completado" ;
@@ -94,13 +95,10 @@
                             </div>
                             <div class="contenedor-informacion__enlaces">
                               <a class="enlaces__enlace-arreglos" href="<%= urlEditar %>">
-                                <img class="enlace__imagen-icono" src="../../Assets/icons/lapiz.png" alt="editar">
                                 Editar
                               </a>
                               <a class="enlaces__enlace-arreglos" href="#"
                                 onclick="prepararEliminarArreglo(<%= arreglo.getPersonalizacionId() %>); return false;">
-                                <img class="enlace__imagen-icono" src="../../Assets/icons/bote-de-basura-morado.png"
-                                  alt="eliminar">
                                 Eliminar
                               </a>
                               <a class="enlace__cita-usuario" href="agendar-cita.jsp">

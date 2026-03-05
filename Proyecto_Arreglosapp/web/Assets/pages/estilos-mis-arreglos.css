@@ -195,10 +195,6 @@
   transform: translateY(-1px);
 }
 
-.enlaces__enlace-arreglos img {
-  filter: brightness(0) saturate(100%) invert(20%) sepia(97%) saturate(1637%) hue-rotate(258deg) brightness(85%) contrast(100%);
-}
-
 /* ICONO — mínimo */
 .enlace__imagen-icono {
   width: 14px;
