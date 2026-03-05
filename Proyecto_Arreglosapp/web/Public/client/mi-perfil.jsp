@@ -1,7 +1,10 @@
 <%@page import="model.Usuario" %>
     <%@page import="dao.UsuarioDAO" %>
-        <% // Verificar si el usuario está autenticado Usuario usuario=(Usuario) session.getAttribute("usuario"); if
-            (usuario==null) { response.sendRedirect("../../../index.jsp"); return; } %>
+<% 
+// Verificar si el usuario está autenticado 
+Usuario usuario=(Usuario) session.getAttribute("usuario"); 
+if (usuario==null) { response.sendRedirect("../../index.jsp"); return; } 
+%>
             <!DOCTYPE html>
             <html lang="es">
 
