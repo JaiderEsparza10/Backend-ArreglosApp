@@ -1,119 +1,255 @@
-/* CONTENEDOR PRINCIPAL */
+/* ========================================
+   CONTENEDOR PRINCIPAL
+   ======================================== */
 .contenido-arreglos {
   grid-area: main;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 75px;
+  padding: 20px 15px 75px;
+  gap: 14px;
   width: 100%;
 }
 
-/* CARD — mismo sistema que mi-seleccion para consistencia */
+/* ========================================
+   CARD
+   ======================================== */
 .arreglo-card {
-  width: 425px;
-  max-width: 95vw;
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(236, 232, 244, 0.7);
+  box-shadow:
+    0 4px 12px rgba(106, 27, 154, 0.04),
+    0 1px 4px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 130px;
+  position: relative;
+}
+
+.arreglo-card:hover {
+  box-shadow:
+    0 12px 24px rgba(106, 27, 154, 0.1),
+    0 4px 8px rgba(106, 27, 154, 0.05);
+  transform: translateY(-4px);
+}
+
+/* ========================================
+   IMAGEN — columna izquierda, altura completa
+   ======================================== */
+.arreglo-card .contenedor__imagen {
+  width: 130px;
+  min-width: 130px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin: 10px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* ========================================
+   COLUMNA DERECHA — toda la información
+   ======================================== */
+.arreglo-card .contenido-seleccion__contenedor-informacion {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding: 16px 16px 16px 6px;
+  gap: 8px;
+}
+
+.arreglo-card .contenedor-informacion__informacion {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+/* META — fecha arriba en gris */
+.arreglo__meta {
+  font-family: var(--tipo-fuente);
+  font-size: 10px;
+  color: #aaa;
+  font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
 /* FILA TÍTULO + BADGE */
-.informacion__fila-titulo {
+.arreglo-card .informacion__fila-titulo {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 6px;
+  margin: 0;
+  flex-wrap: nowrap;
 }
 
-/* BADGE DE ESTADO */
-.informacion__badge {
-  font-size: 10px;
-  font-weight: bold;
-  padding: 3px 8px;
-  border-radius: 12px;
-  white-space: nowrap;
+/* TÍTULO */
+.arreglo-card .informacion__titulo-arreglo {
   font-family: var(--tipo-fuente);
+  font-size: 16px;
+  font-weight: 700;
+  color: #2d3436;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* BADGE DE ESTADO — junto al título */
+.informacion__badge {
+  font-family: var(--tipo-fuente);
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.2px;
+  border: 1px solid transparent;
+  height: 18px;
+  display: flex;
+  align-items: center;
 }
 
 .badge--pendiente {
   background-color: #fff3e0;
   color: #e65100;
-  border: 1px solid #ffcc80;
+  border-color: #ffcc80;
 }
 
 .badge--proceso {
   background-color: #e3f2fd;
   color: #1565c0;
-  border: 1px solid #90caf9;
+  border-color: #90caf9;
 }
 
 .badge--completado {
   background-color: #e8f5e9;
   color: #2e7d32;
-  border: 1px solid #a5d6a7;
+  border-color: #a5d6a7;
 }
 
-/* DESCRIPCIÓN TRUNCADA */
-.arreglo__descripcion {
-  font-style: italic;
-  color: #666;
-}
-
-/* FECHA */
-.arreglo__fecha {
-  font-size: 11px;
-  color: #999;
-  margin-top: 2px;
-}
-
-/* SECCIÓN DE ENLACES INFERIORES */
-.contenedor-informacion__enlaces {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-.enlaces__enlace-arreglos {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* TEXTOS */
+.arreglo-card .informacion__descripcion {
+  font-family: var(--tipo-fuente);
   font-size: 12px;
-  gap: 4px;
-  color: var(--color-boton);
-  font-family: var(--tipo-fuente);
-  cursor: pointer;
-}
-
-.enlace__imagen-icono {
-  width: 24px;
-  border: 2px solid var(--color-boton);
-  border-radius: 50%;
-  padding: 2px;
-}
-
-/* BOTÓN AGENDAR CITA */
-.enlace__cita-usuario {
-  background-color: var(--color-fondo-encabezado);
-  color: var(--color-fuente);
-  padding: 6px 12px;
-  border-radius: 15px;
-  font-size: 11px;
-  font-family: var(--tipo-fuente);
+  color: #636e72;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* ESTADO VACÍO */
+.arreglo__descripcion {
+  font-style: italic;
+}
+
+.arreglo__fecha {
+  font-size: 11px;
+  color: #b2bec3;
+  margin-top: 2px;
+}
+
+/* ========================================
+   FILA INFERIOR — acciones
+   ======================================== */
+.arreglo-card .contenedor-informacion__enlaces {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  flex-wrap: nowrap;
+}
+
+/* EDITAR y ELIMINAR — pequeños como tags */
+.enlaces__enlace-arreglos {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6a1b9a;
+  font-family: var(--tipo-fuente);
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 1px solid #f3e5f5;
+  background-color: #f3e5f5;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  height: 32px;
+}
+
+.enlaces__enlace-arreglos:hover {
+  background-color: #e1bee7;
+  border-color: #ce93d8;
+  transform: translateY(-1px);
+}
+
+.enlaces__enlace-arreglos img {
+  filter: brightness(0) saturate(100%) invert(20%) sepia(97%) saturate(1637%) hue-rotate(258deg) brightness(85%) contrast(100%);
+}
+
+/* ICONO — mínimo */
+.enlace__imagen-icono {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
+/* AGENDAR CITA — botón morado al extremo derecho */
+.enlace__cita-usuario {
+  margin-left: auto;
+  font-family: var(--tipo-fuente);
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #6a1b9a, #9c27b0);
+  border-radius: 14px;
+  padding: 8px 16px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(106, 27, 154, 0.25);
+  transition: all 0.3s ease;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.enlace__cita-usuario:hover {
+  box-shadow: 0 6px 16px rgba(106, 27, 154, 0.4);
+  transform: translateY(-2px) scale(1.02);
+  background: linear-gradient(135deg, #7b1fa2, #ab47bc);
+}
+
+/* ========================================
+   ESTADO VACÍO
+   ======================================== */
 .arreglos__vacio {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   margin-top: 60px;
   text-align: center;
+  padding: 40px 24px;
+  background: #faf8fd;
+  border-radius: 16px;
+  border: 1.5px dashed rgba(106, 27, 154, 0.15);
+  width: 90%;
+  max-width: 400px;
 }
 
 .arreglos__vacio-texto {
-  font-size: 1.2rem;
-  color: #555;
+  font-size: 0.9rem;
+  color: #999;
   font-family: var(--tipo-fuente);
 }

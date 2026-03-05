@@ -37,7 +37,6 @@
                   <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
                 </header>
 
-                <!-- TOAST -->
                 <div id="toast" class="toast"></div>
 
                 <main class="contenido-arreglos">
@@ -59,7 +58,11 @@
                         estadoTexto="Pendiente" ; if (estado.equalsIgnoreCase("en_proceso")) {
                         badgeClase="badge--proceso" ; estadoTexto="En proceso" ; } else if
                         (estado.equalsIgnoreCase("completado")) { badgeClase="badge--completado" ;
-                        estadoTexto="Completado" ; } %>
+                        estadoTexto="Completado" ; } String desc=arreglo.getDescripcion() !=null ?
+                        arreglo.getDescripcion() : "" ; String descCorta=desc.length()> 60 ? desc.substring(0, 60) +
+                        "..." : desc;
+                        String urlEditar = "personalizar-arreglo.jsp?id=" + arreglo.getPersonalizacionId();
+                        %>
                         <section class="contenido-seleccion__contenedor arreglo-card">
                           <img class="contenedor__imagen" src="<%= imgUrl %>" alt="Imagen del arreglo">
                           <div class="contenido-seleccion__contenedor-informacion">
@@ -72,25 +75,25 @@
                                   <%= estadoTexto %>
                                 </span>
                               </div>
-                              <% if (arreglo.getDescripcion() !=null && !arreglo.getDescripcion().trim().isEmpty()) { %>
-                                <p class="informacion__descripcion arreglo__descripcion">
-                                  <%= arreglo.getDescripcion().length()> 60
-                                    ? arreglo.getDescripcion().substring(0, 60) + "..."
-                                    : arreglo.getDescripcion() %>
-                                </p>
-                                <% } %>
-                                  <% if (arreglo.getMaterialTela() !=null &&
-                                    !arreglo.getMaterialTela().trim().isEmpty()) { %>
-                                    <p class="informacion__descripcion">
-                                      <strong>Tela:</strong>
-                                      <%= arreglo.getMaterialTela() %>
-                                    </p>
-                                    <% } %>
-                                      <p class="informacion__descripcion arreglo__fecha">Creado: <%= fechaTexto %>
+                              <div class="informacion__detalles-texto">
+                                <% if (!desc.trim().isEmpty()) { %>
+                                  <p class="informacion__descripcion arreglo__descripcion">
+                                    <%= descCorta %>
+                                  </p>
+                                  <% } %>
+                                    <% if (arreglo.getMaterialTela() !=null &&
+                                      !arreglo.getMaterialTela().trim().isEmpty()) { %>
+                                      <p class="informacion__descripcion">
+                                        <strong>Tela:</strong>
+                                        <%= arreglo.getMaterialTela() %>
                                       </p>
+                                      <% } %>
+                                        <p class="informacion__descripcion arreglo__fecha">Creado: <%= fechaTexto %>
+                                        </p>
+                              </div>
                             </div>
                             <div class="contenedor-informacion__enlaces">
-                              <a class="enlaces__enlace-arreglos" href="personalizar-arreglo.jsp">
+                              <a class="enlaces__enlace-arreglos" href="<%= urlEditar %>">
                                 <img class="enlace__imagen-icono" src="../../Assets/icons/lapiz.png" alt="editar">
                                 Editar
                               </a>

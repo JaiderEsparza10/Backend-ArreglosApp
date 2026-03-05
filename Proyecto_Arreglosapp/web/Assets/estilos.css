@@ -40,6 +40,7 @@
 @import url(Components/boton-eliminar.css);
 @import url(Components/ventana-emergente-eliminar.css);
 @import url(Components/toast-notificacion.css);
+@import url(Components/estilo-agendar-cita.css);
 /* IMPORTAMOS LOS ESTILOS RESPONSIVOS PARA TABLET Y DESKTOP */
 @import url(utils/responsive-tablet.css);
 @import url(utils/responsive-desktop.css);

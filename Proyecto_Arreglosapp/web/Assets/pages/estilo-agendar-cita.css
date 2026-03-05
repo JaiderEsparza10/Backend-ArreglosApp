@@ -1,119 +1,322 @@
-/* CONTENEDOR PRINCIPAL CALENDARIO */
-.formulario__calendario{
-    border: 2px solid black;
-    padding: 10px;
-    background-color: #D9D9D9;
-    border-radius: 14px;
-    width: 410px;
+/* CONTENEDOR PRINCIPAL */
+.contenido-cita {
+    grid-area: main;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    margin-top: 10px;
+    padding-bottom: 75px;
+    width: 100%;
 }
-/* MODIFICACIÓN TITULO MES */
-.calendario__mes{
-    text-align: center;
-    padding: 5px;
-    font-size: 19px;
-    font-weight: var(--grosor-fuente);
+
+/* ENCABEZADO */
+.contenido-cita__encabezado {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 25px;
+    width: 100%;
+    box-sizing: border-box;
 }
-/* DIAS DEL CALENDARIO */
-.calendario__dias{
-    width: 325px;
+
+/* FORMULARIO */
+.cita__formulario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 90%;
+    max-width: 420px;
 }
-/* LISTA DE DATOS */
-.ol{
-    list-style: none;
+
+/* ALERTA */
+.cita__alerta {
+    width: 90%;
+    max-width: 420px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-family: var(--tipo-fuente);
+    margin-bottom: 4px;
+}
+
+.cita__alerta--error {
+    background-color: #fdecea;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+/* SECCIÓN */
+.cita__seccion {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid rgba(106, 27, 154, 0.1);
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(106, 27, 154, 0.06);
+}
+
+.cita__titulo-seccion {
+    font-family: var(--tipo-fuente);
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+}
+
+.cita__subtitulo {
+    font-family: var(--tipo-fuente);
+    font-size: 11px;
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
+.cita__opcional {
+    font-size: 11px;
+    font-weight: 400;
+    color: #aaa;
+}
+
+/* ========================================
+   CALENDARIO
+   ======================================== */
+.cita__calendario {
+    width: 100%;
+}
+
+.calendario__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.calendario__mes-actual {
+    font-family: var(--tipo-fuente);
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.calendario__btn-nav {
+    background: rgba(106, 27, 154, 0.08);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    color: #7000ce;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.calendario__btn-nav:hover {
+    background: rgba(106, 27, 154, 0.16);
+}
+
+.calendario__semana-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 6px;
 }
-/* DIA DE LA SEMANA */
-.dias__dia{
-    background-color: #D9D9D9;
-    color: black;
-    padding: 5px;
-    text-align: right;
-}
-/* NUMERO DE LOS DIAS DEL MES */
-.dia__numero{
+
+.calendario__semana-header span {
     text-align: center;
-    padding: 3px;
-    color: black;
-    border: 1px solid black;
-}
-
-
-/* SECCIÓN HORARIO DISPONIBLE */
-.contenido-arreglo__horario{
-    border: 2px solid black;
-    padding: 15px;
-    background-color: #D9D9D9;
-    border-radius: 14px;
-    width: 410px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: revert;
-    margin-top: 10px;
-}
-
-/* TITULO PRINCIPAL */
-.horario__titulo{
-    font-size: 17px;
-    font-weight: var(--grosor-fuente);
-}
-/* DESCRIPCIÓN */
-.horario__descripcion{
-    font-size: 10px;
-    font-weight: var(--grosor-fuente);
-    color: #4c4c4cd9;
-}
-/* INPUT PARA INGRESAR */
-.horario__ingresar{
-    padding: 5px;
-    border: none;
-    border-bottom: 2px solid black;
-    font-size: 10px;
     font-family: var(--tipo-fuente);
-    background-color: #d9d9d9d9;
-    margin-top: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #aaa;
+    padding: 4px 0;
 }
 
-/* LUGAR DE ENTREGA Y RECOGIDA PRODUCTOS */
-.calendario__lugar-entrega{
-    border: 2px solid black;
-    padding: 15px;
-    background-color: #D9D9D9;
-    border-radius: 14px;
-    width: 410px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: revert;
+.calendario__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.calendario__dia {
+    text-align: center;
+    padding: 8px 4px;
+    border-radius: 8px;
+    font-family: var(--tipo-fuente);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #333;
+}
+
+.calendario__dia:hover:not(.calendario__dia--deshabilitado):not(.calendario__dia--vacio) {
+    background-color: rgba(106, 27, 154, 0.08);
+}
+
+.calendario__dia--hoy {
+    border: 1.5px solid #9057fa;
+    color: #7000ce;
+    font-weight: 700;
+}
+
+.calendario__dia--seleccionado {
+    background: linear-gradient(135deg, #7000ce, #9057fa);
+    color: white !important;
+    font-weight: 700;
+    border-radius: 8px;
+}
+
+.calendario__dia--deshabilitado {
+    color: #ddd;
+    cursor: not-allowed;
+}
+
+.calendario__dia--vacio {
+    cursor: default;
+}
+
+.cita__fecha-seleccionada {
+    font-family: var(--tipo-fuente);
+    font-size: 12px;
+    color: #aaa;
     margin-top: 10px;
+    text-align: center;
 }
 
-
-.lugar-entrega__titulo{
-    font-size: 17px;
-    font-weight: var(--grosor-fuente);
+.cita__fecha-seleccionada--activa {
+    color: #7000ce;
+    font-weight: 600;
 }
 
-.lugar-entrega__input{
+/* ========================================
+   HORAS
+   ======================================== */
+.cita__horas-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.cita__hora-btn {
+    padding: 8px 4px;
+    border-radius: 10px;
+    border: 1px solid #e0d4f5;
+    background-color: #faf7ff;
+    font-family: var(--tipo-fuente);
+    font-size: 11px;
+    font-weight: 500;
+    color: #7000ce;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cita__hora-btn:hover {
+    background-color: rgba(106, 27, 154, 0.08);
+    border-color: #c9a8f5;
+}
+
+.cita__hora-btn--seleccionado {
+    background: linear-gradient(135deg, #7000ce, #9057fa);
+    color: white;
+    border-color: transparent;
+    font-weight: 700;
+}
+
+.cita__hora-seleccionada {
+    font-family: var(--tipo-fuente);
+    font-size: 12px;
+    color: #aaa;
+    text-align: center;
+}
+
+.cita__hora-seleccionada--activa {
+    color: #7000ce;
+    font-weight: 600;
+}
+
+/* ========================================
+   INPUTS
+   ======================================== */
+.cita__input-icono {
     display: flex;
+    align-items: center;
     gap: 10px;
-    margin-top: 10px;
+    background-color: #f8f6fc;
+    border: 1px solid #e0d4f5;
+    border-radius: 10px;
+    padding: 10px 14px;
 }
 
-.input__imagen{
-    width: 30px;
+.cita__icono-input {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    opacity: 0.7;
 }
 
-.input__caja-texto{
-    width: 250px;
-    background-color: #D9D9D9;
-    border: 1px solid black;
-    padding: 5px;
+.cita__input {
+    flex: 1;
+    border: none;
+    background: transparent;
     font-family: var(--tipo-fuente);
+    font-size: 13px;
+    color: #333;
+    outline: none;
+}
+
+.cita__input::placeholder {
+    color: #bbb;
+    font-size: 12px;
+}
+
+.cita__textarea {
+    width: 100%;
+    height: 80px;
+    border: 1px solid #e0d4f5;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: var(--tipo-fuente);
+    font-size: 12px;
+    color: #333;
+    background-color: #f8f6fc;
+    resize: none;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.cita__textarea:focus {
+    border-color: #9057fa;
+}
+
+/* ========================================
+   BOTÓN CONFIRMAR
+   ======================================== */
+.cita__seccion-boton {
+    width: 100%;
+}
+
+.cita__btn-confirmar {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #7000ce, #9057fa);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: var(--tipo-fuente);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(112, 0, 206, 0.3);
+    transition: all 0.2s ease;
+}
+
+.cita__btn-confirmar:hover {
+    box-shadow: 0 6px 20px rgba(112, 0, 206, 0.4);
+    transform: translateY(-1px);
+}
+
+.cita__btn-confirmar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
 }
