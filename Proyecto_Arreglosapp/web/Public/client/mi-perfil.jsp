@@ -1,109 +1,234 @@
-<%@page import="model.Usuario" %>
-    <%@page import="dao.UsuarioDAO" %>
-<% 
-// Verificar si el usuario está autenticado 
-Usuario usuario=(Usuario) session.getAttribute("usuario"); 
-if (usuario==null) { response.sendRedirect("../../index.jsp"); return; } 
-%>
-            <!DOCTYPE html>
-            <html lang="es">
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+    <%@ page import="model.Usuario" %>
+        <%@ page import="dao.UsuarioDAO" %>
+            <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) {
+                usuario=(Usuario) sesion.getAttribute("usuario"); } if (usuario==null) {
+                response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } UsuarioDAO usuarioDAO=new
+                UsuarioDAO(); String errorPerfil=(String) sesion.getAttribute("errorPerfil"); String
+                errorPassword=(String) sesion.getAttribute("errorPassword"); sesion.removeAttribute("errorPerfil");
+                sesion.removeAttribute("errorPassword"); int totalPedidos=0; int totalFavoritos=0; int
+                totalPersonalizaciones=0; String telefono="" ; try {
+                totalPedidos=usuarioDAO.contarPedidosActivos(usuario.getId());
+                totalFavoritos=usuarioDAO.contarFavoritos(usuario.getId());
+                totalPersonalizaciones=usuarioDAO.contarPersonalizaciones(usuario.getId()); String
+                tel=usuarioDAO.obtenerTelefonoPrincipal(usuario.getId()); telefono=tel !=null ? tel : "" ; } catch
+                (Exception e) { e.printStackTrace(); } String nombreActual=usuario.getNombre() !=null ?
+                usuario.getNombre() : "" ; String emailActual=usuario.getEmail() !=null ? usuario.getEmail() : "" ;
+                String direccionActual=usuario.getDireccion() !=null ? usuario.getDireccion() : "" ; String
+                rolTexto=usuario.getRolId()==1 ? "Administrador" : "Cliente" ; String
+                inicialNombre=nombreActual.isEmpty() ? "U" : String.valueOf(nombreActual.charAt(0)).toUpperCase(); %>
+                <!DOCTYPE html>
+                <html lang="es">
 
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link rel="stylesheet" href="../../Assets/estilos.css">
-                <title>Mi Perfil</title>
-            </head>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <link rel="stylesheet" href="../../Assets/estilos.css">
+                    <title>Mi Perfil</title>
+                </head>
 
-            <body class="grid-principal">
-                <header class="seccion-encabezado">
-                    <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
-                        alt="logo de la aplicación">
-                    <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
-                </header>
-                <main class="contenido-perfil">
-                    <div class="contenido-perfil__enlace-volver">
-                        <a href="pagina-principal.jsp" class="enlace-volver__texto">← Volver</a>
-                        <h1 class="enlace-volver__titulo">Mi Perfil</h1>
-                    </div>
+                <body class="grid-principal">
+                    <header class="seccion-encabezado">
+                        <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
+                            alt="logo de la aplicación">
+                        <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
+                    </header>
 
-                    <section class="perfil-informacion">
-                        <div class="perfil__avatar">
-                            <img src="../../Assets/icons/usuario-blanco.png" alt="avatar de usuario"
-                                class="perfil__imagen">
-                        </div>
+                    <div id="toast" class="toast"></div>
 
-                        <div class="perfil__datos">
-                            <h2 class="perfil__nombre">
-                                <%= usuario.getNombre() %>
-                            </h2>
-                            <p class="perfil__email">
-                                <%= usuario.getEmail() %>
-                            </p>
-                            <p class="perfil__direccion">
-                                <%= usuario.getDireccion() !=null ? usuario.getDireccion() : "Sin dirección registrada"
-                                    %>
-                            </p>
-                            <p class="perfil__rol">
-                                <%= usuario.getRolId()==1 ? "Administrador" : "Cliente" %>
-                            </p>
-                        </div>
+                    <main class="contenido-perfil">
 
-                        <div class="perfil__acciones">
-                            <a href="cambiar-contraseña.jsp" class="perfil__boton perfil__boton--secundario">
-                                Cambiar Contraseña
+                        <!-- ENCABEZADO -->
+                        <div class="contenido-perfil__enlace-volver">
+                            <a href="javascript:history.back()" class="encabezado__btn-volver">
+                                <img src="../../Assets/icons/flecha-izquierda__blanca.png" alt="volver"
+                                    class="btn-volver__icono">
                             </a>
-                            <a href="mis-medidas.jsp" class="perfil__boton perfil__boton--primario">
-                                Mis Medidas
+                            <h1 class="enlace-volver__titulo">Mi Perfil</h1>
+                        </div>
+
+                        <!-- ALERTAS -->
+                        <% if (errorPerfil !=null) { %>
+                            <div class="perfil__alerta perfil__alerta--error">❌ <%= errorPerfil %>
+                            </div>
+                            <% } %>
+                                <% if (errorPassword !=null) { %>
+                                    <div class="perfil__alerta perfil__alerta--error">❌ <%= errorPassword %>
+                                    </div>
+                                    <% } %>
+
+                                        <!-- TARJETA DE PERFIL -->
+                                        <section class="perfil-informacion">
+                                            <div class="perfil__avatar">
+                                                <span class="perfil__inicial">
+                                                    <%= inicialNombre %>
+                                                </span>
+                                            </div>
+                                            <div class="perfil__datos">
+                                                <h2 class="perfil__nombre">
+                                                    <%= nombreActual %>
+                                                </h2>
+                                                <p class="perfil__email">
+                                                    <%= emailActual %>
+                                                </p>
+                                                <% if (!direccionActual.isEmpty()) { %>
+                                                    <p class="perfil__direccion">📍 <%= direccionActual %>
+                                                    </p>
+                                                    <% } %>
+                                                        <% if (!telefono.isEmpty()) { %>
+                                                            <p class="perfil__telefono">📞 <%= telefono %>
+                                                            </p>
+                                                            <% } %>
+                                                                <span class="perfil__rol">
+                                                                    <%= rolTexto %>
+                                                                </span>
+                                            </div>
+                                        </section>
+
+                                        <!-- RESUMEN DE ACTIVIDAD -->
+                                        <section class="perfil-resumen">
+                                            <h3 class="resumen__titulo">Resumen de Actividad</h3>
+                                            <div class="resumen__grid">
+                                                <a href="mis-pedidos.jsp" class="resumen__item">
+                                                    <h4 class="resumen__numero">
+                                                        <%= totalPedidos %>
+                                                    </h4>
+                                                    <p class="resumen__texto">Pedidos Activos</p>
+                                                </a>
+                                                <a href="mi-seleccion.jsp" class="resumen__item">
+                                                    <h4 class="resumen__numero">
+                                                        <%= totalFavoritos %>
+                                                    </h4>
+                                                    <p class="resumen__texto">Favoritos</p>
+                                                </a>
+                                                <a href="mis-arreglos.jsp" class="resumen__item">
+                                                    <h4 class="resumen__numero">
+                                                        <%= totalPersonalizaciones %>
+                                                    </h4>
+                                                    <p class="resumen__texto">Personalizaciones</p>
+                                                </a>
+                                            </div>
+                                        </section>
+
+                                        <!-- EDITAR DATOS -->
+                                        <section class="perfil-seccion" id="editarDatos">
+                                            <div class="perfil-seccion__cabecera"
+                                                onclick="toggleSeccion('formEditarDatos')">
+                                                <h3 class="perfil-seccion__titulo">✏️ Editar Datos Personales</h3>
+                                                <span class="perfil-seccion__flecha" id="flechaFormEditarDatos">▼</span>
+                                            </div>
+                                            <div class="perfil-seccion__contenido" id="formEditarDatos"
+                                                style="display:none;">
+                                                <form action="/Proyecto_Arreglosapp/PerfilServlet" method="post"
+                                                    class="perfil__form">
+                                                    <input type="hidden" name="accion" value="editarDatos">
+
+                                                    <label class="perfil__label">Nombre completo</label>
+                                                    <input type="text" name="nombre" class="perfil__input"
+                                                        value="<%= nombreActual %>" required>
+
+                                                    <label class="perfil__label">Dirección</label>
+                                                    <input type="text" name="direccion" class="perfil__input"
+                                                        value="<%= direccionActual %>"
+                                                        placeholder="Ej: Calle 10 # 5-20, Barrio Centro">
+
+                                                    <label class="perfil__label">Teléfono</label>
+                                                    <input type="tel" name="telefono" class="perfil__input"
+                                                        value="<%= telefono %>" placeholder="Ej: 3001234567">
+
+                                                    <button type="submit" class="perfil__btn-guardar">Guardar
+                                                        Cambios</button>
+                                                </form>
+                                            </div>
+                                        </section>
+
+                                        <!-- CAMBIAR CONTRASEÑA -->
+                                        <section class="perfil-seccion" id="cambiarPassword">
+                                            <div class="perfil-seccion__cabecera"
+                                                onclick="toggleSeccion('formPassword')">
+                                                <h3 class="perfil-seccion__titulo">🔒 Cambiar Contraseña</h3>
+                                                <span class="perfil-seccion__flecha" id="flechaFormPassword">▼</span>
+                                            </div>
+                                            <div class="perfil-seccion__contenido" id="formPassword"
+                                                style="display:none;">
+                                                <form action="/Proyecto_Arreglosapp/PerfilServlet" method="post"
+                                                    class="perfil__form">
+                                                    <input type="hidden" name="accion" value="cambiarPassword">
+
+                                                    <label class="perfil__label">Contraseña actual</label>
+                                                    <div class="perfil__input-password">
+                                                        <input type="password" name="passwordActual" id="passActual"
+                                                            class="perfil__input" required>
+                                                        <button type="button" class="perfil__ojo"
+                                                            onclick="togglePass('passActual', 'ojoActual')">
+                                                            <span id="ojoActual">👁</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <label class="perfil__label">Nueva contraseña</label>
+                                                    <div class="perfil__input-password">
+                                                        <input type="password" name="passwordNueva" id="passNueva"
+                                                            class="perfil__input" required minlength="6">
+                                                        <button type="button" class="perfil__ojo"
+                                                            onclick="togglePass('passNueva', 'ojoNueva')">
+                                                            <span id="ojoNueva">👁</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <label class="perfil__label">Confirmar nueva contraseña</label>
+                                                    <div class="perfil__input-password">
+                                                        <input type="password" name="passwordConfirmar" id="passConfirm"
+                                                            class="perfil__input" required minlength="6">
+                                                        <button type="button" class="perfil__ojo"
+                                                            onclick="togglePass('passConfirm', 'ojoConfirm')">
+                                                            <span id="ojoConfirm">👁</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <button type="submit" class="perfil__btn-guardar">Cambiar
+                                                        Contraseña</button>
+                                                </form>
+                                            </div>
+                                        </section>
+
+                                        <!-- CERRAR SESIÓN -->
+                                        <div class="perfil__cerrar-sesion">
+                                            <a href="/Proyecto_Arreglosapp/LogoutServlet"
+                                                class="perfil__btn-cerrar-sesion">
+                                                Cerrar Sesión
+                                            </a>
+                                        </div>
+
+                    </main>
+
+                    <footer class="navbar">
+                        <nav class="navbar-inferior">
+                            <a href="pagina-principal.jsp" class="navbar-inferior__item">
+                                <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono">
+                                <span class="navbar-inferior__texto">Inicio</span>
                             </a>
-                        </div>
-                    </section>
+                            <a href="mi-seleccion.jsp" class="navbar-inferior__item">
+                                <img src="../../Assets/icons/lista-de-deseos-transparente.png"
+                                    class="navbar-inferior__icono">
+                                <span class="navbar-inferior__texto">Mi selección</span>
+                            </a>
+                            <a href="mis-arreglos.jsp" class="navbar-inferior__item">
+                                <img src="../../Assets/icons/cortar-con-tijeras-transparente.png"
+                                    class="navbar-inferior__icono">
+                                <span class="navbar-inferior__texto">Mis Arreglos</span>
+                            </a>
+                            <a href="mis-pedidos.jsp" class="navbar-inferior__item">
+                                <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono">
+                                <span class="navbar-inferior__texto">Pedidos</span>
+                            </a>
+                            <a href="mi-perfil.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
+                                <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono">
+                                <span class="navbar-inferior__texto">Perfil</span>
+                            </a>
+                        </nav>
+                    </footer>
 
-                    <section class="perfil-resumen">
-                        <h3 class="resumen__titulo">Resumen de Actividad</h3>
-                        <div class="resumen__grid">
-                            <div class="resumen__item">
-                                <h4 class="resumen__numero">0</h4>
-                                <p class="resumen__texto">Pedidos Activos</p>
-                            </div>
-                            <div class="resumen__item">
-                                <h4 class="resumen__numero">0</h4>
-                                <p class="resumen__texto">Favoritos</p>
-                            </div>
-                            <div class="resumen__item">
-                                <h4 class="resumen__numero">0</h4>
-                                <p class="resumen__texto">Personalizaciones</p>
-                            </div>
-                        </div>
-                    </section>
-                </main>
+                    <script src="../../Assets/JavaScript/mi-perfil.js"></script>
+                </body>
 
-                <footer class="navbar">
-                    <nav class="navbar-inferior">
-                        <a href="pagina-principal.jsp" class="navbar-inferior__item">
-                            <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono">
-                            <span class="navbar-inferior__texto">Inicio</span>
-                        </a>
-                        <a href="mi-seleccion.jsp" class="navbar-inferior__item">
-                            <img src="../../Assets/icons/lista-de-deseos-transparente.png"
-                                class="navbar-inferior__icono">
-                            <span class="navbar-inferior__texto">Mi selección</span>
-                        </a>
-                        <a href="mis-arreglos.jsp" class="navbar-inferior__item">
-                            <img src="../../Assets/icons/cortar-con-tijeras-transparente.png"
-                                class="navbar-inferior__icono">
-                            <span class="navbar-inferior__texto">Mis Arreglos</span>
-                        </a>
-                        <a href="mis-pedidos.jsp" class="navbar-inferior__item">
-                            <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono">
-                            <span class="navbar-inferior__texto">Pedidos</span>
-                        </a>
-                        <a href="mi-perfil.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
-                            <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono">
-                            <span class="navbar-inferior__texto">Perfil</span>
-                        </a>
-                    </nav>
-                </footer>
-            </body>
-
-            </html>
+                </html>
