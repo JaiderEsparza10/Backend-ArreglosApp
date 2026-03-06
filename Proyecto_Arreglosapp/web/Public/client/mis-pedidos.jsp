@@ -1,131 +1,254 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../Assets/estilos.css">
-    <title>Mis Pedidos</title>
-</head>
-<body class="grid-principal">
-    <header class="seccion-encabezado">
-        <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png" alt="logo de la aplicación">
-        <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
-    </header>
-    <main class="contenido-pedidos">
-        <div class="contenido-pedidos__enlaces">
-            <a href="#activos" class="enlaces__enlace active">Activos</a>
-            <a href="#historial" class="enlaces__enlace">Historial</a>
-        </div>
-        <section id="activos" class="contenido-pedidos__activos">
-            <div class="formulario__calendario calendario__lugar-entrega">
-                <h1 class="lugar-entrega__titulo">Numero de pedido</h1>
-                <p class="lugar-entrega__numero">#P-2024-001A</p>
-                <h1 class="lugar-entrega__titulo">Arreglo: Ajuste Vestido</h1>
-                <div class="activos__estado-pedido">
-                    <h1 class="estado-pedido__estado">Estado: Pendiente</h1>
-                    <a class="estado-pedido__cancelar" href="#modalEliminar">Cancelar</a>
-                </div>
-                <p class="lugar-entrega__numero">Fecha: 01 - 09 - 2025</p>
-            </div>
-            <div class="formulario__calendario calendario__lugar-entrega">
-                <h1 class="lugar-entrega__titulo">Numero de pedido</h1>
-                <p class="lugar-entrega__numero">#P-2024-001A</p>
-                <h1 class="lugar-entrega__titulo">Arreglo: Ajuste Vestido</h1>
-                <div class="activos__estado-pedido">
-                    <h1 class="estado-pedido__estado">Estado: Pendiente</h1>
-                    <a class="estado-pedido__cancelar" href="#modalEliminar">Cancelar</a>
-                </div>
-                <p class="lugar-entrega__numero">Fecha: 01 - 09 - 2025</p>
-            </div>
-            <div class="formulario__calendario calendario__lugar-entrega">
-                <h1 class="lugar-entrega__titulo">Numero de pedido</h1>
-                <p class="lugar-entrega__numero">#P-2024-001A</p>
-                <h1 class="lugar-entrega__titulo">Arreglo: Ajuste Vestido</h1>
-                <div class="activos__estado-pedido">
-                    <h1 class="estado-pedido__estado">Estado: Pendiente</h1>
-                    <a class="estado-pedido__cancelar" href="#modalEliminar">Cancelar</a>
-                </div>
-                <p class="lugar-entrega__numero">Fecha: 01 - 09 - 2025</p>
-            </div>
-        </section>
+﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+    <%@ page import="java.util.List" %>
+        <%@ page import="java.util.Map" %>
+            <%@ page import="model.Usuario" %>
+                <%@ page import="dao.PedidoDAO" %>
+                    <%@ page import="java.time.LocalDateTime" %>
+                        <%@ page import="java.time.format.DateTimeFormatter" %>
+                            <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) {
+                                usuario=(Usuario) sesion.getAttribute("usuario"); } if (usuario==null) {
+                                response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } PedidoDAO
+                                pedidoDAO=new PedidoDAO(); List<Map<String, Object>> pedidosActivos = null;
+                                List<Map<String, Object>> historialPedidos = null;
 
-        <article id="historial" class="contenido-pedidos__activos">
-            <div class="formulario__calendario calendario__lugar-entrega">
-                <h1 class="lugar-entrega__titulo">Numero de pedido</h1>
-                <p class="lugar-entrega__numero">#P-2024-001A</p>
-                <h1 class="lugar-entrega__titulo">Arreglo: Ajuste Vestido</h1>
-                <div class="activos__estado-pedido">
-                    <h1 class="estado-pedido__historial">Estado: Entregado</h1>
-                </div>
-                <p class="lugar-entrega__numero">Fecha: 01 - 09 - 2025</p>
-            </div>
-            <div class="formulario__calendario calendario__lugar-entrega">
-                <h1 class="lugar-entrega__titulo">Numero de pedido</h1>
-                <p class="lugar-entrega__numero">#P-2024-001A</p>
-                <h1 class="lugar-entrega__titulo">Arreglo: Ajuste Vestido</h1>
-                <div class="activos__estado-pedido">
-                    <h1 class="estado-pedido__historial">Estado: Entregado</h1>
-                </div>
-                <p class="lugar-entrega__numero">Fecha: 01 - 09 - 2025</p>
-            </div>
-            <div class="formulario__calendario calendario__lugar-entrega">
-                <h1 class="lugar-entrega__titulo">Numero de pedido</h1>
-                <p class="lugar-entrega__numero">#P-2024-001A</p>
-                <h1 class="lugar-entrega__titulo">Arreglo: Ajuste Vestido</h1>
-                <div class="activos__estado-pedido">
-                    <h1 class="estado-pedido__historial">Estado: Entregado</h1>
-                </div>
-                <p class="lugar-entrega__numero">Fecha: 01 - 09 - 2025</p>
-            </div>
-        </article>
-        <div id="modalEliminar" class="modal">
-            <div class="modal-fondo">
-                <div class="modal-contenido">
-                    <h3 class="modal__titulo">Â¿Deseas cancelar?</h3>
-                    <p class="modal__descripcion">Â¿Estas seguro que quieres cancelar este arreglo que ya está programado?</p>
-                    <div class="modal__acciones">
-                        <a href="#" class="btn-modal btn-modal--cancelar">CANCELAR</a>
-                        <a href="#modalEliminado" class="btn-modal btn-modal--eliminar">ELIMINAR</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="modalEliminado" class="modal">
-            <div class="modal-fondo">
-                <div class="modal-contenido">
-                    <img class="modal__imagen" src="../../Assets/icons/confirmacion-datos.png" alt="imagen de confirmado">
-                    <p class="modal__descripcion">Â¡El articulo fue eliminado con exito!</p>
-                    <div class="modal__acciones">
-                        <a href="#" class="btn-modal btn-modal--cancelar">Volver</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-    <footer class="navbar">
-        <nav class="navbar-inferior">
-            <a href="pagina-principal.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
-                <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Inicio</span>
-            </a>
-            <a href="mi-seleccion.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Mi selección</span>
-            </a>
-            <a href="mis-arreglos.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Mis Arreglos</span>
-            </a>
-            <a href="mis-pedidos.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Pedidos</span>
-            </a>
-            <a href="mi-perfil.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Perfil</span>
-            </a>
-        </nav>
-    </footer>
-</body>
-</html>
+                                    try {
+                                    pedidosActivos = pedidoDAO.obtenerPedidosActivos(usuario.getId());
+                                    historialPedidos = pedidoDAO.obtenerHistorialPedidos(usuario.getId());
+                                    } catch (Exception e) {
+                                    e.printStackTrace();
+                                    }
 
+                                    DateTimeFormatter fmtFecha = DateTimeFormatter.ofPattern("dd MMM yyyy");
+                                    DateTimeFormatter fmtHora = DateTimeFormatter.ofPattern("hh:mm a");
+
+                                    // Mensajes
+                                    String citaAgendada = request.getParameter("citaAgendada");
+                                    %>
+                                    <!DOCTYPE html>
+                                    <html lang="es">
+
+                                    <head>
+                                        <meta charset="UTF-8">
+                                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                        <link rel="stylesheet" href="../../Assets/estilos.css">
+                                        <title>Mis Pedidos</title>
+                                    </head>
+
+                                    <body class="grid-principal">
+                                        <header class="seccion-encabezado">
+                                            <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
+                                                alt="logo de la aplicación">
+                                            <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
+                                        </header>
+
+                                        <div id="toast" class="toast"></div>
+
+                                        <main class="contenido-pedidos">
+                                            <h1 class="contenido__titulo-seleccion">Mis Pedidos</h1>
+
+                                            <!-- TABS -->
+                                            <div class="pedidos__tabs">
+                                                <button class="pedidos__tab pedidos__tab--activo" id="tabActivos"
+                                                    onclick="cambiarTab('activos')">
+                                                    Activos
+                                                    <% if (pedidosActivos !=null && !pedidosActivos.isEmpty()) { %>
+                                                        <span class="pedidos__tab-badge">
+                                                            <%= pedidosActivos.size() %>
+                                                        </span>
+                                                        <% } %>
+                                                </button>
+                                                <button class="pedidos__tab" id="tabHistorial"
+                                                    onclick="cambiarTab('historial')">
+                                                    Historial
+                                                    <% if (historialPedidos !=null && !historialPedidos.isEmpty()) { %>
+                                                        <span class="pedidos__tab-badge pedidos__tab-badge--gris">
+                                                            <%= historialPedidos.size() %>
+                                                        </span>
+                                                        <% } %>
+                                                </button>
+                                            </div>
+
+                                            <!-- ACTIVOS -->
+                                            <section id="panelActivos" class="pedidos__panel">
+                                                <% if (pedidosActivos !=null && !pedidosActivos.isEmpty()) { %>
+                                                    <% for (Map<String, Object> pedido : pedidosActivos) { %>
+                                                        <% int pedidoId=(int) pedido.get("pedidoId"); String
+                                                            estado=(String) pedido.get("pedidoEstado"); LocalDateTime
+                                                            fecha=(LocalDateTime) pedido.get("pedidoFecha");
+                                                            LocalDateTime citaFecha=(LocalDateTime)
+                                                            pedido.get("citaFechaHora"); String citaNotas=(String)
+                                                            pedido.get("citaNotas"); String fechaStr=fecha !=null ?
+                                                            fecha.format(fmtFecha) : "Sin fecha" ; String
+                                                            citaFechaStr=citaFecha !=null ? citaFecha.format(fmtFecha) :
+                                                            null; String citaHoraStr=citaFecha !=null ?
+                                                            citaFecha.format(fmtHora) : null; String
+                                                            badgeClase="badge--pendiente" ; String
+                                                            estadoTexto="Pendiente" ; boolean puedeCancelar=false; if
+                                                            (estado.equals("confirmado")) { badgeClase="badge--proceso"
+                                                            ; estadoTexto="Confirmado" ; puedeCancelar=true; } else if
+                                                            (estado.equals("en_proceso")) { badgeClase="badge--proceso"
+                                                            ; estadoTexto="En proceso" ; } else if
+                                                            (estado.equals("pendiente")) { puedeCancelar=true; } String
+                                                            numPedido=String.format("#P-%05d", pedidoId); %>
+                                                            <div class="pedido-card" id="pedido-<%= pedidoId %>">
+                                                                <div class="pedido-card__cabecera">
+                                                                    <div class="pedido-card__numero-fila">
+                                                                        <span class="pedido-card__numero">
+                                                                            <%= numPedido %>
+                                                                        </span>
+                                                                        <span
+                                                                            class="informacion__badge <%= badgeClase %>">
+                                                                            <%= estadoTexto %>
+                                                                        </span>
+                                                                    </div>
+                                                                    <span class="pedido-card__fecha">Creado: <%=
+                                                                            fechaStr %></span>
+                                                                </div>
+
+                                                                <% if (citaFechaStr !=null) { %>
+                                                                    <div class="pedido-card__cita">
+                                                                        <div class="pedido-card__cita-fila">
+                                                                            <span
+                                                                                class="pedido-card__cita-icono">📅</span>
+                                                                            <span class="pedido-card__cita-texto">Cita:
+                                                                                <%= citaFechaStr %> a las <%=
+                                                                                        citaHoraStr %></span>
+                                                                        </div>
+                                                                        <% if (citaNotas !=null &&
+                                                                            !citaNotas.trim().isEmpty()) { %>
+                                                                            <p class="pedido-card__cita-notas">
+                                                                                <%= citaNotas %>
+                                                                            </p>
+                                                                            <% } %>
+                                                                    </div>
+                                                                    <% } else { %>
+                                                                        <p class="pedido-card__sin-cita">Sin cita
+                                                                            agendada</p>
+                                                                        <% } %>
+
+                                                                            <% if (puedeCancelar) { %>
+                                                                                <div class="pedido-card__acciones">
+                                                                                    <button
+                                                                                        class="pedido-card__btn-cancelar"
+                                                                                        onclick="prepararCancelacion(<%= pedidoId %>)">
+                                                                                        Cancelar pedido
+                                                                                    </button>
+                                                                                </div>
+                                                                                <% } %>
+                                                            </div>
+                                                            <% } %>
+                                                                <% } else { %>
+                                                                    <div class="pedidos__vacio">
+                                                                        <p class="pedidos__vacio-texto">No tienes
+                                                                            pedidos activos.</p>
+                                                                        <a href="mis-arreglos.jsp"
+                                                                            class="pedidos__vacio-btn">Ir a Mis
+                                                                            Arreglos</a>
+                                                                    </div>
+                                                                    <% } %>
+                                            </section>
+
+                                            <!-- HISTORIAL -->
+                                            <section id="panelHistorial" class="pedidos__panel pedidos__panel--oculto">
+                                                <% if (historialPedidos !=null && !historialPedidos.isEmpty()) { %>
+                                                    <% for (Map<String, Object> pedido : historialPedidos) { %>
+                                                        <% int pedidoIdH=(int) pedido.get("pedidoId"); String
+                                                            estadoH=(String) pedido.get("pedidoEstado"); LocalDateTime
+                                                            fechaH=(LocalDateTime) pedido.get("pedidoFecha");
+                                                            LocalDateTime citaFechaH=(LocalDateTime)
+                                                            pedido.get("citaFechaHora"); String fechaStrH=fechaH !=null
+                                                            ? fechaH.format(fmtFecha) : "Sin fecha" ; String
+                                                            citaFechaStrH=citaFechaH !=null ?
+                                                            citaFechaH.format(fmtFecha) : null; String
+                                                            citaHoraStrH=citaFechaH !=null ? citaFechaH.format(fmtHora)
+                                                            : null; String badgeClaseH="badge--completado" ; String
+                                                            estadoTextoH="Completado" ; if (estadoH.equals("cancelado"))
+                                                            { badgeClaseH="badge--cancelado" ; estadoTextoH="Cancelado"
+                                                            ; } String numPedidoH=String.format("#P-%05d", pedidoIdH);
+                                                            %>
+                                                            <div class="pedido-card pedido-card--historial">
+                                                                <div class="pedido-card__cabecera">
+                                                                    <div class="pedido-card__numero-fila">
+                                                                        <span class="pedido-card__numero">
+                                                                            <%= numPedidoH %>
+                                                                        </span>
+                                                                        <span
+                                                                            class="informacion__badge <%= badgeClaseH %>">
+                                                                            <%= estadoTextoH %>
+                                                                        </span>
+                                                                    </div>
+                                                                    <span class="pedido-card__fecha">Creado: <%=
+                                                                            fechaStrH %></span>
+                                                                </div>
+
+                                                                <% if (citaFechaStrH !=null) { %>
+                                                                    <div class="pedido-card__cita">
+                                                                        <div class="pedido-card__cita-fila">
+                                                                            <span
+                                                                                class="pedido-card__cita-icono">📅</span>
+                                                                            <span class="pedido-card__cita-texto">Cita:
+                                                                                <%= citaFechaStrH %> a las <%=
+                                                                                        citaHoraStrH %></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <% } %>
+                                                            </div>
+                                                            <% } %>
+                                                                <% } else { %>
+                                                                    <div class="pedidos__vacio">
+                                                                        <p class="pedidos__vacio-texto">No tienes
+                                                                            pedidos en el historial.</p>
+                                                                    </div>
+                                                                    <% } %>
+                                            </section>
+                                        </main>
+
+                                        <!-- MODAL CANCELAR -->
+                                        <div id="modalCancelar" class="modal">
+                                            <div class="modal-contenido">
+                                                <h3 class="modal__titulo">¿Cancelar pedido?</h3>
+                                                <p class="modal__descripcion">Esta acción no se puede deshacer. ¿Estás
+                                                    seguro que quieres cancelar este pedido?</p>
+                                                <div class="modal__acciones">
+                                                    <button class="btn-modal btn-modal--cancelar"
+                                                        onclick="cerrarModalCancelacion()">VOLVER</button>
+                                                    <button class="btn-modal btn-modal--eliminar"
+                                                        id="btnConfirmarCancelacion">CANCELAR PEDIDO</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <footer class="navbar">
+                                            <nav class="navbar-inferior">
+                                                <a href="pagina-principal.jsp" class="navbar-inferior__item">
+                                                    <img src="../../Assets/icons/casa-blanca.png"
+                                                        class="navbar-inferior__icono">
+                                                    <span class="navbar-inferior__texto">Inicio</span>
+                                                </a>
+                                                <a href="mi-seleccion.jsp" class="navbar-inferior__item">
+                                                    <img src="../../Assets/icons/lista-de-deseos-transparente.png"
+                                                        class="navbar-inferior__icono">
+                                                    <span class="navbar-inferior__texto">Mi selección</span>
+                                                </a>
+                                                <a href="mis-arreglos.jsp" class="navbar-inferior__item">
+                                                    <img src="../../Assets/icons/cortar-con-tijeras-transparente.png"
+                                                        class="navbar-inferior__icono">
+                                                    <span class="navbar-inferior__texto">Mis Arreglos</span>
+                                                </a>
+                                                <a href="mis-pedidos.jsp" class="navbar-inferior__item">
+                                                    <img src="../../Assets/icons/caja-transparente.png"
+                                                        class="navbar-inferior__icono">
+                                                    <span class="navbar-inferior__texto">Pedidos</span>
+                                                </a>
+                                                <a href="mi-perfil.jsp" class="navbar-inferior__item">
+                                                    <img src="../../Assets/icons/usuario-transparente.png"
+                                                        class="navbar-inferior__icono">
+                                                    <span class="navbar-inferior__texto">Perfil</span>
+                                                </a>
+                                            </nav>
+                                        </footer>
+
+                                        <script src="../../Assets/JavaScript/mis-pedidos.js"></script>
+                                    </body>
+
+                                    </html>

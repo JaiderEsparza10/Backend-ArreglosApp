@@ -1,108 +1,346 @@
-/* CONTENEDOR PRINCIPAL PEDIDOS */
+/* CONTENEDOR PRINCIPAL */
 .contenido-pedidos {
     grid-area: main;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    padding: 20px 15px 75px;
+    gap: 16px;
+    width: 100%;
+}
+
+/* TABS */
+.pedidos__tabs {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    max-width: 480px;
+    background: #f3eeff;
+    border-radius: 12px;
+    padding: 4px;
+}
+
+.pedidos__tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    font-family: var(--tipo-fuente);
+    font-size: 13px;
+    font-weight: 600;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: var(--alinear-items);
-    padding-bottom: 75px;
+    gap: 6px;
 }
 
-/* CONTENEDOR ENLACES - SECCIÓN SUPERIOR */
-.contenido-pedidos__enlaces {
-    display: flex;
-    gap: 40px;
+.pedidos__tab--activo {
+    background: white;
+    color: #7000ce;
+    box-shadow: 0 2px 8px rgba(106, 27, 154, 0.1);
 }
 
-/* ENLACES PARA LAS VISTAS */
-.enlaces__enlace {
-    font-size: 25px;
-    padding: 10px 10px;
-    font-family: var(--tipo-fuente);
-    font-weight: bold;
-    color: var(--color-enlace-seleccion);
-}
-
-.enlaces__enlace:hover {
-    border-bottom: 2px solid var(--color-bordes);
-}
-
-/* VISTAS DE LOS ACTIVOS */
-.lugar-entrega__numero {
+.pedidos__tab-badge {
+    background: #7000ce;
+    color: white;
     font-size: 10px;
-    color: var(--color-texto-gris);
-}
-
-.activos__estado-pedido {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-}
-
-.estado-pedido__estado {
-    font-size: 15px;
-    font-weight: var(--grosor-fuente);
-    color: var(--color-estado-amarillo);
-}
-
-.estado-pedido__cancelar {
-    background-color: var(--color-fondo-cancelar);
-    padding: 5px;
-    border-radius: 16px;
-    font-size: 12px;
-    width: 105px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
     text-align: center;
-    color: var(--color-fuente);
-    font-weight: bold;
 }
 
-/* ESTILOS PARA LA NAVEGACIÓN (TABS) */
-.enlaces__enlace {
-    /* ... Tus estilos anteriores ... */
-    font-size: 25px;
-    padding: 10px 10px;
-    font-family: var(--tipo-fuente);
-    font-weight: bold;
-    color: var(--color-enlace-seleccion);
+.pedidos__tab-badge--gris {
+    background: #bbb;
 }
 
-/* Estilo para el enlace seleccionado (por defecto o al hacer clic) */
-.enlaces__enlace.active {
-    border-bottom: 2px solid var(--color-bordes);
+/* PANEL */
+.pedidos__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 480px;
 }
 
-.enlaces__enlace:hover {
-    border-bottom: 2px solid var(--color-bordes);
-}
-
-/* --- LÓGICA DE MOSTRAR/OCULTAR CONTENIDO --- */
-
-/* 1. Ocultar ambas secciones por defecto */
-#activos,
-#historial {
+.pedidos__panel--oculto {
     display: none;
-    /* Asegúrate de que los estilos de 'contenido-pedidos__activos' sean consistentes si necesitas otros como width/margin. */
 }
 
-/* 2. Mostrar la sección que coincida con el fragmento de URL */
-#activos:target,
-#historial:target {
+/* CARD DE PEDIDO */
+.pedido-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid rgba(106, 27, 154, 0.1);
+    box-shadow: 0 2px 10px rgba(106, 27, 154, 0.06);
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    /* Asumiendo que quieres que se apilen verticalmente */
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
 }
 
-/* 3. **IMPORTANTE:** Mostrar la sección de activos por defecto si no hay fragmento en la URL */
-/* Esto asegura que al cargar la página se vea el contenido de 'activos' */
-/* Se selecciona #activos que es la primera sección, y si el body no tiene :target (no se ha hecho clic), se muestra */
-.contenido-pedidos:not(:has(:target)) #activos {
+.pedido-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #7000ce, #9057fa);
+    border-radius: 16px 0 0 16px;
+}
+
+.pedido-card--historial::before {
+    background: linear-gradient(180deg, #bbb, #ddd);
+}
+
+.pedido-card:hover {
+    box-shadow: 0 4px 16px rgba(106, 27, 154, 0.1);
+}
+
+/* CABECERA */
+.pedido-card__cabecera {
     display: flex;
     flex-direction: column;
+    gap: 4px;
 }
 
-/* MODIFICAR COLOR */
-.estado-pedido__historial {
-    font-size: 15px;
-    font-weight: var(--grosor-fuente);
-    color: var(--color-estado-taller);
+.pedido-card__numero-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.pedido-card__numero {
+    font-family: var(--tipo-fuente);
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: 0.5px;
+}
+
+.pedido-card__fecha {
+    font-family: var(--tipo-fuente);
+    font-size: 11px;
+    color: #bbb;
+}
+
+/* BADGE — reutiliza los de mis-arreglos */
+.badge--cancelado {
+    background-color: #fdecea;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+    font-family: var(--tipo-fuente);
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* CITA */
+.pedido-card__cita {
+    background: #f8f6fc;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pedido-card__cita-fila {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pedido-card__cita-icono {
+    font-size: 14px;
+}
+
+.pedido-card__cita-texto {
+    font-family: var(--tipo-fuente);
+    font-size: 12px;
+    font-weight: 600;
+    color: #7000ce;
+}
+
+.pedido-card__cita-notas {
+    font-family: var(--tipo-fuente);
+    font-size: 11px;
+    color: #888;
+    padding-left: 22px;
+    line-height: 1.4;
+}
+
+.pedido-card__sin-cita {
+    font-family: var(--tipo-fuente);
+    font-size: 11px;
+    color: #ccc;
+    font-style: italic;
+}
+
+/* BOTÓN CANCELAR */
+.pedido-card__acciones {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.pedido-card__btn-cancelar {
+    background: none;
+    border: 1px solid #ef9a9a;
+    color: #c62828;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--tipo-fuente);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pedido-card__btn-cancelar:hover {
+    background-color: #fdecea;
+}
+
+/* ESTADO VACÍO */
+.pedidos__vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 40px;
+    text-align: center;
+    padding: 40px 24px;
+    background: #faf8fd;
+    border-radius: 16px;
+    border: 1.5px dashed rgba(106, 27, 154, 0.15);
+    width: 100%;
+}
+
+.pedidos__vacio-texto {
+    font-size: 0.9rem;
+    color: #999;
+    font-family: var(--tipo-fuente);
+}
+
+.pedidos__vacio-btn {
+    background: linear-gradient(135deg, #7000ce, #9057fa);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--tipo-fuente);
+    box-shadow: 0 2px 8px rgba(112, 0, 206, 0.2);
+    transition: all 0.2s ease;
+}
+
+.pedidos__vacio-btn:hover {
+    box-shadow: 0 4px 14px rgba(112, 0, 206, 0.3);
+    transform: translateY(-1px);
+}
+
+/* ========================================
+   MODAL CANCELAR — estilos específicos
+   ======================================== */
+#modalCancelar.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+#modalCancelar.modal--activo {
+    visibility: visible;
+    opacity: 1;
+}
+
+#modalCancelar .modal-contenido {
+    background: white;
+    border-radius: 20px;
+    padding: 28px 24px;
+    width: 85%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+#modalCancelar .modal__titulo {
+    font-family: var(--tipo-fuente);
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+#modalCancelar .modal__descripcion {
+    font-family: var(--tipo-fuente);
+    font-size: 13px;
+    color: #777;
+    line-height: 1.5;
+    margin: 0;
+}
+
+#modalCancelar .modal__acciones {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-top: 4px;
+}
+
+#modalCancelar .btn-modal {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    font-family: var(--tipo-fuente);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+#modalCancelar .btn-modal--cancelar {
+    background: #f3eeff;
+    color: #7000ce;
+}
+
+#modalCancelar .btn-modal--cancelar:hover {
+    background: #e8d8ff;
+}
+
+#modalCancelar .btn-modal--eliminar {
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    color: white;
+    box-shadow: 0 3px 10px rgba(255, 0, 0, 0.2);
+}
+
+#modalCancelar .btn-modal--eliminar:hover {
+    box-shadow: 0 5px 14px rgba(255, 0, 0, 0.3);
+    transform: translateY(-1px);
 }

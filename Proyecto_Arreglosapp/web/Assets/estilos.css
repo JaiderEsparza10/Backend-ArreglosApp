@@ -26,6 +26,7 @@
 @import url(pages/estilos-dashboard-admin.css);
 @import url(pages/estilos-servicios-admin.css);
 @import url(pages/estilos-usuarios-admin.css);
+@import url(pages/estilos-mis-pedidos.css);
 /* IMPORTAMOS LOS COMPONENTES QUE HAN SIDO CREADOS */
 @import url(Components/boton_inicio.css);
 @import url(Components/encabezado-logo.css);
