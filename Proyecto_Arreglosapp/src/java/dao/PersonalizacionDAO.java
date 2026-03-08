@@ -6,9 +6,18 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Esta clase gestiona la persistencia de las personalizaciones de arreglos
+ * solicitadas por los usuarios.
+ */
 public class PersonalizacionDAO {
 
-    // Crear una personalización
+    /**
+     * Registra una nueva personalización de arreglo en la base de datos.
+     * 
+     * @param personalizacion El objeto con los detalles de la personalización.
+     * @return true si la inserción fue exitosa, false en caso contrario.
+     */
     public boolean crearPersonalizacion(Personalizacion personalizacion) throws Exception {
         String sql = "INSERT INTO PERSONALIZACIONES (user_id, categoria, descripcion, material_tela, imagen_referencia, estado) VALUES (?, ?, ?, ?, ?, ?)";
 

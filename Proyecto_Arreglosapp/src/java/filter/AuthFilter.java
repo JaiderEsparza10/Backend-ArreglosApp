@@ -9,14 +9,29 @@ import java.io.IOException;
 import model.Usuario;
 import util.JWTUtil;
 
+/**
+ * Este filtro se encarga de interceptar todas las solicitudes al servidor para
+ * verificar
+ * la autenticación del usuario mediante tokens JWT y controlar el acceso según
+ * los roles.
+ */
 @WebFilter("/*")
 public class AuthFilter implements Filter {
 
+    /**
+     * Inicializa la configuración del filtro de autenticación.
+     */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         // Inicialización del filtro
     }
 
+    /**
+     * Realiza el filtrado de cada solicitud, validando la presencia y validez del
+     * token JWT
+     * en la sesión y redirigiendo al login si no se cumplen los requisitos de
+     * acceso.
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -67,7 +82,8 @@ public class AuthFilter implements Filter {
                 path.equals("/AuthServlet") ||
                 path.equals("/UsuarioServlet") ||
                 path.equals("/RecuperarPasswordServlet") ||
-                path.equals("/LogoutServlet");
+                path.equals("/LogoutServlet") ||
+                path.equals("/AdminServlet");
     }
 
     private boolean hasAccess(String path, int rolId) {

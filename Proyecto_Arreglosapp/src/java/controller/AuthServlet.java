@@ -9,9 +9,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
+/**
+ * Este servlet maneja la autenticación de usuarios, incluyendo el inicio y
+ * cierre de sesión.
+ */
 @WebServlet("/AuthServlet")
 public class AuthServlet extends HttpServlet {
 
+    /**
+     * Procesa las solicitudes POST para el inicio de sesión.
+     * Valida las credenciales del usuario, genera un token JWT y establece la
+     * sesión.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -23,10 +32,10 @@ public class AuthServlet extends HttpServlet {
         String rutaLogin = contextPath + "/index.jsp";
 
         // Validar campos vacíos
-        if (email == null || password == null || 
-            email.trim().isEmpty() || password.trim().isEmpty()) {
-            response.sendRedirect(rutaLogin + "?msg=camposVacios&email=" + 
-                java.net.URLEncoder.encode(email != null ? email.trim() : "", "UTF-8"));
+        if (email == null || password == null ||
+                email.trim().isEmpty() || password.trim().isEmpty()) {
+            response.sendRedirect(rutaLogin + "?msg=camposVacios&email=" +
+                    java.net.URLEncoder.encode(email != null ? email.trim() : "", "UTF-8"));
             return;
         }
 
@@ -34,18 +43,17 @@ public class AuthServlet extends HttpServlet {
         try {
             // Autenticar usuario
             Usuario usuario = dao.autenticarUsuario(email.trim(), password);
-            
+
             // Generar token
             String token = JWTUtil.generateToken(
-                usuario.getEmail(), 
-                usuario.getId(), 
-                usuario.getRolId(), 
-                usuario.getNombre()
-            );
+                    usuario.getEmail(),
+                    usuario.getId(),
+                    usuario.getRolId(),
+                    usuario.getNombre());
 
             if (token == null) {
-                response.sendRedirect(rutaLogin + "?msg=errorServidor&email=" + 
-                    java.net.URLEncoder.encode(email.trim(), "UTF-8"));
+                response.sendRedirect(rutaLogin + "?msg=errorServidor&email=" +
+                        java.net.URLEncoder.encode(email.trim(), "UTF-8"));
                 return;
             }
 
@@ -74,7 +82,7 @@ public class AuthServlet extends HttpServlet {
             // Manejar errores específicos
             String errorMsg = e.getMessage();
             String redirectMsg = "";
-            
+
             if ("EMAIL_NOT_FOUND".equals(errorMsg)) {
                 redirectMsg = "emailNoExiste";
             } else if ("PASSWORD_INCORRECT".equals(errorMsg)) {
@@ -82,16 +90,16 @@ public class AuthServlet extends HttpServlet {
             } else {
                 redirectMsg = "errorServidor";
             }
-            
-            response.sendRedirect(rutaLogin + "?msg=" + redirectMsg + "&email=" + 
-                java.net.URLEncoder.encode(email.trim(), "UTF-8"));
+
+            response.sendRedirect(rutaLogin + "?msg=" + redirectMsg + "&email=" +
+                    java.net.URLEncoder.encode(email.trim(), "UTF-8"));
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // Para cerrar sesión
         String action = request.getParameter("action");
         if ("logout".equals(action)) {

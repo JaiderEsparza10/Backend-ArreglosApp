@@ -5,9 +5,21 @@ import model.Usuario;
 import org.mindrot.jbcrypt.BCrypt;
 import java.sql.*;
 
+/**
+ * Esta clase proporciona los métodos para gestionar la persistencia de los
+ * datos de los usuarios.
+ * Permite realizar operaciones de autenticación, registro y actualización en la
+ * base de datos.
+ */
 public class UsuarioDAO {
 
-    // Verificar si el email ya existe
+    /**
+     * Verifica si una dirección de correo electrónico ya se encuentra registrada en
+     * el sistema.
+     * 
+     * @param email El correo electrónico a verificar.
+     * @return true si el email existe, false en caso contrario.
+     */
     public boolean existeEmail(String email) throws Exception {
         String sql = "SELECT COUNT(*) FROM USUARIOS WHERE user_email = ?";
         try (Connection con = ConectionDB.getConexion();

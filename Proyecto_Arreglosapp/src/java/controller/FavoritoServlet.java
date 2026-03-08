@@ -14,12 +14,23 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+/**
+ * Este servlet gestiona la lista de servicios favoritos o seleccionados por el
+ * usuario.
+ * Permite agregar, eliminar y listar los favoritos de un usuario autenticado.
+ */
 @WebServlet("/FavoritoServlet")
 public class FavoritoServlet extends HttpServlet {
 
     private FavoritoDAO favoritoDAO = new FavoritoDAO();
     private Gson gson = new Gson();
 
+    /**
+     * Procesa las solicitudes POST para agregar o eliminar servicios de la
+     * selección de favoritos.
+     * Retorna una respuesta en formato JSON indicando el éxito o fracaso de la
+     * operación.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

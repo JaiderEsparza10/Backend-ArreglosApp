@@ -13,16 +13,27 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Este servlet gestiona la creación de citas para los pedidos de los usuarios.
+ */
 @WebServlet("/CitaServlet")
 public class CitaServlet extends HttpServlet {
 
     private CitaDAO citaDAO;
 
+    /**
+     * Inicializa el DAO de citas para su uso en el servlet.
+     */
     @Override
     public void init() throws ServletException {
         citaDAO = new CitaDAO();
     }
 
+    /**
+     * Procesa las solicitudes POST para agendar una nueva cita.
+     * Valida la información recibida, crea el pedido asociado y registra la cita en
+     * la base de datos.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

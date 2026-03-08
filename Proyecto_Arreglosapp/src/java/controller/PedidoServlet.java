@@ -11,16 +11,29 @@ import model.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+/**
+ * Este servlet gestiona las operaciones relacionadas con los pedidos de los
+ * usuarios.
+ * Permite realizar acciones como la cancelación de pedidos existentes.
+ */
 @WebServlet("/PedidoServlet")
 public class PedidoServlet extends HttpServlet {
 
     private PedidoDAO pedidoDAO;
 
+    /**
+     * Inicializa el DAO de pedidos para interactuar con la persistencia de datos.
+     */
     @Override
     public void init() throws ServletException {
         pedidoDAO = new PedidoDAO();
     }
 
+    /**
+     * Procesa las solicitudes POST para gestionar acciones de pedidos, como la
+     * cancelación.
+     * Valida la autenticación del usuario y la validez de la acción solicitada.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

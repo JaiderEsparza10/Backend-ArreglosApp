@@ -8,12 +8,22 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Esta clase centraliza la configuración y gestión de la conexión a la base de
+ * datos MySQL.
+ */
 public class ConectionDB {
     private static final String URL = "jdbc:mysql://localhost:3306/PROYECTO_ARREGLOSAPP";
     private static final String USER = "root";
     private static final String PASSWD = "J1095581627";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 
+    /**
+     * Establece y retorna una conexión activa con la base de datos utilizando el
+     * controlador JDBC.
+     * 
+     * @return El objeto Connection si tiene éxito, o null en caso de error.
+     */
     public static Connection getConexion() {
         Connection conect = null;
         try {

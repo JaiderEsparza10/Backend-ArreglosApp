@@ -2,6 +2,10 @@ package model;
 
 import java.time.LocalDateTime;
 
+/**
+ * Esta clase representa una cita agendada por un usuario para la entrega o
+ * revisión de un pedido.
+ */
 public class Cita {
     private int citaId;
     private int pedidoId;

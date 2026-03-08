@@ -2,11 +2,21 @@ package util;
 
 import java.util.Properties;
 
+/**
+ * Esta utilidad facilita el envío de correos electrónicos a través de un
+ * servidor SMTP configurado.
+ */
 public final class EmailService {
 
     private EmailService() {
     }
 
+    /**
+     * Envía un código de recuperación de contraseña a la dirección de correo
+     * especificada.
+     * Utiliza reflexión para interactuar con las librerías de JavaMail de forma
+     * dinámica.
+     */
     public static boolean sendRecoveryCode(String toEmail, String code) {
         String host = envOrProp("SMTP_HOST");
         String port = envOrProp("SMTP_PORT");
@@ -36,7 +46,8 @@ public final class EmailService {
             return true;
 
         } catch (Throwable ex) {
-            System.out.println("[EmailService] No fue posible enviar el correo: " + ex.getClass().getName() + " - " + ex.getMessage());
+            System.out.println("[EmailService] No fue posible enviar el correo: " + ex.getClass().getName() + " - "
+                    + ex.getMessage());
             return false;
         }
     }
@@ -48,14 +59,13 @@ public final class EmailService {
 
         Object authenticator = java.lang.reflect.Proxy.newProxyInstance(
                 authenticatorClass.getClassLoader(),
-                new Class<?>[]{authenticatorClass},
+                new Class<?>[] { authenticatorClass },
                 (proxy, method, args) -> {
                     if ("getPasswordAuthentication".equals(method.getName())) {
                         return passwordAuthClass.getConstructor(String.class, String.class).newInstance(user, pass);
                     }
                     return null;
-                }
-        );
+                });
 
         return sessionClass.getMethod("getInstance", Properties.class, authenticatorClass)
                 .invoke(null, props, authenticator);
@@ -75,10 +85,12 @@ public final class EmailService {
 
         Object toAddrs = internetAddressClass.getMethod("parse", String.class).invoke(null, toEmail);
         Object toType = recipientTypeClass.getField("TO").get(null);
-        messageClass.getMethod("setRecipients", recipientTypeClass, internetAddressArrayClass).invoke(message, toType, toAddrs);
+        messageClass.getMethod("setRecipients", recipientTypeClass, internetAddressArrayClass).invoke(message, toType,
+                toAddrs);
 
         messageClass.getMethod("setSubject", String.class).invoke(message, "Código de recuperación de contraseña");
-        messageClass.getMethod("setText", String.class).invoke(message, "Tu código de recuperación es: " + code + "\n\nEste código expira en 15 minutos.");
+        messageClass.getMethod("setText", String.class).invoke(message,
+                "Tu código de recuperación es: " + code + "\n\nEste código expira en 15 minutos.");
         return message;
     }
 
@@ -90,7 +102,8 @@ public final class EmailService {
 
     private static String envOrProp(String key) {
         String v = System.getenv(key);
-        if (!isBlank(v)) return v;
+        if (!isBlank(v))
+            return v;
         return System.getProperty(key);
     }
 

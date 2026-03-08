@@ -9,22 +9,42 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
+/**
+ * Este servlet gestiona el proceso de recuperación de contraseña de los
+ * usuarios.
+ * Permite verificar el correo electrónico y establecer una nueva contraseña de
+ * acceso.
+ */
 @WebServlet("/RecuperarPasswordServlet")
 public class RecuperarPasswordServlet extends HttpServlet {
 
     private UsuarioDAO usuarioDAO;
 
+    /**
+     * Inicializa el DAO de usuarios para realizar búsquedas y actualizaciones de
+     * contraseñas.
+     */
     @Override
     public void init() throws ServletException {
         usuarioDAO = new UsuarioDAO();
     }
 
+    /**
+     * Redirige las solicitudes GET al método POST para unificar el manejo de la
+     * lógica.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doPost(request, response);
     }
 
+    /**
+     * Procesa las solicitudes POST para las distintas etapas de recuperación de
+     * contraseña.
+     * Maneja las acciones de verificación de email y actualización de la nueva
+     * contraseña.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

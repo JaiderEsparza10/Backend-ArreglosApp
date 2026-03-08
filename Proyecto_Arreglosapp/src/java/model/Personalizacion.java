@@ -2,6 +2,10 @@ package model;
 
 import java.time.LocalDateTime;
 
+/**
+ * Esta clase representa la personalización de un arreglo de ropa solicitada por
+ * un cliente.
+ */
 public class Personalizacion {
     private int personalizacionId;
     private int userId;
@@ -13,9 +17,11 @@ public class Personalizacion {
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
 
-    public Personalizacion() {}
+    public Personalizacion() {
+    }
 
-    public Personalizacion(int userId, String categoria, String descripcion, String materialTela, String imagenReferencia) {
+    public Personalizacion(int userId, String categoria, String descripcion, String materialTela,
+            String imagenReferencia) {
         this.userId = userId;
         this.categoria = categoria;
         this.descripcion = descripcion;
@@ -25,30 +31,75 @@ public class Personalizacion {
     }
 
     // Getters y Setters
-    public int getPersonalizacionId() { return personalizacionId; }
-    public void setPersonalizacionId(int personalizacionId) { this.personalizacionId = personalizacionId; }
+    public int getPersonalizacionId() {
+        return personalizacionId;
+    }
 
-    public int getUserId() { return userId; }
-    public void setUserId(int userId) { this.userId = userId; }
+    public void setPersonalizacionId(int personalizacionId) {
+        this.personalizacionId = personalizacionId;
+    }
 
-    public String getCategoria() { return categoria; }
-    public void setCategoria(String categoria) { this.categoria = categoria; }
+    public int getUserId() {
+        return userId;
+    }
 
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
-    public String getMaterialTela() { return materialTela; }
-    public void setMaterialTela(String materialTela) { this.materialTela = materialTela; }
+    public String getCategoria() {
+        return categoria;
+    }
 
-    public String getImagenReferencia() { return imagenReferencia; }
-    public void setImagenReferencia(String imagenReferencia) { this.imagenReferencia = imagenReferencia; }
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
-    public LocalDateTime getFechaActualizacion() { return fechaActualizacion; }
-    public void setFechaActualizacion(LocalDateTime fechaActualizacion) { this.fechaActualizacion = fechaActualizacion; }
+    public String getMaterialTela() {
+        return materialTela;
+    }
+
+    public void setMaterialTela(String materialTela) {
+        this.materialTela = materialTela;
+    }
+
+    public String getImagenReferencia() {
+        return imagenReferencia;
+    }
+
+    public void setImagenReferencia(String imagenReferencia) {
+        this.imagenReferencia = imagenReferencia;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public LocalDateTime getFechaActualizacion() {
+        return fechaActualizacion;
+    }
+
+    public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
+    }
 }

@@ -10,16 +10,31 @@ import jakarta.servlet.http.HttpSession;
 import model.Usuario;
 import java.io.IOException;
 
+/**
+ * Este servlet gestiona el perfil del usuario, permitiendo la actualización de
+ * datos personales
+ * y el cambio de contraseña.
+ */
 @WebServlet("/PerfilServlet")
 public class PerfilServlet extends HttpServlet {
 
     private UsuarioDAO usuarioDAO;
 
+    /**
+     * Inicializa el DAO de usuarios para gestionar la persistencia de datos del
+     * perfil.
+     */
     @Override
     public void init() throws ServletException {
         usuarioDAO = new UsuarioDAO();
     }
 
+    /**
+     * Procesa las solicitudes POST para editar datos del perfil o cambiar la
+     * contraseña.
+     * Verifica la sesión del usuario y valida los datos antes de persistir los
+     * cambios.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -15,18 +15,32 @@ import model.Personalizacion;
 import model.Usuario;
 import java.io.IOException;
 
+/**
+ * Este servlet permite a los usuarios personalizar sus arreglos de ropa.
+ * Maneja la creación, edición y eliminación de personalizaciones, incluyendo la
+ * subida de imágenes.
+ */
 @WebServlet("/PersonalizacionServlet")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
 public class PersonalizacionServlet extends HttpServlet {
 
-    // ✅ Declaración separada del campo
     private PersonalizacionDAO personalizacionDAO;
 
+    /**
+     * Inicializa el DAO de personalización para gestionar los datos de los
+     * arreglos.
+     */
     @Override
     public void init() throws ServletException {
         personalizacionDAO = new PersonalizacionDAO();
     }
 
+    /**
+     * Procesa las solicitudes POST para crear o editar una personalización de
+     * arreglo.
+     * Valida la sesión del usuario y procesa la imagen de referencia si se
+     * proporciona.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

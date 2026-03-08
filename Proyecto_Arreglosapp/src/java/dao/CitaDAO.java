@@ -6,9 +6,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Esta clase gestiona las operaciones de base de datos relacionadas con las
+ * citas y pedidos iniciales.
+ */
 public class CitaDAO {
 
-    // Crear pedido automáticamente y retornar su ID
+    /**
+     * Crea un nuevo pedido con estado pendiente y retorna el identificador
+     * generado.
+     * 
+     * @param userId El identificador del usuario que realiza el pedido.
+     * @return El identificador del pedido creado o -1 si falla.
+     */
     public int crearPedido(int userId) throws Exception {
         String sql = "INSERT INTO PEDIDOS (usuario_id, pedido_estado, pedido_total) VALUES (?, 'pendiente', 0)";
         try (Connection con = ConectionDB.getConexion();
