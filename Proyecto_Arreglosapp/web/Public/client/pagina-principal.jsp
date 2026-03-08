@@ -1,127 +1,174 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../Assets/estilos.css">
-    <title>Pagina Principal</title>
-</head>
-<body class="grid-principal">
-    <header class="seccion-encabezado">
-        <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png" alt="logo de la aplicación">
-        <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
-    </header>
-    <main class="contenido">
-        <div class="contenido__barra-busqueda">
-            <img src="../../Assets/icons/lupa.png" alt="lupa de carga">
-            <input type="text" name="buscador" id="buscador" placeholder="Buscar Arreglos">
-        </div>
-        <h2 class="contenido__titulo-seccion">Categorías</h2>
-        <section class="contenido__categorias">
-            <div class="categorias__grid">
-                <article class="tarjeta-arreglo">
-                    <div class="tarjeta-arreglo__imagen-contenedor">
-                        <a href="arreglos-medida.jsp"><img src="../../Assets/image/imagen-arreglos-de-vestidos-de-fiesta.jpg" alt="imagen de medidas y arreglos"></a>
-                    </div>
-                    <div class="tarjeta-arreglo__contenido">
-                        <h3 class="tarjeta-arreglo__nombre">Arreglo de Medidas y Ajustes</h3>
-                        <div class="tarjeta-arreglo__footer">
-                            <p class="tarjeta-arreglo__precio">$15.000</p>
-                            <a href="arreglos-medida.jsp" class="tarjeta-arreglo__enlace">Detalles</a>
-                        </div>
-                    </div>
-                </article>
-                <article class="tarjeta-arreglo">
-                    <div class="tarjeta-arreglo__imagen-contenedor">
-                        <a href="vestidos-finos.jsp"><img src="../../Assets/image/imagen-vestidos-finos.jpg" alt="imagen de ajustes de vestidos y ropa"></a>
-                    </div>
-                    <div class="tarjeta-arreglo__contenido">
-                        <h3 class="tarjeta-arreglo__nombre">Ajuste Fino de Vestidos y Ropa</h3>
-                        <div class="tarjeta-arreglo__footer">
-                            <p class="tarjeta-arreglo__precio">$20.000</p>
-                            <a href="vestidos-finos.jsp" class="tarjeta-arreglo__enlace">Detalles</a>
-                        </div>
-                    </div>
-                </article>
+﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+    <%@ page import="model.Usuario" %>
+        <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) { usuario=(Usuario)
+            sesion.getAttribute("usuario"); } if (usuario==null) {
+            response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } %>
+            <!DOCTYPE html>
+            <html lang="es">
 
-                <article class="tarjeta-arreglo">
-                    <div class="tarjeta-arreglo__imagen-contenedor">
-                        <a href="detalles-costuras.jsp"><img src="../../Assets/image/imagen-costura.jpg" alt="imagen de costura general"></a>
-                    </div>
-                    <div class="tarjeta-arreglo__contenido">
-                        <h3 class="tarjeta-arreglo__nombre">Costura y reparación General</h3>
-                        <div class="tarjeta-arreglo__footer">
-                            <p class="tarjeta-arreglo__precio">$25.000</p>
-                            <a href="detalles-costuras.jsp" class="tarjeta-arreglo__enlace">Detalles</a>
-                        </div>
-                    </div>
-                </article>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link rel="stylesheet" href="../../Assets/estilos.css">
+                <title>Página Principal</title>
+            </head>
 
-                <article class="tarjeta-arreglo">
-                    <div class="tarjeta-arreglo__imagen-contenedor">
-                        <a href="detalles-sastreria.jsp"><img src="../../Assets/image/imagen-sastreria.jpg" alt="imagen de sastreria y Dobladillos"></a>
-                    </div>
-                    <div class="tarjeta-arreglo__contenido">
-                        <h3 class="tarjeta-arreglo__nombre">Sastrería y Dobladillos Manuales</h3>
-                        <div class="tarjeta-arreglo__footer">
-                            <p class="tarjeta-arreglo__precio">$35.000</p>
-                            <a href="detalles-sastreria.jsp" class="tarjeta-arreglo__enlace">Detalles</a>
-                        </div>
-                    </div>
-                </article>
+            <body class="grid-principal">
+                <header class="seccion-encabezado">
+                    <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
+                        alt="logo de la aplicación">
+                    <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
+                </header>
 
-                <article class="tarjeta-arreglo">
-                    <div class="tarjeta-arreglo__imagen-contenedor">
-                        <a href="detalles-arreglos-bolsillos.jsp"><img src="../../Assets/image/image-arreglo-bolsillos.jpg" alt="imagen de arreglo de bolsillos"></a>
-                    </div>
-                    <div class="tarjeta-arreglo__contenido">
-                        <h3 class="tarjeta-arreglo__nombre">Arreglo de Bolsillos y Remiendos</h3>
-                        <div class="tarjeta-arreglo__footer">
-                            <p class="tarjeta-arreglo__precio">$18.000</p>
-                            <a href="detalles-arreglos-bolsillos.jsp" class="tarjeta-arreglo__enlace">Detalles</a>
-                        </div>
-                    </div>
-                </article>
+                <main class="contenido">
 
-                <article class="tarjeta-arreglo">
-                    <div class="tarjeta-arreglo__imagen-contenedor">
-                        <a href="detalles-planchado.jsp"><img src="../../Assets/image/imagen-planchado de ropa.jpg" alt="imagen de una persona planchando"></a>
+                    <!-- BARRA DE BÚSQUEDA -->
+                    <div class="contenido__barra-busqueda">
+                        <img src="../../Assets/icons/lupa.png" alt="lupa">
+                        <input type="text" name="buscador" id="buscador" placeholder="Buscar arreglos..."
+                            autocomplete="off">
+                        <button class="buscador__limpiar" id="btnLimpiar" style="display:none;">✕</button>
                     </div>
-                    <div class="tarjeta-arreglo__contenido">
-                        <h3 class="tarjeta-arreglo__nombre">Servicios Planchado de Ropa</h3>
-                        <div class="tarjeta-arreglo__footer">
-                            <p class="tarjeta-arreglo__precio">$12.000</p>
-                            <a href="detalles-planchado.jsp" class="tarjeta-arreglo__enlace">Detalles</a>
-                        </div>
-                    </div>
-                </article>  
-            </div>
-        </section>
-    </main>
-    <footer class="navbar">
-        <nav class="navbar-inferior">
-            <a href="pagina-principal.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
-                <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Inicio</span>
-            </a>
-            <a href="mi-seleccion.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Mi selección</span>
-            </a>
-            <a href="mis-arreglos.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Mis Arreglos</span>
-            </a>
-            <a href="mis-pedidos.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Pedidos</span>
-            </a>
-            <a href="mi-perfil.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono"></img> 
-                <span class="navbar-inferior__texto">Perfil</span>
-            </a>
-        </nav>
-    </footer>
-</body>
-</html>
 
+                    <!-- MENSAJE SIN RESULTADOS -->
+                    <div class="busqueda__sin-resultados" id="sinResultados" style="display:none;">
+                        <p>No se encontraron servicios para "<span id="textoBuscado"></span>"</p>
+                    </div>
+
+                    <h2 class="contenido__titulo-seccion" id="tituloCategorias">Categorías</h2>
+
+                    <section class="contenido__categorias">
+                        <div class="categorias__grid" id="gridServicios">
+
+                            <article class="tarjeta-arreglo" data-nombre="arreglo de medidas ajustes vestidos">
+                                <div class="tarjeta-arreglo__imagen-contenedor">
+                                    <a href="arreglos-medida.jsp">
+                                        <img src="../../Assets/image/imagen-arreglos-de-vestidos-de-fiesta.jpg"
+                                            alt="imagen de medidas y arreglos">
+                                    </a>
+                                </div>
+                                <div class="tarjeta-arreglo__contenido">
+                                    <h3 class="tarjeta-arreglo__nombre">Arreglo de Medidas y Ajustes</h3>
+                                    <div class="tarjeta-arreglo__footer">
+                                        <p class="tarjeta-arreglo__precio">$15.000</p>
+                                        <a href="arreglos-medida.jsp" class="tarjeta-arreglo__enlace">Detalles</a>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <article class="tarjeta-arreglo" data-nombre="ajuste fino vestidos ropa elegante">
+                                <div class="tarjeta-arreglo__imagen-contenedor">
+                                    <a href="vestidos-finos.jsp">
+                                        <img src="../../Assets/image/imagen-vestidos-finos.jpg"
+                                            alt="imagen de ajustes de vestidos y ropa">
+                                    </a>
+                                </div>
+                                <div class="tarjeta-arreglo__contenido">
+                                    <h3 class="tarjeta-arreglo__nombre">Ajuste Fino de Vestidos y Ropa</h3>
+                                    <div class="tarjeta-arreglo__footer">
+                                        <p class="tarjeta-arreglo__precio">$20.000</p>
+                                        <a href="vestidos-finos.jsp" class="tarjeta-arreglo__enlace">Detalles</a>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <article class="tarjeta-arreglo" data-nombre="costura reparacion general costurera">
+                                <div class="tarjeta-arreglo__imagen-contenedor">
+                                    <a href="detalles-costuras.jsp">
+                                        <img src="../../Assets/image/imagen-costura.jpg"
+                                            alt="imagen de costura general">
+                                    </a>
+                                </div>
+                                <div class="tarjeta-arreglo__contenido">
+                                    <h3 class="tarjeta-arreglo__nombre">Costura y Reparación General</h3>
+                                    <div class="tarjeta-arreglo__footer">
+                                        <p class="tarjeta-arreglo__precio">$25.000</p>
+                                        <a href="detalles-costuras.jsp" class="tarjeta-arreglo__enlace">Detalles</a>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <article class="tarjeta-arreglo" data-nombre="sastreria dobladillo manual pantalon">">
+                                <div class="tarjeta-arreglo__imagen-contenedor">
+                                    <a href="detalles-sastreria.jsp">
+                                        <img src="../../Assets/image/imagen-sastreria.jpg"
+                                            alt="imagen de sastreria y Dobladillos">
+                                    </a>
+                                </div>
+                                <div class="tarjeta-arreglo__contenido">
+                                    <h3 class="tarjeta-arreglo__nombre">Sastrería y Dobladillos Manuales</h3>
+                                    <div class="tarjeta-arreglo__footer">
+                                        <p class="tarjeta-arreglo__precio">$35.000</p>
+                                        <a href="detalles-sastreria.jsp" class="tarjeta-arreglo__enlace">Detalles</a>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <article class="tarjeta-arreglo" data-nombre="bolsillos remiendos remiendo rotura">
+                                <div class="tarjeta-arreglo__imagen-contenedor">
+                                    <a href="detalles-arreglos-bolsillos.jsp">
+                                        <img src="../../Assets/image/image-arreglo-bolsillos.jpg"
+                                            alt="imagen de arreglo de bolsillos">
+                                    </a>
+                                </div>
+                                <div class="tarjeta-arreglo__contenido">
+                                    <h3 class="tarjeta-arreglo__nombre">Arreglo de Bolsillos y Remiendos</h3>
+                                    <div class="tarjeta-arreglo__footer">
+                                        <p class="tarjeta-arreglo__precio">$18.000</p>
+                                        <a href="detalles-arreglos-bolsillos.jsp"
+                                            class="tarjeta-arreglo__enlace">Detalles</a>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <article class="tarjeta-arreglo" data-nombre="planchado plancha ropa servicio">
+                                <div class="tarjeta-arreglo__imagen-contenedor">
+                                    <a href="detalles-planchado.jsp">
+                                        <img src="../../Assets/image/imagen-planchado de ropa.jpg"
+                                            alt="imagen de una persona planchando">
+                                    </a>
+                                </div>
+                                <div class="tarjeta-arreglo__contenido">
+                                    <h3 class="tarjeta-arreglo__nombre">Servicios Planchado de Ropa</h3>
+                                    <div class="tarjeta-arreglo__footer">
+                                        <p class="tarjeta-arreglo__precio">$12.000</p>
+                                        <a href="detalles-planchado.jsp" class="tarjeta-arreglo__enlace">Detalles</a>
+                                    </div>
+                                </div>
+                            </article>
+
+                        </div>
+                    </section>
+                </main>
+
+                <footer class="navbar">
+                    <nav class="navbar-inferior">
+                        <a href="pagina-principal.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
+                            <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono">
+                            <span class="navbar-inferior__texto">Inicio</span>
+                        </a>
+                        <a href="mi-seleccion.jsp" class="navbar-inferior__item">
+                            <img src="../../Assets/icons/lista-de-deseos-transparente.png"
+                                class="navbar-inferior__icono">
+                            <span class="navbar-inferior__texto">Mi selección</span>
+                        </a>
+                        <a href="mis-arreglos.jsp" class="navbar-inferior__item">
+                            <img src="../../Assets/icons/cortar-con-tijeras-transparente.png"
+                                class="navbar-inferior__icono">
+                            <span class="navbar-inferior__texto">Mis Arreglos</span>
+                        </a>
+                        <a href="mis-pedidos.jsp" class="navbar-inferior__item">
+                            <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono">
+                            <span class="navbar-inferior__texto">Pedidos</span>
+                        </a>
+                        <a href="mi-perfil.jsp" class="navbar-inferior__item">
+                            <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono">
+                            <span class="navbar-inferior__texto">Perfil</span>
+                        </a>
+                    </nav>
+                </footer>
+
+                <script src="../../Assets/JavaScript/pagina-principal.js"></script>
+            </body>
+
+            </html>

@@ -1,72 +1,85 @@
-/* CONTENEDOR PRINCIPAL DEL FORMULARIO */
-
-.contenedor-principal{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: var(--alinear-items);
-}
-
-/* CUADRO EN DONDE SE ENCUENTRA ALMACENADO EL FORMULARIO */
-
-.contenedor-principal__formulario-recuperar {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: var(--alinear-items);
-    gap: 25px;
-    background: var(--color-fondo-formulario); /* Un color morado similar al de la imagen */
-    padding: var(--padding-contenedor-login);
+/* ALERTA ESTILO LOGIN */
+.recuperar__alerta-login {
+    background-color: rgba(255, 0, 0, 0.15);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 100, 100, 0.3);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-family: var(--tipo-fuente);
+    font-size: 13px;
     width: var(--ancho-contenedor-login);
-    border-radius: var(--borde-contenedor-login); 
-    margin-bottom: var(--margen-abajo);
-    padding: 45px;
-}
-
-/* TITULO DEL FORMULARIO */
-
-.formulario-recuperar__titulo{
-    color: var(--color-fuente);
-    font-size: var(--tamano-fuente-recuperar);
-    font-weight: var(--grosor-fuente);
-}
-
-/* FUENTE DE MENSAJE */
-
-.formulario-recuperar__mensaje-recuperar{
-    color: var(--color-fuente);
-    font-size: 15px;
+    box-sizing: border-box;
     text-align: center;
+    margin-top: 10px;
 }
 
-/* CONTENEDOR DEL FORMULARIO */
-
-.formulario-recuperar__campos{
-    width: 300px;
+/* SUBTÍTULO DENTRO DEL FORM */
+.recuperar__subtitulo-login {
+    font-family: var(--tipo-fuente);
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: -10px;
 }
 
-/* ESTILO DE CADA CAMPO DEL FORMULARIO  */
+/* EMAIL MOSTRADO EN PASO 2 */
+.recuperar__email-login {
+    font-family: var(--tipo-fuente);
+    font-size: 13px;
+    color: var(--color-fuente-secundario);
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
 
-.campos__label-codigo {
-    width: 300px; 
-    height: 80px; 
+/* INPUT CON BOTÓN OJO */
+.recuperar__input-pass {
+    position: relative;
     display: flex;
-    justify-content: space-evenly; 
-    align-items: center; 
-    padding: 0 10px;
-    margin-bottom: var(--margen-abajo);
+    align-items: center;
 }
 
-.label-codigo__input-codigo {
-    background-color: white; 
-    width: 40px; 
-    height: 50px; 
+.recuperar__input-pass input {
+    width: 100%;
     border: none;
-    font-size: 36px; 
-    text-align: center; 
-    font-family: sans-serif; 
-}
-.label-codigo__input-codigo:focus {
+    background: transparent;
+    color: var(--color-fuente);
+    padding: 5px 30px 5px 0;
     outline: none;
+    font-size: var(--tamano-fuente-input);
 }
 
+.recuperar__ojo-login {
+    position: absolute;
+    right: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* INDICADOR COINCIDENCIA */
+.recuperar__indicador-login {
+    font-family: var(--tipo-fuente);
+    font-size: 12px;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 8px;
+    margin-top: -8px;
+    margin-bottom: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.recuperar__indicador-login.recuperar__indicador--ok {
+    background-color: rgba(0, 200, 100, 0.15);
+    color: #00e676;
+}
+
+.recuperar__indicador-login.recuperar__indicador--error {
+    background-color: rgba(255, 0, 0, 0.15);
+    color: #ff6b6b;
+}

@@ -1,15 +1,39 @@
-/* TOAST */
-/* ya está en estilos.css */
+/* CONTENEDOR PRINCIPAL */
+.contenido-perfil {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+    padding-bottom: 75px;
+    gap: 16px;
+}
+
+/* ENCABEZADO */
+.contenido-perfil__enlace-volver {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.enlace-volver__titulo {
+    font-family: var(--tipo-fuente);
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
 
 /* ALERTA */
 .perfil__alerta {
-    width: 90%;
+    width: 100%;
     max-width: 500px;
     padding: 12px 16px;
     border-radius: 8px;
     font-size: 0.9em;
     font-family: var(--tipo-fuente);
-    margin-bottom: 8px;
 }
 
 .perfil__alerta--error {
@@ -18,7 +42,34 @@
     border: 1px solid #ef9a9a;
 }
 
+/* TARJETA DE PERFIL */
+.perfil-informacion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    background: linear-gradient(145deg, #ffffff, #f8f6fc);
+    border-radius: 18px;
+    border: 1px solid rgba(106, 27, 154, 0.12);
+    box-shadow: 0 4px 15px rgba(106, 27, 154, 0.08);
+    padding: 24px 20px;
+    gap: 6px;
+}
+
 /* AVATAR CON INICIAL */
+.perfil__avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7000ce, #9057fa);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 14px rgba(112, 0, 206, 0.3);
+}
+
 .perfil__inicial {
     font-family: var(--tipo-fuente);
     font-size: 32px;
@@ -26,12 +77,107 @@
     color: white;
 }
 
-/* TELÉFONO */
-.perfil__telefono {
+/* DATOS */
+.perfil__datos {
+    text-align: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.perfil__nombre {
+    font-family: var(--tipo-fuente);
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.perfil__email {
     font-family: var(--tipo-fuente);
     font-size: 13px;
+    color: #888;
+}
+
+.perfil__direccion {
+    font-family: var(--tipo-fuente);
+    font-size: 12px;
     color: var(--color-texto-gris);
-    margin-bottom: 5px;
+}
+
+.perfil__telefono {
+    font-family: var(--tipo-fuente);
+    font-size: 12px;
+    color: var(--color-texto-gris);
+}
+
+.perfil__rol {
+    font-family: var(--tipo-fuente);
+    font-size: 11px;
+    color: #7000ce;
+    font-weight: 600;
+    background-color: rgba(106, 27, 154, 0.08);
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-top: 4px;
+}
+
+/* RESUMEN */
+.perfil-resumen {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid rgba(106, 27, 154, 0.1);
+    box-shadow: 0 2px 10px rgba(106, 27, 154, 0.06);
+    padding: 18px 16px;
+}
+
+.resumen__titulo {
+    font-family: var(--tipo-fuente);
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 14px;
+}
+
+.resumen__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.resumen__item {
+    text-align: center;
+    padding: 12px 8px;
+    background: #f8f6fc;
+    border-radius: 12px;
+    border: 1px solid rgba(106, 27, 154, 0.08);
+    transition: all 0.2s ease;
+    display: block;
+}
+
+.resumen__item:hover {
+    background: #f0e8ff;
+    transform: translateY(-2px);
+}
+
+.resumen__numero {
+    font-family: var(--tipo-fuente);
+    font-size: 22px;
+    font-weight: 700;
+    color: #7000ce;
+    margin-bottom: 4px;
+}
+
+.resumen__texto {
+    font-family: var(--tipo-fuente);
+    font-size: 10px;
+    color: #888;
+    font-weight: 500;
+    line-height: 1.3;
 }
 
 /* SECCIONES COLAPSABLES */
@@ -68,7 +214,6 @@
 .perfil-seccion__flecha {
     font-size: 12px;
     color: #aaa;
-    transition: transform 0.2s ease;
 }
 
 .perfil-seccion__contenido {
@@ -157,7 +302,7 @@
 .perfil__cerrar-sesion {
     width: 100%;
     max-width: 500px;
-    margin-top: 8px;
+    margin-top: 4px;
 }
 
 .perfil__btn-cerrar-sesion {
@@ -172,7 +317,6 @@
     font-family: var(--tipo-fuente);
     font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
     transition: all 0.2s ease;
 }
 
