@@ -19,7 +19,6 @@ public class RecuperarPasswordServlet extends HttpServlet {
         usuarioDAO = new UsuarioDAO();
     }
 
-    // ─── ACEPTAR TAMBIÉN GET ──────────────────────────────────────
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -34,19 +33,27 @@ public class RecuperarPasswordServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession();
+
         String accion = request.getParameter("accion");
+        if (accion != null) {
+            accion = accion.trim();
+        }
 
         System.out.println("=== RecuperarPasswordServlet ===");
         System.out.println("Metodo: " + request.getMethod());
-        System.out.println("Accion: " + accion);
+        System.out.println("Accion recibida: [" + accion + "]");
         System.out.println("Email param: " + request.getParameter("email"));
+        System.out.println("Es verificarEmail: " + "verificarEmail".equals(accion));
+        System.out.println("Es cambiarPassword: " + "cambiarPassword".equals(accion));
 
         if (accion == null) {
+            System.out.println("Accion es NULL, redirigiendo a recuperar");
             response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp");
             return;
         }
 
         if ("verificarEmail".equals(accion)) {
+            System.out.println("Entrando a verificarEmail...");
             try {
                 String email = request.getParameter("email");
 
@@ -56,7 +63,9 @@ public class RecuperarPasswordServlet extends HttpServlet {
                     return;
                 }
 
+                System.out.println("Verificando email: " + email.trim());
                 boolean existe = usuarioDAO.existeEmail(email.trim());
+                System.out.println("Email existe: " + existe);
 
                 if (existe) {
                     session.setAttribute("emailRecuperar", email.trim());
@@ -67,19 +76,20 @@ public class RecuperarPasswordServlet extends HttpServlet {
                 }
 
             } catch (Exception e) {
-                System.out.println("Error verificarEmail: " + e.getMessage());
-                session.setAttribute("errorRecuperar", "Error al verificar el correo");
+                System.out.println("ERROR en verificarEmail: " + e.getMessage());
+                e.printStackTrace();
+                session.setAttribute("errorRecuperar", "Error: " + e.getMessage());
                 response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp");
             }
 
         } else if ("cambiarPassword".equals(accion)) {
+            System.out.println("Entrando a cambiarPassword...");
             try {
                 String email = (String) session.getAttribute("emailRecuperar");
                 String passwordNueva = request.getParameter("passwordNueva");
                 String passwordConfirm = request.getParameter("passwordConfirmar");
 
                 System.out.println("Email sesion: " + email);
-                System.out.println("Password nueva: " + passwordNueva);
 
                 if (email == null) {
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp");
@@ -105,6 +115,7 @@ public class RecuperarPasswordServlet extends HttpServlet {
                 }
 
                 boolean cambiada = usuarioDAO.actualizarPassword(email, passwordNueva);
+                System.out.println("Password cambiada: " + cambiada);
 
                 if (cambiada) {
                     session.removeAttribute("emailRecuperar");
@@ -115,13 +126,14 @@ public class RecuperarPasswordServlet extends HttpServlet {
                 }
 
             } catch (Exception e) {
-                System.out.println("Error cambiarPassword: " + e.getMessage());
-                session.setAttribute("errorRecuperar", "Error al cambiar la contraseña");
+                System.out.println("ERROR en cambiarPassword: " + e.getMessage());
+                e.printStackTrace();
+                session.setAttribute("errorRecuperar", "Error: " + e.getMessage());
                 response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp?paso=2");
             }
 
         } else {
-            System.out.println("Accion no reconocida: " + accion);
+            System.out.println("Accion no reconocida: [" + accion + "], redirigiendo");
             response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp");
         }
     }

@@ -2,7 +2,7 @@
     <% HttpSession sesion=request.getSession(); String errorMsg=(String) sesion.getAttribute("errorRecuperar");
         sesion.removeAttribute("errorRecuperar"); String paso=request.getParameter("paso"); boolean esPaso2="2"
         .equals(paso); String emailGuardado=(String) sesion.getAttribute("emailRecuperar"); if (esPaso2 &&
-        emailGuardado==null) { response.sendRedirect("/Proyecto_Arreglosapp/Public/client/recuperar-contrasena.jsp");
+        emailGuardado==null) { response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp");
         return; } %>
         <!DOCTYPE html>
         <html lang="es">
@@ -32,7 +32,6 @@
                     </div>
                     <% } %>
 
-                        <!-- PASO 1 — VERIFICAR EMAIL -->
                         <% if (!esPaso2) { %>
                             <form class="contenedor-login" action="/Proyecto_Arreglosapp/RecuperarPasswordServlet"
                                 method="post">
@@ -63,7 +62,6 @@
                                 </div>
                             </form>
 
-                            <!-- PASO 2 — NUEVA CONTRASEÑA -->
                             <% } else { %>
                                 <form class="contenedor-login" action="/Proyecto_Arreglosapp/RecuperarPasswordServlet"
                                     method="post" id="formNuevaPassword">
@@ -121,6 +119,7 @@
                                     </div>
                                 </form>
                                 <% } %>
+
             </main>
 
             <script src="../../Assets/JavaScript/recuperar-contrasena.js"></script>
