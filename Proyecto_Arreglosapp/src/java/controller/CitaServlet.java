@@ -13,27 +13,16 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Este servlet gestiona la creación de citas para los pedidos de los usuarios.
- */
 @WebServlet("/CitaServlet")
 public class CitaServlet extends HttpServlet {
 
     private CitaDAO citaDAO;
 
-    /**
-     * Inicializa el DAO de citas para su uso en el servlet.
-     */
     @Override
     public void init() throws ServletException {
         citaDAO = new CitaDAO();
     }
 
-    /**
-     * Procesa las solicitudes POST para agendar una nueva cita.
-     * Valida la información recibida, crea el pedido asociado y registra la cita en
-     * la base de datos.
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -58,20 +47,31 @@ public class CitaServlet extends HttpServlet {
                 String direccion = request.getParameter("direccionEntrega");
                 String notas = request.getParameter("notas");
 
+                // Obtener personalizacionId
+                String personalizacionIdStr = request.getParameter("personalizacionId");
+                int personalizacionId = -1;
+                if (personalizacionIdStr != null && !personalizacionIdStr.trim().isEmpty()) {
+                    try {
+                        personalizacionId = Integer.parseInt(personalizacionIdStr.trim());
+                    } catch (NumberFormatException ex) {
+                        personalizacionId = -1;
+                    }
+                }
+
                 // Validar campos obligatorios
                 if (fechaStr == null || fechaStr.trim().isEmpty()) {
                     session.setAttribute("errorCita", "Debes seleccionar una fecha");
-                    response.sendRedirect("Public/client/agendar-cita.jsp");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
                 if (horaStr == null || horaStr.trim().isEmpty()) {
                     session.setAttribute("errorCita", "Debes seleccionar una hora");
-                    response.sendRedirect("Public/client/agendar-cita.jsp");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
                 if (direccion == null || direccion.trim().isEmpty()) {
                     session.setAttribute("errorCita", "Debes ingresar un lugar de entrega");
-                    response.sendRedirect("Public/client/agendar-cita.jsp");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
 
@@ -80,11 +80,11 @@ public class CitaServlet extends HttpServlet {
                 LocalDateTime fechaHora = LocalDateTime.parse(fechaHoraStr,
                         DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
-                // Crear pedido automáticamente
-                int pedidoId = citaDAO.crearPedido(usuario.getId());
+                // Crear pedido con detalle
+                int pedidoId = citaDAO.crearPedido(usuario.getId(), personalizacionId);
                 if (pedidoId == -1) {
                     session.setAttribute("errorCita", "No se pudo crear el pedido");
-                    response.sendRedirect("Public/client/agendar-cita.jsp");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
 
@@ -93,20 +93,20 @@ public class CitaServlet extends HttpServlet {
                 boolean creada = citaDAO.crearCita(cita);
 
                 if (creada) {
-                    response.sendRedirect("Public/client/mis-pedidos.jsp?citaAgendada=1");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-pedidos.jsp?citaAgendada=1");
                 } else {
                     session.setAttribute("errorCita", "No se pudo agendar la cita. Intenta nuevamente.");
-                    response.sendRedirect("Public/client/agendar-cita.jsp");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                 }
 
             } catch (Exception e) {
                 session.setAttribute("errorCita", "Error: " + e.getMessage());
-                response.sendRedirect("Public/client/agendar-cita.jsp");
+                response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
             }
 
         } else {
             session.setAttribute("errorCita", "Acción no válida");
-            response.sendRedirect("Public/client/agendar-cita.jsp");
+            response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
         }
     }
 }

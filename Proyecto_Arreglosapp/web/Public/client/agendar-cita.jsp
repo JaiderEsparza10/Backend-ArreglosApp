@@ -4,8 +4,8 @@
             sesion.getAttribute("usuario"); } if (usuario==null) {
             response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } String errorMsg=(String)
             sesion.getAttribute("errorCita"); if (errorMsg !=null) { sesion.removeAttribute("errorCita"); } String
-            personalizacionId=request.getParameter("personalizacionId"); if (personalizacionId==null)
-            personalizacionId="" ; %>
+            personalizacionId=request.getParameter("personalizacionId"); if (personalizacionId==null) {
+            personalizacionId="" ; } %>
             <!DOCTYPE html>
             <html lang="es">
 
@@ -17,6 +17,7 @@
             </head>
 
             <body class="grid-principal">
+
                 <header class="seccion-encabezado">
                     <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
                         alt="logo de la aplicación">
@@ -63,8 +64,9 @@
                                         </div>
                                         <div class="calendario__grid" id="calendarioGrid"></div>
                                     </div>
-                                    <p class="cita__fecha-seleccionada" id="textoFechaSeleccionada">Ninguna fecha
-                                        seleccionada</p>
+                                    <p class="cita__fecha-seleccionada" id="textoFechaSeleccionada">
+                                        Ninguna fecha seleccionada
+                                    </p>
                                 </div>
 
                                 <!-- HORA -->
@@ -73,8 +75,9 @@
                                     <p class="cita__subtitulo">Disponible de lunes a viernes — 2:00 pm a 10:00 pm</p>
                                     <div class="cita__horas-grid" id="horasGrid"></div>
                                     <input type="hidden" name="horaCita" id="horaCitaInput">
-                                    <p class="cita__hora-seleccionada" id="textoHoraSeleccionada">Ninguna hora
-                                        seleccionada</p>
+                                    <p class="cita__hora-seleccionada" id="textoHoraSeleccionada">
+                                        Ninguna hora seleccionada
+                                    </p>
                                 </div>
 
                                 <!-- LUGAR DE ENTREGA -->
@@ -90,8 +93,9 @@
 
                                 <!-- NOTAS ADICIONALES -->
                                 <div class="cita__seccion">
-                                    <h2 class="cita__titulo-seccion">Notas Adicionales <span
-                                            class="cita__opcional">(opcional)</span></h2>
+                                    <h2 class="cita__titulo-seccion">
+                                        Notas Adicionales <span class="cita__opcional">(opcional)</span>
+                                    </h2>
                                     <textarea name="notas" class="cita__textarea"
                                         placeholder="Alguna indicación especial para el sastre..."
                                         maxlength="300"></textarea>

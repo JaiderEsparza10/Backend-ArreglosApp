@@ -79,7 +79,10 @@ public class AuthServlet extends HttpServlet {
             response.sendRedirect(redirectUrl + "?msg=exitoLogin");
 
         } catch (Exception e) {
-            // Manejar errores específicos
+            System.out.println("=== ERROR AuthServlet ===");
+            System.out.println("Mensaje: " + e.getMessage());
+            e.printStackTrace();
+
             String errorMsg = e.getMessage();
             String redirectMsg = "";
 

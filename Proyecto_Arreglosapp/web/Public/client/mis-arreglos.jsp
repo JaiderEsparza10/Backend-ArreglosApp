@@ -11,6 +11,7 @@
               sesion.getAttribute("errorPersonalizacion"); sesion.removeAttribute("mensajePersonalizacion");
               sesion.removeAttribute("errorPersonalizacion"); PersonalizacionDAO personalizacionDAO=new
               PersonalizacionDAO(); List<Personalizacion> misArreglos = null;
+
               try {
               misArreglos = personalizacionDAO.obtenerPersonalizacionesPorUsuario(usuario.getId());
               } catch (Exception e) {
@@ -31,6 +32,7 @@
               </head>
 
               <body class="grid-principal">
+
                 <header class="seccion-encabezado">
                   <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
                     alt="logo de la aplicación">
@@ -63,6 +65,7 @@
                         arreglo.getDescripcion() : "" ; String descCorta=desc.length()> 60 ? desc.substring(0, 60) +
                         "..." : desc;
                         String urlEditar = "personalizar-arreglo.jsp?id=" + arreglo.getPersonalizacionId();
+                        String urlCita = "agendar-cita.jsp?personalizacionId=" + arreglo.getPersonalizacionId();
                         %>
                         <section class="contenido-seleccion__contenedor arreglo-card">
                           <img class="contenedor__imagen" src="<%= imgUrl %>" alt="Imagen del arreglo">
@@ -84,8 +87,7 @@
                                   <% } %>
                                     <% if (arreglo.getMaterialTela() !=null &&
                                       !arreglo.getMaterialTela().trim().isEmpty()) { %>
-                                      <p class="informacion__descripcion">
-                                        <strong>Tela:</strong>
+                                      <p class="informacion__descripcion"><strong>Tela:</strong>
                                         <%= arreglo.getMaterialTela() %>
                                       </p>
                                       <% } %>
@@ -94,16 +96,12 @@
                               </div>
                             </div>
                             <div class="contenedor-informacion__enlaces">
-                              <a class="enlaces__enlace-arreglos" href="<%= urlEditar %>">
-                                Editar
-                              </a>
+                              <a class="enlaces__enlace-arreglos" href="<%= urlEditar %>">Editar</a>
                               <a class="enlaces__enlace-arreglos" href="#"
                                 onclick="prepararEliminarArreglo(<%= arreglo.getPersonalizacionId() %>); return false;">
                                 Eliminar
                               </a>
-                              <a class="enlace__cita-usuario" href="agendar-cita.jsp">
-                                Agendar Cita
-                              </a>
+                              <a class="enlace__cita-usuario" href="<%= urlCita %>">Agendar Cita</a>
                             </div>
                           </div>
                         </section>
@@ -111,9 +109,7 @@
                           <% } else { %>
                             <div class="arreglos__vacio">
                               <p class="arreglos__vacio-texto">No tienes arreglos personalizados aún.</p>
-                              <a href="pagina-principal.jsp" class="informacion__enlace-personalizar">
-                                Ver Servicios
-                              </a>
+                              <a href="pagina-principal.jsp" class="informacion__enlace-personalizar">Ver Servicios</a>
                             </div>
                             <% } %>
                 </main>
