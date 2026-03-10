@@ -62,6 +62,14 @@ public class AdminServlet extends HttpServlet {
                             + pedidoId + "&actualizado=1");
                     break;
                 }
+                case "cambiarEstadoCita": {
+                    int citaId = Integer.parseInt(request.getParameter("citaId"));
+                    String nuevoEstado = request.getParameter("nuevoEstado");
+                    adminDAO.cambiarEstadoCita(citaId, nuevoEstado);
+                    response.sendRedirect(
+                            "/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp?vista=citas&actualizado=1");
+                    break;
+                }
 
                 default:
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp");

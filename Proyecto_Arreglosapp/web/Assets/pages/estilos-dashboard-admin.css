@@ -426,3 +426,57 @@
 .estadistica:hover {
     transform: translateY(-2px);
 }
+
+/* BOTÓN GESTIONAR EN CITAS */
+.pedido__enlace--btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* MODAL CITA */
+.modal-cita__opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.modal-cita__btn {
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.modal-cita__btn--confirmar {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.modal-cita__btn--confirmar:hover {
+    background: #c8e6c9;
+}
+
+.modal-cita__btn--completar {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.modal-cita__btn--completar:hover {
+    background: #bbdefb;
+}
+
+.modal-cita__btn--cancelar {
+    background: #fdecea;
+    color: #c62828;
+}
+
+.modal-cita__btn--cancelar:hover {
+    background: #ffcdd2;
+}

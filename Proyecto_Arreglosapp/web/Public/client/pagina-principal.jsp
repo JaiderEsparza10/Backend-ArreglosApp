@@ -75,7 +75,7 @@
                                                                         <p class="tarjeta-arreglo__precio">$<%= precio
                                                                                 %>
                                                                         </p>
-                                                                        <a href="personalizar-arreglo.jsp"
+                                                                        <a href="detalle-servicio.jsp?id=<%= s.getArregloId() %>"
                                                                             class="tarjeta-arreglo__enlace">Detalles</a>
                                                                     </div>
                                                                 </div>

@@ -22,7 +22,7 @@
     background-color: #7b1fa2;
 }
 
-/* LISTA DE SERVICIOS */
+/* LISTA */
 .servicios__lista {
     display: flex;
     flex-direction: column;
@@ -222,6 +222,9 @@
     pointer-events: none;
     transition: opacity 0.3s ease;
     z-index: 9999;
+    display: inline-block;
+    width: auto;
+    max-width: 90%;
     white-space: nowrap;
 }
 
@@ -235,82 +238,4 @@
 
 .toast--error {
     background-color: #c62828;
-}
-
-.toast {
-    display: inline-block;
-    width: auto;
-    max-width: 90%;
-}
-
-/* FORMULARIO CREAR/EDITAR SERVICIO */
-.formulario-servicio__titulo {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin-bottom: 20px;
-}
-
-.formulario-servicio {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding-bottom: 80px;
-}
-
-.formulario-servicio__grupo {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.formulario-servicio__label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #444;
-}
-
-.formulario-servicio__input {
-    border: none;
-    border-bottom: 2px solid #6a0dad;
-    padding: 10px 4px;
-    font-size: 14px;
-    color: #1a1a1a;
-    background: transparent;
-    outline: none;
-    width: 100%;
-}
-
-.formulario-servicio__input:focus {
-    border-bottom-color: #9c27b0;
-}
-
-.formulario-servicio__textarea {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 14px;
-    color: #1a1a1a;
-    background: #fafafa;
-    outline: none;
-    width: 100%;
-    min-height: 100px;
-    resize: vertical;
-}
-
-.formulario-servicio__textarea:focus {
-    border-color: #6a0dad;
-}
-
-.formulario__imagen-actual {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-}
-
-.imagen-actual__texto {
-    font-size: 12px;
-    color: #888;
-    text-align: center;
 }

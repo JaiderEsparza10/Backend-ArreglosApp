@@ -63,6 +63,84 @@ public class AdminDAO {
         return lista;
     }
 
+    public List<Map<String, Object>> obtenerTodasLasCitas() throws Exception {
+        String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, " +
+                "u.user_nombre, p.pedido_id " +
+                "FROM citas c " +
+                "JOIN pedidos p ON p.pedido_id = c.pedido_id " +
+                "JOIN usuarios u ON u.user_id = p.usuario_id " +
+                "ORDER BY c.cita_fecha_hora DESC";
+
+        List<Map<String, Object>> lista = new ArrayList<>();
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Map<String, Object> cita = new LinkedHashMap<>();
+                cita.put("citaId", rs.getInt("cita_id"));
+                cita.put("pedidoId", rs.getInt("pedido_id"));
+                cita.put("fechaHora", rs.getTimestamp("cita_fecha_hora"));
+                cita.put("estado", rs.getString("cita_estado"));
+                cita.put("notas", rs.getString("cita_notas"));
+                cita.put("cliente", rs.getString("user_nombre"));
+                lista.add(cita);
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener citas: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public boolean cambiarEstadoCita(int citaId, String nuevoEstado) throws Exception {
+        Connection con = null;
+        try {
+            con = ConectionDB.getConexion();
+            con.setAutoCommit(false);
+
+            // 1. Actualizar estado de la cita
+            String sqlCita = "UPDATE citas SET cita_estado = ? WHERE cita_id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlCita)) {
+                ps.setString(1, nuevoEstado);
+                ps.setInt(2, citaId);
+                ps.executeUpdate();
+            }
+
+            // 2. Sincronizar estado del pedido según estado de cita
+            String nuevoPedidoEstado = null;
+            if (nuevoEstado.equals("confirmada")) {
+                nuevoPedidoEstado = "confirmado";
+            } else if (nuevoEstado.equals("completada")) {
+                nuevoPedidoEstado = "terminado";
+            } else if (nuevoEstado.equals("cancelada")) {
+                nuevoPedidoEstado = "cancelado";
+            }
+
+            if (nuevoPedidoEstado != null) {
+                String sqlPedido = "UPDATE pedidos SET pedido_estado = ?, " +
+                        "pedido_fecha_actualizacion = CURRENT_TIMESTAMP " +
+                        "WHERE pedido_id = (SELECT pedido_id FROM citas WHERE cita_id = ?)";
+                try (PreparedStatement ps = con.prepareStatement(sqlPedido)) {
+                    ps.setString(1, nuevoPedidoEstado);
+                    ps.setInt(2, citaId);
+                    ps.executeUpdate();
+                }
+            }
+
+            con.commit();
+            return true;
+
+        } catch (SQLException e) {
+            if (con != null)
+                con.rollback();
+            throw new Exception("Error al cambiar estado cita: " + e.getMessage());
+        } finally {
+            if (con != null) {
+                con.setAutoCommit(true);
+                con.close();
+            }
+        }
+    }
+
     // ─── USUARIOS ─────────────────────────────────────────────────
 
     public List<Map<String, Object>> obtenerUsuarios(String busqueda) throws Exception {
@@ -105,13 +183,41 @@ public class AdminDAO {
     }
 
     public boolean eliminarUsuario(int userId) throws Exception {
-        String sql = "DELETE FROM usuarios WHERE user_id = ? AND rol_id = 2";
-        try (Connection con = ConectionDB.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            return ps.executeUpdate() > 0;
+        Connection con = null;
+        try {
+            con = ConectionDB.getConexion();
+            con.setAutoCommit(false);
+
+            // Eliminar registros relacionados en orden
+            String[] tablas = {
+                    "DELETE FROM favoritos WHERE user_id = ?",
+                    "DELETE FROM telefonos WHERE user_id = ?",
+                    "DELETE FROM detalle_pedido WHERE pedido_id IN (SELECT pedido_id FROM pedidos WHERE usuario_id = ?)",
+                    "DELETE FROM citas WHERE pedido_id IN (SELECT pedido_id FROM pedidos WHERE usuario_id = ?)",
+                    "DELETE FROM personalizaciones WHERE user_id = ?",
+                    "DELETE FROM pedidos WHERE usuario_id = ?",
+                    "DELETE FROM usuarios WHERE user_id = ? AND rol_id = 2"
+            };
+
+            for (String sql : tablas) {
+                try (PreparedStatement ps = con.prepareStatement(sql)) {
+                    ps.setInt(1, userId);
+                    ps.executeUpdate();
+                }
+            }
+
+            con.commit();
+            return true;
+
         } catch (SQLException e) {
+            if (con != null)
+                con.rollback();
             throw new Exception("Error al eliminar usuario: " + e.getMessage());
+        } finally {
+            if (con != null) {
+                con.setAutoCommit(true);
+                con.close();
+            }
         }
     }
 

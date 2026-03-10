@@ -8,3 +8,9 @@
         "footer footer footer footer footer";
     padding-bottom: 75px;
 }
+
+.grid-principal {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}

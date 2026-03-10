@@ -11,12 +11,12 @@
                     sid=Integer.parseInt(idParam); ServicioDAO dao=new ServicioDAO(); editando=dao.obtenerPorId(sid); }
                     catch (Exception e) { e.printStackTrace(); } } boolean esEdicion=editando !=null; String
                     accionForm=esEdicion ? "editar" : "crear" ; String tituloBtn=esEdicion ? "Guardar Cambios"
-                    : "Crear Servicio" ; String tituloPag=esEdicion ? "Editar Servicio" : "Crear Servicio" ; String
+                    : "Crear Servicio" ; String tituloPag=esEdicion ? "Editar Servicio" : "Nuevo Servicio" ; String
                     valNombre=esEdicion ? editando.getNombre() : "" ; String valDesc=esEdicion ?
                     (editando.getDescripcion() !=null ? editando.getDescripcion() : "" ) : "" ; String
                     valPrecio=esEdicion ? String.valueOf(editando.getPrecioBase()) : "" ; String valTiempo=esEdicion ?
                     (editando.getTiempoEstimado() !=null ? editando.getTiempoEstimado() : "" ) : "" ; int
-                    valId=esEdicion ? editando.getArregloId() : 0; %>
+                    valId=esEdicion ? editando.getArregloId() : 0; String ctx=request.getContextPath(); %>
                     <!DOCTYPE html>
                     <html lang="es">
 
@@ -36,22 +36,24 @@
                             <h1 class="seccion-encabezado__nombre">ArreglosApp</h1>
                         </header>
 
-                        <main class="dashboard">
-                            <a href="administrador-servicios.jsp" class="detalle-pedido__volver">
-                                <img src="../../Assets/icons/flecha-atras-negra.png" alt="volver"
-                                    class="detalle-pedido__volver-icono">
-                            </a>
+                        <main class="form-servicio-page">
 
-                            <h2 class="formulario-servicio__titulo">
-                                <%= tituloPag %>
-                            </h2>
+                            <div class="form-servicio-page__encabezado">
+                                <a href="administrador-servicios.jsp" class="form-servicio-page__volver">
+                                    <img src="../../Assets/icons/flecha-izquierda__blanca.png" alt="volver"
+                                        class="btn-volver__icono">
+                                </a>
+                                <h1 class="form-servicio-page__titulo">
+                                    <%= tituloPag %>
+                                </h1>
+                            </div>
 
                             <% if (errorMsg !=null) { %>
-                                <div class="cita__alerta cita__alerta--error">❌ <%= errorMsg %>
+                                <div class="form-servicio-page__error">❌ <%= errorMsg %>
                                 </div>
                                 <% } %>
 
-                                    <form class="formulario-servicio" action="/Proyecto_Arreglosapp/ServicioServlet"
+                                    <form class="form-servicio" action="/Proyecto_Arreglosapp/ServicioServlet"
                                         method="post" enctype="multipart/form-data">
 
                                         <input type="hidden" name="accion" value="<%= accionForm %>">
@@ -59,60 +61,70 @@
                                             <input type="hidden" name="arregloId" value="<%= valId %>">
                                             <% } %>
 
-                                                <div class="formulario-servicio__grupo">
-                                                    <label class="formulario-servicio__label">Nombre del
-                                                        Servicio</label>
-                                                    <input type="text" name="nombre" class="formulario-servicio__input"
-                                                        placeholder="Costura y Reparación General..."
+                                                <div class="form-servicio__campo">
+                                                    <label class="form-servicio__label">Nombre del Servicio</label>
+                                                    <input type="text" name="nombre" class="form-servicio__input"
+                                                        placeholder="Ej: Costura y Reparación General"
                                                         value="<%= valNombre %>" required>
                                                 </div>
 
-                                                <div class="formulario-servicio__grupo">
-                                                    <label class="formulario-servicio__label">Descripción del
-                                                        Servicio</label>
-                                                    <textarea name="descripcion" class="formulario-servicio__textarea"
-                                                        placeholder="Descripción del servicio..."><%= valDesc %></textarea>
+                                                <div class="form-servicio__campo">
+                                                    <label class="form-servicio__label">Descripción</label>
+                                                    <textarea name="descripcion" class="form-servicio__textarea"
+                                                        placeholder="Describe el servicio..."><%= valDesc %></textarea>
                                                 </div>
 
-                                                <div class="formulario-servicio__grupo">
-                                                    <label class="formulario-servicio__label">Precio Base</label>
-                                                    <input type="text" name="precio" class="formulario-servicio__input"
-                                                        placeholder="25000" value="<%= valPrecio %>" required>
-                                                </div>
-
-                                                <div class="formulario-servicio__grupo">
-                                                    <label class="formulario-servicio__label">Tiempo Estimado</label>
-                                                    <input type="text" name="tiempoEstimado"
-                                                        class="formulario-servicio__input" placeholder="Ej: 2-3 días"
-                                                        value="<%= valTiempo %>">
-                                                </div>
-
-                                                <% if (esEdicion && editando.getImagenUrl() !=null) { %>
-                                                    <div class="formulario__imagen-actual">
-                                                        <img src="<%= request.getContextPath() + " /" +
-                                                            editando.getImagenUrl() %>"
-                                                        alt="Imagen actual" class="preview__imagen">
-                                                        <p class="imagen-actual__texto">Imagen actual — sube una nueva
-                                                            para reemplazarla</p>
+                                                <div class="form-servicio__fila">
+                                                    <div class="form-servicio__campo">
+                                                        <label class="form-servicio__label">Precio Base</label>
+                                                        <div class="form-servicio__input-prefix">
+                                                            <span class="form-servicio__prefix">$</span>
+                                                            <input type="text" name="precio"
+                                                                class="form-servicio__input form-servicio__input--con-prefix"
+                                                                placeholder="25000" value="<%= valPrecio %>" required>
+                                                        </div>
                                                     </div>
-                                                    <% } %>
+                                                    <div class="form-servicio__campo">
+                                                        <label class="form-servicio__label">Tiempo Estimado</label>
+                                                        <input type="text" name="tiempoEstimado"
+                                                            class="form-servicio__input" placeholder="Ej: 2-3 días"
+                                                            value="<%= valTiempo %>">
+                                                    </div>
+                                                </div>
 
-                                                        <div class="formulario__subir-foto">
-                                                            <input type="file" name="imagen" id="imagenServicio"
-                                                                class="subir-foto__foto" accept="image/*">
-                                                            <label for="imagenServicio" class="subir-foto__agregar">
+                                                <div class="form-servicio__campo">
+                                                    <label class="form-servicio__label">Imagen del Servicio</label>
+                                                    <% if (esEdicion && editando.getImagenUrl() !=null) { %>
+                                                        <div class="form-servicio__img-actual">
+                                                            <img src="<%= ctx + " /" +
+                                                                editando.getImagenUrl().replace("../../", "" ) %>"
+                                                            alt="Imagen actual" class="form-servicio__img-preview">
+                                                            <p class="form-servicio__img-texto">Imagen actual — sube una
+                                                                nueva para reemplazarla</p>
+                                                        </div>
+                                                        <% } %>
+                                                            <label for="imagenServicio"
+                                                                class="form-servicio__upload-label" id="uploadLabel">
                                                                 <img src="../../Assets/icons/agregar-imagen.png"
-                                                                    alt="icono agregar" class="subir-foto__icono">
-                                                                <span id="nombreArchivo">Subir Foto</span>
+                                                                    alt="subir" class="form-servicio__upload-icono">
+                                                                <span id="nombreArchivo">Toca para subir una foto</span>
                                                             </label>
-                                                        </div>
+                                                            <input type="file" name="imagen" id="imagenServicio"
+                                                                class="form-servicio__upload-input" accept="image/*">
+                                                </div>
 
-                                                        <div class="formulario__seccion-boton">
-                                                            <button type="submit"
-                                                                class="informacion__enlace-personalizar informacion__enlace-personalizar--modificador">
-                                                                <%= tituloBtn %>
-                                                            </button>
-                                                        </div>
+                                                <div id="previewContenedor" class="form-servicio__preview"
+                                                    style="display:none;">
+                                                    <img id="previewImagen" class="form-servicio__img-preview" src=""
+                                                        alt="Vista previa">
+                                                    <button type="button" class="form-servicio__quitar-img"
+                                                        onclick="quitarImagen()">✕ Quitar imagen</button>
+                                                </div>
+
+                                                <button type="submit" class="form-servicio__btn-submit">
+                                                    <%= tituloBtn %>
+                                                </button>
+
                                     </form>
                         </main>
 
@@ -141,9 +153,23 @@
 
                         <script>
                             document.getElementById('imagenServicio').addEventListener('change', function () {
-                                var nombre = this.files[0] ? this.files[0].name : 'Subir Foto';
-                                document.getElementById('nombreArchivo').textContent = nombre;
+                                var archivo = this.files[0];
+                                if (archivo) {
+                                    document.getElementById('nombreArchivo').textContent = archivo.name;
+                                    var reader = new FileReader();
+                                    reader.onload = function (e) {
+                                        document.getElementById('previewImagen').src = e.target.result;
+                                        document.getElementById('previewContenedor').style.display = 'block';
+                                    };
+                                    reader.readAsDataURL(archivo);
+                                }
                             });
+
+                            function quitarImagen() {
+                                document.getElementById('imagenServicio').value = '';
+                                document.getElementById('nombreArchivo').textContent = 'Toca para subir una foto';
+                                document.getElementById('previewContenedor').style.display = 'none';
+                            }
                         </script>
                     </body>
 

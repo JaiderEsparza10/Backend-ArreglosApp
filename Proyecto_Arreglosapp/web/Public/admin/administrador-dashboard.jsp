@@ -9,19 +9,21 @@
                                 admin.getRolId() !=1) { response.sendRedirect("/Proyecto_Arreglosapp/index.jsp");
                                 return; } AdminDAO adminDAO=new AdminDAO(); int totalPedidosActivos=0; int
                                 totalCitasHoy=0; List<Map<String, Object>> pedidosRecientes = new ArrayList<>();
-                                    List<Map<String, Object>> citasHoy = new ArrayList<>();
-
+                                    List<Map<String, Object>> todasLasCitas = new ArrayList<>();
                                             try {
                                             totalPedidosActivos = adminDAO.contarPedidosActivos();
                                             totalCitasHoy = adminDAO.contarCitasHoy();
                                             pedidosRecientes = adminDAO.obtenerPedidosRecientes();
-                                            citasHoy = adminDAO.obtenerCitasHoy();
+                                            todasLasCitas = adminDAO.obtenerTodasLasCitas();
                                             } catch (Exception e) {
                                             e.printStackTrace();
                                             }
-
                                             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                                            SimpleDateFormat sdfFecha = new SimpleDateFormat("dd/MM/yyyy");
                                             SimpleDateFormat sdfHora = new SimpleDateFormat("hh:mm a");
+                                            String vistaParam = request.getParameter("vista");
+                                            String vistaInicial = (vistaParam != null && vistaParam.equals("citas")) ?
+                                            "citas" : "pedidos";
                                             %>
                                             <!DOCTYPE html>
                                             <html lang="es">
@@ -34,6 +36,8 @@
                                             </head>
 
                                             <body class="grid-principal">
+
+                                                <div id="toast" class="toast"></div>
 
                                                 <header class="seccion-encabezado">
                                                     <img class="seccion-encabezado__logo"
@@ -81,158 +85,170 @@
                                                                     No hay pedidos recientes</p>
                                                                 <% } %>
                                                                     <% for (int i=0; i < pedidosRecientes.size(); i++) {
+                                                                        Map<String, Object> pedido =
+                                                                        pedidosRecientes.get(i);
+                                                                        int pedidoId = (Integer) pedido.get("pedidoId");
+                                                                        String estado = (String) pedido.get("estado");
+                                                                        String cliente = (String) pedido.get("cliente");
+                                                                        java.sql.Timestamp citaFecha =
+                                                                        (java.sql.Timestamp) pedido.get("citaFecha");
+                                                                        String citaStr = "Sin cita";
+                                                                        if (citaFecha != null) { citaStr =
+                                                                        sdf.format(citaFecha); }
+                                                                        String estadoClass =
+                                                                        "pedido__estado--pendiente";
+                                                                        String estadoLabel = "Pendiente";
+                                                                        if (estado != null) {
+                                                                        if (estado.equals("confirmado")) { estadoClass =
+                                                                        "pedido__estado--confirmado"; estadoLabel =
+                                                                        "Confirmado"; }
+                                                                        else if (estado.equals("en_proceso")) {
+                                                                        estadoClass = "pedido__estado--en-taller";
+                                                                        estadoLabel = "En Proceso"; }
+                                                                        else if (estado.equals("terminado")) {
+                                                                        estadoClass = "pedido__estado--entregado";
+                                                                        estadoLabel = "Terminado"; }
+                                                                        else if (estado.equals("cancelado")) {
+                                                                        estadoClass = "pedido__estado--cancelado";
+                                                                        estadoLabel = "Cancelado"; }
+                                                                        }
                                                                         %>
-                                                                        <% Map<String, Object> pedido =
-                                                                            pedidosRecientes.get(i);
-                                                                            int pedidoId = (Integer)
-                                                                            pedido.get("pedidoId");
-                                                                            String estado = (String)
-                                                                            pedido.get("estado");
-                                                                            String cliente = (String)
-                                                                            pedido.get("cliente");
-                                                                            java.sql.Timestamp citaFecha =
-                                                                            (java.sql.Timestamp)
-                                                                            pedido.get("citaFecha");
-                                                                            String citaStr = "Sin cita";
-                                                                            if (citaFecha != null) {
-                                                                            citaStr = sdf.format(citaFecha);
-                                                                            }
-                                                                            String estadoClass =
-                                                                            "pedido__estado--pendiente";
-                                                                            String estadoLabel = "Pendiente";
-                                                                            if (estado != null) {
-                                                                            if (estado.equals("confirmado")) {
-                                                                            estadoClass = "pedido__estado--confirmado";
-                                                                            estadoLabel = "Confirmado"; }
-                                                                            else if (estado.equals("en_proceso")) {
-                                                                            estadoClass = "pedido__estado--en-taller";
-                                                                            estadoLabel = "En Proceso"; }
-                                                                            else if (estado.equals("terminado")) {
-                                                                            estadoClass = "pedido__estado--entregado";
-                                                                            estadoLabel = "Terminado"; }
-                                                                            else if (estado.equals("cancelado")) {
-                                                                            estadoClass = "pedido__estado--cancelado";
-                                                                            estadoLabel = "Cancelado"; }
-                                                                            }
-                                                                            %>
-                                                                            <article class="pedido">
-                                                                                <div class="pedido__contenido">
-                                                                                    <span class="pedido__id">ID: #P-<%=
-                                                                                            String.format("%05d",
-                                                                                            pedidoId) %></span>
-                                                                                    <div class="pedido__info-cliente">
-                                                                                        <div
-                                                                                            class="pedido__cliente-row">
-                                                                                            <span
-                                                                                                class="pedido__label">Cliente:</span>
-                                                                                            <span
-                                                                                                class="pedido__cliente">
-                                                                                                <%= cliente %>
-                                                                                            </span>
-                                                                                        </div>
-                                                                                        <span class="pedido__cita">Cita:
-                                                                                            <%= citaStr %></span>
+                                                                        <article class="pedido">
+                                                                            <div class="pedido__contenido">
+                                                                                <span class="pedido__id">ID: #P-<%=
+                                                                                        String.format("%05d", pedidoId)
+                                                                                        %></span>
+                                                                                <div class="pedido__info-cliente">
+                                                                                    <div class="pedido__cliente-row">
+                                                                                        <span
+                                                                                            class="pedido__label">Cliente:</span>
+                                                                                        <span class="pedido__cliente">
+                                                                                            <%= cliente %>
+                                                                                        </span>
                                                                                     </div>
+                                                                                    <span class="pedido__cita">Cita: <%=
+                                                                                            citaStr %></span>
                                                                                 </div>
-                                                                                <div class="pedido__acciones">
-                                                                                    <span
-                                                                                        class="pedido__estado <%= estadoClass %>">
-                                                                                        <%= estadoLabel %>
-                                                                                    </span>
-                                                                                    <a href="detalle-pedido-admin.jsp?pedidoId=<%= pedidoId %>"
-                                                                                        class="pedido__enlace">Detalles</a>
-                                                                                </div>
-                                                                            </article>
-                                                                            <% } %>
+                                                                            </div>
+                                                                            <div class="pedido__acciones">
+                                                                                <span
+                                                                                    class="pedido__estado <%= estadoClass %>">
+                                                                                    <%= estadoLabel %>
+                                                                                </span>
+                                                                                <a href="detalle-pedido-admin.jsp?pedidoId=<%= pedidoId %>"
+                                                                                    class="pedido__enlace">Detalles</a>
+                                                                            </div>
+                                                                        </article>
+                                                                        <% } %>
                                                         </div>
                                                     </section>
 
                                                     <!-- VISTA CITAS -->
                                                     <section class="dashboard__seccion-pedidos" id="vistaCitas"
                                                         style="display:none;">
-                                                        <h2 class="pedidos__titulo">Citas de Hoy</h2>
+                                                        <h2 class="pedidos__titulo">Todas las Citas</h2>
                                                         <div class="pedidos__lista">
-                                                            <% if (citasHoy==null || citasHoy.isEmpty()) { %>
+                                                            <% if (todasLasCitas==null || todasLasCitas.isEmpty()) { %>
                                                                 <p
                                                                     style="color:#888;font-size:13px;text-align:center;padding:20px;">
-                                                                    No hay citas para hoy</p>
+                                                                    No hay citas registradas</p>
                                                                 <% } %>
-                                                                    <% for (int j=0; j < citasHoy.size(); j++) { %>
-                                                                        <% Map<String, Object> cita = citasHoy.get(j);
-                                                                            int pedidoIdCita = (Integer)
-                                                                            cita.get("pedidoId");
-                                                                            String clienteCita = (String)
-                                                                            cita.get("cliente");
-                                                                            String estadoCita = (String)
-                                                                            cita.get("estado");
-                                                                            String notasCita = (String)
-                                                                            cita.get("notas");
-                                                                            java.sql.Timestamp fechaHoraCita =
-                                                                            (java.sql.Timestamp) cita.get("fechaHora");
-                                                                            String horaStr = "Sin hora";
-                                                                            if (fechaHoraCita != null) {
-                                                                            horaStr = sdfHora.format(fechaHoraCita);
-                                                                            }
-                                                                            String notasTexto = "";
-                                                                            if (notasCita != null &&
-                                                                            !notasCita.trim().isEmpty()) {
-                                                                            notasTexto = notasCita;
-                                                                            }
-                                                                            String estadoCitaClass =
-                                                                            "pedido__estado--pendiente";
-                                                                            String estadoCitaLabel = "Programada";
-                                                                            if (estadoCita != null) {
-                                                                            if (estadoCita.equals("confirmada")) {
-                                                                            estadoCitaClass =
-                                                                            "pedido__estado--confirmado";
-                                                                            estadoCitaLabel = "Confirmada"; }
-                                                                            else if (estadoCita.equals("completada")) {
-                                                                            estadoCitaClass =
-                                                                            "pedido__estado--entregado"; estadoCitaLabel
-                                                                            = "Completada"; }
-                                                                            else if (estadoCita.equals("cancelada")) {
-                                                                            estadoCitaClass =
-                                                                            "pedido__estado--cancelado"; estadoCitaLabel
-                                                                            = "Cancelada"; }
-                                                                            }
-                                                                            %>
-                                                                            <article class="pedido">
-                                                                                <div class="pedido__contenido">
-                                                                                    <span class="pedido__id">🕐 <%=
-                                                                                            horaStr %></span>
-                                                                                    <div class="pedido__info-cliente">
-                                                                                        <div
-                                                                                            class="pedido__cliente-row">
-                                                                                            <span
-                                                                                                class="pedido__label">Cliente:</span>
-                                                                                            <span
-                                                                                                class="pedido__cliente">
-                                                                                                <%= clienteCita %>
-                                                                                            </span>
-                                                                                        </div>
-                                                                                        <% if (!notasTexto.isEmpty()) {
-                                                                                            %>
-                                                                                            <span
-                                                                                                class="pedido__cita">📍
-                                                                                                <%= notasTexto %></span>
-                                                                                            <% } %>
+                                                                    <% for (int j=0; j < todasLasCitas.size(); j++) {
+                                                                        Map<String, Object> cita = todasLasCitas.get(j);
+                                                                        int citaId = (Integer) cita.get("citaId");
+                                                                        int pedidoIdCita = (Integer)
+                                                                        cita.get("pedidoId");
+                                                                        String clienteCita = (String)
+                                                                        cita.get("cliente");
+                                                                        String estadoCita = (String) cita.get("estado");
+                                                                        String notasCita = (String) cita.get("notas");
+                                                                        java.sql.Timestamp fechaHoraCita =
+                                                                        (java.sql.Timestamp) cita.get("fechaHora");
+                                                                        String fechaStr = "Sin fecha";
+                                                                        if (fechaHoraCita != null) { fechaStr =
+                                                                        sdf.format(fechaHoraCita); }
+                                                                        String notasTexto = (notasCita != null &&
+                                                                        !notasCita.trim().isEmpty()) ? notasCita : "";
+                                                                        String estadoCitaClass =
+                                                                        "pedido__estado--pendiente";
+                                                                        String estadoCitaLabel = "Programada";
+                                                                        if (estadoCita != null) {
+                                                                        if (estadoCita.equals("confirmada")) {
+                                                                        estadoCitaClass = "pedido__estado--confirmado";
+                                                                        estadoCitaLabel = "Confirmada"; }
+                                                                        else if (estadoCita.equals("completada")) {
+                                                                        estadoCitaClass = "pedido__estado--entregado";
+                                                                        estadoCitaLabel = "Completada"; }
+                                                                        else if (estadoCita.equals("cancelada")) {
+                                                                        estadoCitaClass = "pedido__estado--cancelado";
+                                                                        estadoCitaLabel = "Cancelada"; }
+                                                                        }
+                                                                        %>
+                                                                        <article class="pedido">
+                                                                            <div class="pedido__contenido">
+                                                                                <span class="pedido__id">🗓 <%= fechaStr
+                                                                                        %></span>
+                                                                                <div class="pedido__info-cliente">
+                                                                                    <div class="pedido__cliente-row">
+                                                                                        <span
+                                                                                            class="pedido__label">Cliente:</span>
+                                                                                        <span class="pedido__cliente">
+                                                                                            <%= clienteCita %>
+                                                                                        </span>
                                                                                     </div>
+                                                                                    <% if (!notasTexto.isEmpty()) { %>
+                                                                                        <span class="pedido__cita">📍
+                                                                                            <%= notasTexto %></span>
+                                                                                        <% } %>
                                                                                 </div>
-                                                                                <div class="pedido__acciones">
-                                                                                    <span
-                                                                                        class="pedido__estado <%= estadoCitaClass %>">
-                                                                                        <%= estadoCitaLabel %>
-                                                                                    </span>
-                                                                                    <a href="detalle-pedido-admin.jsp?pedidoId=<%= pedidoIdCita %>"
-                                                                                        class="pedido__enlace">Ver
-                                                                                        Pedido</a>
-                                                                                </div>
-                                                                            </article>
-                                                                            <% } %>
+                                                                            </div>
+                                                                            <div class="pedido__acciones">
+                                                                                <span
+                                                                                    class="pedido__estado <%= estadoCitaClass %>">
+                                                                                    <%= estadoCitaLabel %>
+                                                                                </span>
+                                                                                <button
+                                                                                    class="pedido__enlace pedido__enlace--btn"
+                                                                                    onclick="abrirModalCita(<%= citaId %>, '<%= estadoCita %>')">
+                                                                                    Gestionar
+                                                                                </button>
+                                                                            </div>
+                                                                        </article>
+                                                                        <% } %>
                                                         </div>
                                                     </section>
 
                                                 </main>
+
+                                                <!-- MODAL GESTIONAR CITA -->
+                                                <div id="modalCita" class="modal-overlay" style="display:none;">
+                                                    <div class="modal-contenido">
+                                                        <h2 class="modal__titulo">Cambiar Estado</h2>
+                                                        <p class="modal__descripcion">Selecciona el nuevo estado para
+                                                            esta cita</p>
+                                                        <div class="modal-cita__opciones">
+                                                            <button class="modal-cita__btn modal-cita__btn--confirmar"
+                                                                onclick="cambiarEstado('confirmada')">✓
+                                                                Confirmar</button>
+                                                            <button class="modal-cita__btn modal-cita__btn--completar"
+                                                                onclick="cambiarEstado('completada')">✅
+                                                                Completar</button>
+                                                            <button class="modal-cita__btn modal-cita__btn--cancelar"
+                                                                onclick="cambiarEstado('cancelada')">✕ Cancelar</button>
+                                                        </div>
+                                                        <form method="post" action="/Proyecto_Arreglosapp/AdminServlet"
+                                                            id="formCita">
+                                                            <input type="hidden" name="accion"
+                                                                value="cambiarEstadoCita">
+                                                            <input type="hidden" name="citaId" id="inputCitaId">
+                                                            <input type="hidden" name="nuevoEstado"
+                                                                id="inputNuevoEstado">
+                                                        </form>
+                                                        <button class="btn-modal btn-modal--cancelar"
+                                                            style="width:100%;margin-top:8px;"
+                                                            onclick="cerrarModalCita()">Cerrar</button>
+                                                    </div>
+                                                </div>
 
                                                 <footer class="navbar">
                                                     <nav class="navbar-inferior">
@@ -264,6 +280,17 @@
                                                 </footer>
 
                                                 <script>
+                                                    var vistaInicial = '<%= vistaInicial %>';
+                                                    var citaIdActual = 0;
+
+                                                    window.addEventListener('load', function () {
+                                                        mostrarVista(vistaInicial);
+                                                        var params = new URLSearchParams(window.location.search);
+                                                        if (params.get('actualizado') === '1') {
+                                                            mostrarToast('Estado actualizado correctamente', 'exito');
+                                                        }
+                                                    });
+
                                                     function mostrarVista(vista) {
                                                         var vistaPedidos = document.getElementById('vistaPedidos');
                                                         var vistaCitas = document.getElementById('vistaCitas');
@@ -280,6 +307,28 @@
                                                             estadPedidos.style.opacity = '0.6';
                                                             estadCitas.style.opacity = '1';
                                                         }
+                                                    }
+
+                                                    function abrirModalCita(citaId, estadoActual) {
+                                                        citaIdActual = citaId;
+                                                        document.getElementById('inputCitaId').value = citaId;
+                                                        document.getElementById('modalCita').style.display = 'flex';
+                                                    }
+
+                                                    function cambiarEstado(nuevoEstado) {
+                                                        document.getElementById('inputNuevoEstado').value = nuevoEstado;
+                                                        document.getElementById('formCita').submit();
+                                                    }
+
+                                                    function cerrarModalCita() {
+                                                        document.getElementById('modalCita').style.display = 'none';
+                                                    }
+
+                                                    function mostrarToast(msg, tipo) {
+                                                        var toast = document.getElementById('toast');
+                                                        toast.textContent = msg;
+                                                        toast.className = 'toast toast--' + tipo + ' toast--visible';
+                                                        setTimeout(function () { toast.classList.remove('toast--visible'); }, 3000);
                                                     }
                                                 </script>
                                             </body>
