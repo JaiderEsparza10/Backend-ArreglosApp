@@ -18,6 +18,7 @@
     text-align: center;
     min-width: 280px;
     pointer-events: none;
+    bottom: auto; /* Evita estiramiento vertical si se define bottom en otro lugar */
 }
 
 .toast--exito {

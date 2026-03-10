@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public class ConectionDB {
     private static final String URL = "jdbc:mysql://localhost:3306/PROYECTO_ARREGLOSAPP";
     private static final String USER = "root";
-    private static final String PASSWD = "J1095581627";
+    private static final String PASSWD = "#Aprendiz2024";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 
     /**

@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ page import="java.util.List" %>
         <%@ page import="java.util.Map" %>
             <%@ page import="model.Usuario" %>
@@ -35,6 +35,7 @@
                                     </head>
 
                                     <body class="grid-principal">
+                                        <a href="#contenido-principal" class="skip-link">Saltar al contenido</a>
                                         <header class="seccion-encabezado">
                                             <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
                                                 alt="logo de la aplicación">
@@ -43,7 +44,7 @@
 
                                         <div id="toast" class="toast"></div>
 
-                                        <main class="contenido-pedidos">
+                                        <main class="contenido-pedidos" id="contenido-principal" role="main">
                                             <h1 class="contenido__titulo-seleccion">Mis Pedidos</h1>
 
                                             <!-- TABS -->
@@ -112,7 +113,8 @@
                                                                                 class="pedido-card__cita-icono">📅</span>
                                                                             <span class="pedido-card__cita-texto">Cita:
                                                                                 <%= citaFechaStr %> a las <%=
-                                                                                        citaHoraStr %></span>
+                                                                                        citaHoraStr %>
+                                                                            </span>
                                                                         </div>
                                                                         <% if (citaNotas !=null &&
                                                                             !citaNotas.trim().isEmpty()) { %>
@@ -188,7 +190,8 @@
                                                                                 class="pedido-card__cita-icono">📅</span>
                                                                             <span class="pedido-card__cita-texto">Cita:
                                                                                 <%= citaFechaStrH %> a las <%=
-                                                                                        citaHoraStrH %></span>
+                                                                                        citaHoraStrH %>
+                                                                            </span>
                                                                         </div>
                                                                     </div>
                                                                     <% } %>
@@ -219,30 +222,37 @@
                                         </div>
 
                                         <footer class="navbar">
-                                            <nav class="navbar-inferior">
-                                                <a href="pagina-principal.jsp" class="navbar-inferior__item">
+                                            <nav class="navbar-inferior" role="navigation"
+                                                aria-label="Navegación principal">
+                                                <a href="pagina-principal.jsp" class="navbar-inferior__item"
+                                                    aria-label="Inicio">
                                                     <img src="../../Assets/icons/casa-blanca.png"
-                                                        class="navbar-inferior__icono">
+                                                        class="navbar-inferior__icono" alt="">
                                                     <span class="navbar-inferior__texto">Inicio</span>
                                                 </a>
-                                                <a href="mi-seleccion.jsp" class="navbar-inferior__item">
+                                                <a href="mi-seleccion.jsp" class="navbar-inferior__item"
+                                                    aria-label="Mi selección">
                                                     <img src="../../Assets/icons/lista-de-deseos-transparente.png"
-                                                        class="navbar-inferior__icono">
+                                                        class="navbar-inferior__icono" alt="">
                                                     <span class="navbar-inferior__texto">Mi selección</span>
                                                 </a>
-                                                <a href="mis-arreglos.jsp" class="navbar-inferior__item">
+                                                <a href="mis-arreglos.jsp" class="navbar-inferior__item"
+                                                    aria-label="Mis Arreglos">
                                                     <img src="../../Assets/icons/cortar-con-tijeras-transparente.png"
-                                                        class="navbar-inferior__icono">
+                                                        class="navbar-inferior__icono" alt="">
                                                     <span class="navbar-inferior__texto">Mis Arreglos</span>
                                                 </a>
-                                                <a href="mis-pedidos.jsp" class="navbar-inferior__item">
+                                                <a href="mis-pedidos.jsp"
+                                                    class="navbar-inferior__item navbar-inferior__item--activo"
+                                                    aria-current="page" aria-label="Pedidos">
                                                     <img src="../../Assets/icons/caja-transparente.png"
-                                                        class="navbar-inferior__icono">
+                                                        class="navbar-inferior__icono" alt="">
                                                     <span class="navbar-inferior__texto">Pedidos</span>
                                                 </a>
-                                                <a href="mi-perfil.jsp" class="navbar-inferior__item">
+                                                <a href="mi-perfil.jsp" class="navbar-inferior__item"
+                                                    aria-label="Perfil">
                                                     <img src="../../Assets/icons/usuario-transparente.png"
-                                                        class="navbar-inferior__icono">
+                                                        class="navbar-inferior__icono" alt="">
                                                     <span class="navbar-inferior__texto">Perfil</span>
                                                 </a>
                                             </nav>

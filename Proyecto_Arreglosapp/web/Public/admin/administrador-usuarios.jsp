@@ -25,7 +25,7 @@
                                 </head>
 
                                 <body class="grid-principal">
-
+                                    <a href="#contenido-principal" class="skip-link">Saltar al contenido</a>
                                     <div id="toast" class="toast"></div>
 
                                     <header class="seccion-encabezado">
@@ -34,7 +34,7 @@
                                         <h1 class="seccion-encabezado__nombre">ArreglosApp</h1>
                                     </header>
 
-                                    <main class="usuarios">
+                                    <main class="usuarios" id="contenido-principal" role="main">
 
                                         <form method="get" action="" class="usuarios__buscador">
                                             <img src="../../Assets/icons/lupa.png" alt="buscar"
@@ -141,26 +141,21 @@
                                     </div>
 
                                     <footer class="navbar">
-                                        <nav class="navbar-inferior">
-                                            <a href="administrador-dashboard.jsp" class="navbar-inferior__item">
-                                                <img src="../../Assets/icons/diagrama-dashboard.png"
-                                                    class="navbar-inferior__icono">
+                                        <nav class="navbar-inferior" role="navigation" aria-label="Navegación principal">
+                                            <a href="administrador-dashboard.jsp" class="navbar-inferior__item" aria-label="Dashboard">
+                                                <img src="../../Assets/icons/diagrama-dashboard.png" class="navbar-inferior__icono" alt="">
                                                 <span class="navbar-inferior__texto">Dashboard</span>
                                             </a>
-                                            <a href="administrador-servicios.jsp" class="navbar-inferior__item">
-                                                <img src="../../Assets/icons/catalogo-de-productos.png"
-                                                    class="navbar-inferior__icono">
+                                            <a href="administrador-servicios.jsp" class="navbar-inferior__item" aria-label="Servicios">
+                                                <img src="../../Assets/icons/catalogo-de-productos.png" class="navbar-inferior__icono" alt="">
                                                 <span class="navbar-inferior__texto">Servicios</span>
                                             </a>
-                                            <a href="administrador-usuarios.jsp"
-                                                class="navbar-inferior__item navbar-inferior__item--activo">
-                                                <img src="../../Assets/icons/anadir-grupo.png"
-                                                    class="navbar-inferior__icono">
+                                            <a href="administrador-usuarios.jsp" class="navbar-inferior__item navbar-inferior__item--activo" aria-current="page" aria-label="Usuarios">
+                                                <img src="../../Assets/icons/anadir-grupo.png" class="navbar-inferior__icono" alt="">
                                                 <span class="navbar-inferior__texto">Usuarios</span>
                                             </a>
-                                            <a href="/Proyecto_Arreglosapp/LogoutServlet" class="navbar-inferior__item">
-                                                <img src="../../Assets/icons/salir-aplicacion.png"
-                                                    class="navbar-inferior__icono">
+                                            <a href="/Proyecto_Arreglosapp/LogoutServlet" class="navbar-inferior__item" aria-label="Cerrar sesión">
+                                                <img src="../../Assets/icons/salir-aplicacion.png" class="navbar-inferior__icono" alt="">
                                                 <span class="navbar-inferior__texto">Salir</span>
                                             </a>
                                         </nav>

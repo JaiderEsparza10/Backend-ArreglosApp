@@ -37,7 +37,7 @@ public class AdminDAO {
     public List<Map<String, Object>> obtenerPedidosRecientes() throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, " +
                 "u.user_nombre, u.user_email, " +
-                "c.cita_fecha_hora " +
+                "c.cita_fecha_hora, c.cita_estado " +
                 "FROM pedidos p " +
                 "JOIN usuarios u ON p.usuario_id = u.user_id " +
                 "LEFT JOIN citas c ON c.pedido_id = p.pedido_id " +
@@ -51,6 +51,7 @@ public class AdminDAO {
                 Map<String, Object> pedido = new LinkedHashMap<>();
                 pedido.put("pedidoId", rs.getInt("pedido_id"));
                 pedido.put("estado", rs.getString("pedido_estado"));
+                pedido.put("citaEstado", rs.getString("cita_estado"));
                 pedido.put("fecha", rs.getTimestamp("pedido_fecha_creacion"));
                 pedido.put("cliente", rs.getString("user_nombre"));
                 pedido.put("email", rs.getString("user_email"));
@@ -139,6 +140,19 @@ public class AdminDAO {
                 con.close();
             }
         }
+    }
+
+    public int contarTodasLasCitas() throws Exception {
+        String sql = "SELECT COUNT(*) FROM citas";
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            if (rs.next())
+                return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new Exception("Error al contar citas: " + e.getMessage());
+        }
+        return 0;
     }
 
     // ─── USUARIOS ─────────────────────────────────────────────────

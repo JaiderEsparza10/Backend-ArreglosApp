@@ -34,7 +34,7 @@
 
                     <body class="grid-principal">
 
-                        <div id="toast" class="toast-detalle"></div>
+                        <div id="toast" class="toast"></div>
 
                         <header class="seccion-encabezado">
                             <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png" alt="logo">
@@ -156,9 +156,9 @@
                             function mostrarToast(msg, tipo) {
                                 var toast = document.getElementById('toast');
                                 toast.textContent = msg;
-                                toast.className = 'toast-detalle toast-detalle--' + tipo + ' toast-detalle--visible';
+                                toast.className = 'toast toast--' + (tipo === 'exito' ? 'exito' : 'error') + ' toast--visible';
                                 setTimeout(function () {
-                                    toast.classList.remove('toast-detalle--visible');
+                                    toast.classList.remove('toast--visible');
                                 }, 3000);
                             }
                         </script>

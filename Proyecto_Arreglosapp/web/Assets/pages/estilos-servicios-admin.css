@@ -205,37 +205,4 @@
 #modalEliminar .btn-modal--eliminar:hover {
     box-shadow: 0 5px 14px rgba(255, 0, 0, 0.3);
     transform: translateY(-1px);
-}
-
-/* TOAST */
-.toast {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #323232;
-    color: #fff;
-    padding: 12px 24px;
-    border-radius: 24px;
-    font-size: 14px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 9999;
-    display: inline-block;
-    width: auto;
-    max-width: 90%;
-    white-space: nowrap;
-}
-
-.toast--visible {
-    opacity: 1;
-}
-
-.toast--exito {
-    background-color: #2e7d32;
-}
-
-.toast--error {
-    background-color: #c62828;
-}
+}

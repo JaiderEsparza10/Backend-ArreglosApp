@@ -12,7 +12,7 @@
     </head>
 
     <body>
-
+      <a href="#contenido-principal" class="skip-link">Saltar al contenido</a>
       <div id="toast" class="toast"></div>
 
       <header class="seccion-logo">
@@ -20,7 +20,7 @@
         <h1 class="seccion-logo__nombre">Arreglos App</h1>
       </header>
 
-      <main class="contenedor-registro">
+      <main class="contenedor-registro" id="contenido-principal" role="main">
         <h1 class="contenedor-registro__titulo">INICIAR SESIÓN</h1>
         <img class="contenedor-login__imagen" src="Assets/icons/user-inicio.png" alt="logo de usuario">
 
@@ -29,10 +29,16 @@
           <div class="contenedor-login__campo">
             <div class="campo__usuario">
               <img class="campo__icono" src="Assets/icons/user.png" alt="icono de usuario">
-              <label class="campo__label" for="email">Correo Electrónico</label>
+              <label class="campo__label" for="email">Correo Electrónico <span aria-hidden="true">*</span></label>
             </div>
             <input type="email" id="email" name="email" value="<%= email != null ? email : "" %>"
-              placeholder="Ingrese su correo electrónico" required>
+              placeholder="Ingrese su correo electrónico" 
+              aria-required="true"
+              aria-describedby="email-error"
+              required>
+            <span id="email-error" class="campo-error" role="alert" style="display:none;">
+              El correo electrónico es obligatorio
+            </span>
             <div class="linea-separadora"></div>
           </div>
 
@@ -77,6 +83,24 @@
             setTimeout(function () { toast.classList.remove('toast--visible'); }, 3000);
             history.replaceState({}, document.title, window.location.pathname);
           }
+        });
+
+        document.querySelector('.contenedor-login').addEventListener('submit', function (e) {
+          var valido = true;
+          var campos = this.querySelectorAll('[aria-required="true"]');
+          campos.forEach(function (campo) {
+            var errorId = campo.getAttribute('aria-describedby');
+            var errorEl = document.getElementById(errorId);
+            if (!campo.value.trim()) {
+              campo.setAttribute('aria-invalid', 'true');
+              if (errorEl) errorEl.style.display = 'flex';
+              valido = false;
+            } else {
+              campo.setAttribute('aria-invalid', 'false');
+              if (errorEl) errorEl.style.display = 'none';
+            }
+          });
+          if (!valido) e.preventDefault();
         });
       </script>
     </body>

@@ -140,34 +140,4 @@
 .detalle-servicio__btn--personalizar:hover {
     box-shadow: 0 6px 18px rgba(106, 13, 173, 0.4);
     transform: translateY(-1px);
-}
-
-/* TOAST */
-.toast-detalle {
-    position: fixed;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 12px 24px;
-    border-radius: 24px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 9999;
-    white-space: nowrap;
-}
-
-.toast-detalle--visible {
-    opacity: 1;
-}
-
-.toast-detalle--exito {
-    background-color: #2e7d32;
-}
-
-.toast-detalle--error {
-    background-color: #c62828;
-}
+}

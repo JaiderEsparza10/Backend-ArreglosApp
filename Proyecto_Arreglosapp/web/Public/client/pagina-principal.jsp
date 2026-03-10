@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ page import="model.Usuario" %>
         <%@ page import="model.Servicio" %>
             <%@ page import="dao.ServicioDAO" %>
@@ -26,12 +26,13 @@
                                 </head>
 
                                 <body class="grid-principal">
+                                    <a href="#contenido-principal" class="skip-link">Saltar al contenido</a>
                                     <header class="seccion-encabezado">
                                         <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
                                             alt="logo de la aplicación">
                                         <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
                                     </header>
-                                    <main class="contenido">
+                                    <main class="contenido" id="contenido-principal" role="main">
                                         <div class="contenido__barra-busqueda">
                                             <img src="../../Assets/icons/lupa.png" alt="lupa">
                                             <input type="text" name="buscador" id="buscador"
@@ -85,31 +86,25 @@
                                         </section>
                                     </main>
                                     <footer class="navbar">
-                                        <nav class="navbar-inferior">
-                                            <a href="pagina-principal.jsp"
-                                                class="navbar-inferior__item navbar-inferior__item--activo">
-                                                <img src="../../Assets/icons/casa-blanca.png"
-                                                    class="navbar-inferior__icono">
+                                        <nav class="navbar-inferior" role="navigation" aria-label="Navegación principal">
+                                            <a href="pagina-principal.jsp" class="navbar-inferior__item navbar-inferior__item--activo" aria-current="page" aria-label="Inicio">
+                                                <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono" alt="">
                                                 <span class="navbar-inferior__texto">Inicio</span>
                                             </a>
-                                            <a href="mi-seleccion.jsp" class="navbar-inferior__item">
-                                                <img src="../../Assets/icons/lista-de-deseos-transparente.png"
-                                                    class="navbar-inferior__icono">
+                                            <a href="mi-seleccion.jsp" class="navbar-inferior__item" aria-label="Mi selección">
+                                                <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono" alt="">
                                                 <span class="navbar-inferior__texto">Mi selección</span>
                                             </a>
-                                            <a href="mis-arreglos.jsp" class="navbar-inferior__item">
-                                                <img src="../../Assets/icons/cortar-con-tijeras-transparente.png"
-                                                    class="navbar-inferior__icono">
+                                            <a href="mis-arreglos.jsp" class="navbar-inferior__item" aria-label="Mis Arreglos">
+                                                <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono" alt="">
                                                 <span class="navbar-inferior__texto">Mis Arreglos</span>
                                             </a>
-                                            <a href="mis-pedidos.jsp" class="navbar-inferior__item">
-                                                <img src="../../Assets/icons/caja-transparente.png"
-                                                    class="navbar-inferior__icono">
+                                            <a href="mis-pedidos.jsp" class="navbar-inferior__item" aria-label="Pedidos">
+                                                <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono" alt="">
                                                 <span class="navbar-inferior__texto">Pedidos</span>
                                             </a>
-                                            <a href="mi-perfil.jsp" class="navbar-inferior__item">
-                                                <img src="../../Assets/icons/usuario-transparente.png"
-                                                    class="navbar-inferior__icono">
+                                            <a href="mi-perfil.jsp" class="navbar-inferior__item" aria-label="Perfil">
+                                                <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono" alt="">
                                                 <span class="navbar-inferior__texto">Perfil</span>
                                             </a>
                                         </nav>

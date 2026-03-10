@@ -28,6 +28,7 @@
                 </head>
 
                 <body class="grid-principal">
+                    <a href="#contenido-principal" class="skip-link">Saltar al contenido</a>
                     <header class="seccion-encabezado">
                         <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
                             alt="logo de la aplicación">
@@ -36,7 +37,7 @@
 
                     <div id="toast" class="toast"></div>
 
-                    <main class="contenido-perfil">
+                    <main class="contenido-perfil" id="contenido-principal" role="main">
 
                         <!-- ENCABEZADO -->
                         <div class="contenido-perfil__enlace-volver">
@@ -202,27 +203,25 @@
                     </main>
 
                     <footer class="navbar">
-                        <nav class="navbar-inferior">
-                            <a href="pagina-principal.jsp" class="navbar-inferior__item">
-                                <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono">
+                        <nav class="navbar-inferior" role="navigation" aria-label="Navegación principal">
+                            <a href="pagina-principal.jsp" class="navbar-inferior__item" aria-label="Inicio">
+                                <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono" alt="">
                                 <span class="navbar-inferior__texto">Inicio</span>
                             </a>
-                            <a href="mi-seleccion.jsp" class="navbar-inferior__item">
-                                <img src="../../Assets/icons/lista-de-deseos-transparente.png"
-                                    class="navbar-inferior__icono">
+                            <a href="mi-seleccion.jsp" class="navbar-inferior__item" aria-label="Mi selección">
+                                <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono" alt="">
                                 <span class="navbar-inferior__texto">Mi selección</span>
                             </a>
-                            <a href="mis-arreglos.jsp" class="navbar-inferior__item">
-                                <img src="../../Assets/icons/cortar-con-tijeras-transparente.png"
-                                    class="navbar-inferior__icono">
+                            <a href="mis-arreglos.jsp" class="navbar-inferior__item" aria-label="Mis Arreglos">
+                                <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono" alt="">
                                 <span class="navbar-inferior__texto">Mis Arreglos</span>
                             </a>
-                            <a href="mis-pedidos.jsp" class="navbar-inferior__item">
-                                <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono">
+                            <a href="mis-pedidos.jsp" class="navbar-inferior__item" aria-label="Pedidos">
+                                <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono" alt="">
                                 <span class="navbar-inferior__texto">Pedidos</span>
                             </a>
-                            <a href="mi-perfil.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
-                                <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono">
+                            <a href="mi-perfil.jsp" class="navbar-inferior__item navbar-inferior__item--activo" aria-current="page" aria-label="Perfil">
+                                <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono" alt="">
                                 <span class="navbar-inferior__texto">Perfil</span>
                             </a>
                         </nav>

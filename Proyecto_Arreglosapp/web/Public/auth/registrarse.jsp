@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <% 
     // Obtener parámetros de la URL para mantener valores después de validaciones
     String msg = request.getParameter("msg"); 
@@ -18,6 +18,7 @@
     </head>
 
     <body>
+      <a href="#contenido-principal" class="skip-link">Saltar al contenido</a>
       <!-- Sección de logo y título -->
       <header class="seccion-logo">
         <img class="seccion-logo__logo" src="../../Assets/image/logo-app.png" alt="logo de la aplicación">
@@ -25,7 +26,7 @@
       </header>
       
       <!-- Contenedor principal del formulario de registro -->
-      <main class="contenedor-registro">
+      <main class="contenedor-registro" id="contenido-principal" role="main">
         <h1 class="contenedor-registro__titulo">REGISTRARSE</h1>
         <img class="contenedor-login__imagen" src="../../Assets/icons/user-inicio.png" alt="logo de usuario">
         
@@ -36,7 +37,7 @@
           <div class="contenedor-login__campo">
             <div class="campo__usuario">
               <img class="campo__icono" src="../../Assets/icons/user.png" alt="icono de usuario">
-              <label class="campo__label" for="txtNombre">Nombre Completo</label>
+              <label class="campo__label" for="txtNombre">Nombre Completo <span aria-hidden="true">*</span></label>
             </div>
             <input 
                 type="text" 
@@ -44,8 +45,13 @@
                 id="txtNombre" 
                 value="<%= nombre != null ? nombre : "" %>"
                 placeholder="Ingrese su nombre completo"
+                aria-required="true"
+                aria-describedby="txtNombre-error"
                 required
             >
+            <span id="txtNombre-error" class="campo-error" role="alert" style="display:none;">
+              El nombre completo es obligatorio
+            </span>
             <div class="linea-separadora"></div>
           </div>
 
@@ -53,7 +59,7 @@
           <div class="contenedor-login__campo">
             <div class="campo__contrasena">
               <img class="campo__icono" src="../../Assets/icons/correo-electronico.png" alt="icono de correo">
-              <label class="campo__label" for="txtEmail">Correo Electrónico</label>
+              <label class="campo__label" for="txtEmail">Correo Electrónico <span aria-hidden="true">*</span></label>
             </div>
             <input 
                 type="email" 
@@ -61,8 +67,13 @@
                 name="txtEmail" 
                 value="<%= email != null ? email : "" %>"
                 placeholder="Ingrese su correo electrónico"
+                aria-required="true"
+                aria-describedby="txtEmail-error"
                 required
             >
+            <span id="txtEmail-error" class="campo-error" role="alert" style="display:none;">
+              El correo electrónico es obligatorio
+            </span>
             <div class="linea-separadora"></div>
           </div>
 
@@ -151,6 +162,25 @@
         <!-- Scripts de validación -->
         <script src="../../Assets/JavaScript/registro.js"></script>
         <script src="../../Assets/JavaScript/alerts.js"></script>
+        <script>
+          document.querySelector('.contenedor-login').addEventListener('submit', function (e) {
+            var valido = true;
+            var campos = this.querySelectorAll('[aria-required="true"]');
+            campos.forEach(function (campo) {
+              var errorId = campo.getAttribute('aria-describedby');
+              var errorEl = document.getElementById(errorId);
+              if (!campo.value.trim()) {
+                campo.setAttribute('aria-invalid', 'true');
+                if (errorEl) errorEl.style.display = 'flex';
+                valido = false;
+              } else {
+                campo.setAttribute('aria-invalid', 'false');
+                if (errorEl) errorEl.style.display = 'none';
+              }
+            });
+            if (!valido) e.preventDefault();
+          });
+        </script>
       </main>
     </body>
 

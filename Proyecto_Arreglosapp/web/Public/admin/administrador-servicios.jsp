@@ -31,12 +31,13 @@ String ctx = request.getContextPath();
 <title>Servicios</title>
 </head>
 <body class="grid-principal">
+<a href="#contenido-principal" class="skip-link">Saltar al contenido</a>
 <div id="toast" class="toast"></div>
 <header class="seccion-encabezado">
 <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png" alt="logo">
 <h1 class="seccion-encabezado__nombre">ArreglosApp</h1>
 </header>
-<main class="dashboard">
+<main class="dashboard" id="contenido-principal" role="main">
 <div class="dashboard__encabezado-accion">
 <h2 class="dashboard__titulo-seccion">Servicios Disponibles</h2>
 <a href="crear-servicio.jsp" class="btn-agregar-servicio">+ Agregar</a>
@@ -96,21 +97,21 @@ String tiempo = s.getTiempoEstimado() != null ? s.getTiempoEstimado() : "No defi
 </div>
 </div>
 <footer class="navbar">
-<nav class="navbar-inferior">
-<a href="administrador-dashboard.jsp" class="navbar-inferior__item">
-<img src="../../Assets/icons/diagrama-dashboard.png" class="navbar-inferior__icono">
+<nav class="navbar-inferior" role="navigation" aria-label="Navegación principal">
+<a href="administrador-dashboard.jsp" class="navbar-inferior__item" aria-label="Dashboard">
+<img src="../../Assets/icons/diagrama-dashboard.png" class="navbar-inferior__icono" alt="">
 <span class="navbar-inferior__texto">Dashboard</span>
 </a>
-<a href="administrador-servicios.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
-<img src="../../Assets/icons/catalogo-de-productos.png" class="navbar-inferior__icono">
+<a href="administrador-servicios.jsp" class="navbar-inferior__item navbar-inferior__item--activo" aria-current="page" aria-label="Servicios">
+<img src="../../Assets/icons/catalogo-de-productos.png" class="navbar-inferior__icono" alt="">
 <span class="navbar-inferior__texto">Servicios</span>
 </a>
-<a href="administrador-usuarios.jsp" class="navbar-inferior__item">
-<img src="../../Assets/icons/anadir-grupo.png" class="navbar-inferior__icono">
+<a href="administrador-usuarios.jsp" class="navbar-inferior__item" aria-label="Usuarios">
+<img src="../../Assets/icons/anadir-grupo.png" class="navbar-inferior__icono" alt="">
 <span class="navbar-inferior__texto">Usuarios</span>
 </a>
-<a href="/Proyecto_Arreglosapp/LogoutServlet" class="navbar-inferior__item">
-<img src="../../Assets/icons/salir-aplicacion.png" class="navbar-inferior__icono">
+<a href="/Proyecto_Arreglosapp/LogoutServlet" class="navbar-inferior__item" aria-label="Cerrar sesión">
+<img src="../../Assets/icons/salir-aplicacion.png" class="navbar-inferior__icono" alt="">
 <span class="navbar-inferior__texto">Salir</span>
 </a>
 </nav>
