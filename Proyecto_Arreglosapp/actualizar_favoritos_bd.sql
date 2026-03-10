@@ -18,6 +18,7 @@ CREATE TABLE FAVORITOS (
     nombre_categoria VARCHAR(100) NOT NULL,
     precio DECIMAL(10,2),
     imagen_url VARCHAR(255),
+    cantidad INT DEFAULT 1,
     fecha_agregado DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES USUARIOS(user_id) ON DELETE CASCADE,
     FOREIGN KEY (arreglo_id) REFERENCES ARREGLOS(arreglo_id) ON DELETE CASCADE,

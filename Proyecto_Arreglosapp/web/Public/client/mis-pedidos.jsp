@@ -127,14 +127,17 @@
                                                                             fechaStr %></span>
                                                                 </div>
 
-                                                                <!-- RESUMEN DE CUENTA CLIENTE -->
-                                                                <%
-                                                                double totalParaSaldo = 0;
-                                                                double abonadoParaSaldo = 0;
-                                                                if(pedido.get("pedidoTotal") != null) totalParaSaldo = ((java.math.BigDecimal)pedido.get("pedidoTotal")).doubleValue();
-                                                                if(pedido.get("pedidoMontoAbonado") != null) abonadoParaSaldo = ((java.math.BigDecimal)pedido.get("pedidoMontoAbonado")).doubleValue();
-                                                                double saldoRestante = totalParaSaldo - abonadoParaSaldo;
-                                                                %>
+                                                                <!-- RESUMEN DE CUENTA CLIENTE -->                                                                 <%
+                                                                 double totalParaSaldo = 0;
+                                                                 double abonadoParaSaldo = 0;
+                                                                 Object totalObj = pedido.get("pedidoTotal");
+                                                                 Object abonadoObj = pedido.get("pedidoMontoAbonado");
+
+                                                                 if(totalObj instanceof java.lang.Number) totalParaSaldo = ((java.lang.Number)totalObj).doubleValue();
+                                                                 if(abonadoObj instanceof java.lang.Number) abonadoParaSaldo = ((java.lang.Number)abonadoObj).doubleValue();
+                                                                 
+                                                                 double saldoRestante = totalParaSaldo - abonadoParaSaldo;
+                                                                 %>
                                                                 <div style="background:#f9f9f9; padding:10px; border-radius:8px; margin:10px 0; border:1px solid #eee;">
                                                                     <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
                                                                         <span style="color:#666;">Total servicio:</span>
@@ -204,21 +207,21 @@
                                             <!-- HISTORIAL -->
                                             <section id="panelHistorial" class="pedidos__panel pedidos__panel--oculto">
                                                 <% if (historialPedidos !=null && !historialPedidos.isEmpty()) { %>
-                                                    <% for (Map<String, Object> pedido : historialPedidos) { %>
-                                                        <% int pedidoIdH=(int) pedido.get("pedidoId"); String
-                                                            estadoH=(String) pedido.get("pedidoEstado"); LocalDateTime
-                                                            fechaH=(LocalDateTime) pedido.get("pedidoFecha");
-                                                            LocalDateTime citaFechaH=(LocalDateTime)
-                                                            pedido.get("citaFechaHora"); String fechaStrH=fechaH !=null
-                                                            ? fechaH.format(fmtFecha) : "Sin fecha" ; String
-                                                            citaFechaStrH=citaFechaH !=null ?
-                                                            citaFechaH.format(fmtFecha) : null; String
-                                                            citaHoraStrH=citaFechaH !=null ? citaFechaH.format(fmtHora)
-                                                            : null; String badgeClaseH="badge--completado" ; String
-                                                            estadoTextoH="Completado" ; if (estadoH.equals("cancelado"))
-                                                            { badgeClaseH="badge--cancelado" ; estadoTextoH="Cancelado"
-                                                            ; } String numPedidoH=String.format("#P-%05d", pedidoIdH);
-                                                            %>
+                                                     <% for (Map<String, Object> pedido : historialPedidos) {
+                                                                int pedidoIdH=(int) pedido.get("pedidoId"); String
+                                                                estadoH=(String) pedido.get("pedidoEstado"); LocalDateTime
+                                                                fechaH=(LocalDateTime) pedido.get("pedidoFecha");
+                                                                LocalDateTime citaFechaH=(LocalDateTime)
+                                                                pedido.get("citaFechaHora"); String fechaStrH=fechaH !=null
+                                                                ? fechaH.format(fmtFecha) : "Sin fecha" ; String
+                                                                citaFechaStrH=citaFechaH !=null ?
+                                                                citaFechaH.format(fmtFecha) : null; String
+                                                                citaHoraStrH=citaFechaH !=null ? citaFechaH.format(fmtHora)
+                                                                : null; String badgeClaseH="badge--completado" ; String
+                                                                estadoTextoH="Terminado" ; if ("cancelado".equals(estadoH))
+                                                                { badgeClaseH="badge--cancelado" ; estadoTextoH="Cancelado"
+                                                                ; } String numPedidoH=String.format("#P-%05d", pedidoIdH);
+                                                                %>
                                                             <div class="pedido-card pedido-card--historial">
                                                                 <div class="pedido-card__cabecera">
                                                                     <div class="pedido-card__numero-fila">
