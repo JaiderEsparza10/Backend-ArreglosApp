@@ -128,8 +128,8 @@ public class RecuperarPasswordServlet extends HttpServlet {
                     return;
                 }
 
-                if (passwordNueva.length() < 6) {
-                    session.setAttribute("errorRecuperar", "La contraseña debe tener al menos 6 caracteres");
+                if (!passwordNueva.matches("^(?=.*[A-Z])(?=.*\\d).{8,}$")) {
+                    session.setAttribute("errorRecuperar", "La contraseña debe tener mínimo 8 caracteres, una mayúscula y un número");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp?paso=2");
                     return;
                 }

@@ -36,9 +36,30 @@ public class ControllerUser extends HttpServlet {
         String rutaLogin = contextPath + "/index.jsp";
 
         // Validación campos vacíos
-        if (nombre == null || email == null || pass == null ||
-                nombre.trim().isEmpty() || email.trim().isEmpty() || pass.trim().isEmpty()) {
+        String confirmarPass = request.getParameter("txtConfirmarPassword");
+        if (nombre == null || email == null || pass == null || confirmarPass == null ||
+                nombre.trim().isEmpty() || email.trim().isEmpty() || pass.trim().isEmpty() || confirmarPass.trim().isEmpty()) {
             response.sendRedirect(rutaRegistro + "?msg=camposVacios");
+            return;
+        }
+
+        // Validación de coincidencia de contraseñas
+        if (!pass.equals(confirmarPass)) {
+            response.sendRedirect(rutaRegistro + "?msg=contrasenasNoCoinciden&nombre=" +
+                    java.net.URLEncoder.encode(nombre.trim(), "UTF-8") +
+                    "&email=" + java.net.URLEncoder.encode(email.trim(), "UTF-8") +
+                    "&direccion=" + java.net.URLEncoder.encode(direccion != null ? direccion.trim() : "", "UTF-8") +
+                    "&telefono=" + java.net.URLEncoder.encode(telefono != null ? telefono.trim() : "", "UTF-8"));
+            return;
+        }
+
+        // Validación de complejidad de contraseña (mínimo 8 caracteres, 1 mayúscula, 1 número)
+        if (!pass.matches("^(?=.*[A-Z])(?=.*\\d).{8,}$")) {
+            response.sendRedirect(rutaRegistro + "?msg=contrasenaInvalida&nombre=" +
+                    java.net.URLEncoder.encode(nombre.trim(), "UTF-8") +
+                    "&email=" + java.net.URLEncoder.encode(email.trim(), "UTF-8") +
+                    "&direccion=" + java.net.URLEncoder.encode(direccion != null ? direccion.trim() : "", "UTF-8") +
+                    "&telefono=" + java.net.URLEncoder.encode(telefono != null ? telefono.trim() : "", "UTF-8"));
             return;
         }
 

@@ -49,7 +49,31 @@ public class ServicioServlet extends HttpServlet {
                 String tiempoEst = request.getParameter("tiempoEstimado");
 
                 if (nombre == null || nombre.trim().isEmpty()) {
-                    session.setAttribute("errorServicio", "El nombre es obligatorio");
+                    session.setAttribute("errorServicio", "El nombre del servicio es obligatorio.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
+                    return;
+                }
+                
+                if (nombre.matches(".*\\d.*")) {
+                    session.setAttribute("errorServicio", "El nombre del servicio no puede contener números.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
+                    return;
+                }
+
+                if (descripcion == null || descripcion.trim().isEmpty()) {
+                    session.setAttribute("errorServicio", "La descripción del servicio es obligatoria.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
+                    return;
+                }
+                
+                if (descripcion.trim().length() < 10) {
+                    session.setAttribute("errorServicio", "La descripción debe tener al menos 10 caracteres.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
+                    return;
+                }
+
+                if (precioStr == null || precioStr.trim().isEmpty()) {
+                    session.setAttribute("errorServicio", "El precio base es obligatorio.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
                     return;
                 }
@@ -57,8 +81,15 @@ public class ServicioServlet extends HttpServlet {
                 double precio = 0;
                 try {
                     precio = Double.parseDouble(precioStr.replace(",", ".").trim());
+                    if (precio <= 0) {
+                        session.setAttribute("errorServicio", "El precio debe ser mayor a 0.");
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
+                        return;
+                    }
                 } catch (NumberFormatException e) {
-                    precio = 0;
+                    session.setAttribute("errorServicio", "El formato del precio es inválido.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
+                    return;
                 }
 
                 String imagenUrl = procesarImagen(request);
@@ -92,11 +123,48 @@ public class ServicioServlet extends HttpServlet {
                 String precioStr = request.getParameter("precio");
                 String tiempoEst = request.getParameter("tiempoEstimado");
 
+                if (nombre == null || nombre.trim().isEmpty()) {
+                    session.setAttribute("errorServicio", "El nombre del servicio es obligatorio.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + arregloId);
+                    return;
+                }
+                
+                if (nombre.matches(".*\\d.*")) {
+                    session.setAttribute("errorServicio", "El nombre del servicio no puede contener números.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + arregloId);
+                    return;
+                }
+
+                if (descripcion == null || descripcion.trim().isEmpty()) {
+                    session.setAttribute("errorServicio", "La descripción del servicio es obligatoria.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + arregloId);
+                    return;
+                }
+                
+                if (descripcion.trim().length() < 10) {
+                    session.setAttribute("errorServicio", "La descripción debe tener al menos 10 caracteres.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + arregloId);
+                    return;
+                }
+
+                if (precioStr == null || precioStr.trim().isEmpty()) {
+                    session.setAttribute("errorServicio", "El precio base es obligatorio.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + arregloId);
+                    return;
+                }
+
                 double precio = 0;
                 try {
                     precio = Double.parseDouble(precioStr.replace(",", ".").trim());
+                    if (precio <= 0) {
+                        session.setAttribute("errorServicio", "El precio debe ser mayor a 0.");
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + arregloId);
+                        return;
+                    }
                 } catch (NumberFormatException e) {
-                    precio = 0;
+                    session.setAttribute("errorServicio", "El formato del precio es inválido.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + arregloId);
+                    return;
                 }
 
                 String imagenUrl = procesarImagen(request);

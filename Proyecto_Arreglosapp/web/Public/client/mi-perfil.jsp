@@ -6,7 +6,11 @@
         <%@ page import="java.text.SimpleDateFormat" %>
             <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) {
                 usuario=(Usuario) sesion.getAttribute("usuario"); } if (usuario==null) {
-                response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } UsuarioDAO usuarioDAO=new
+                response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } 
+                if (usuario.getRolId() == 1) { 
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp"); return; 
+                }
+                UsuarioDAO usuarioDAO=new
                 UsuarioDAO(); String errorPerfil=(String) sesion.getAttribute("errorPerfil"); String
                 errorPassword=(String) sesion.getAttribute("errorPassword"); sesion.removeAttribute("errorPerfil");
                 sesion.removeAttribute("errorPassword"); int totalPedidos=0; int totalFavoritos=0; int

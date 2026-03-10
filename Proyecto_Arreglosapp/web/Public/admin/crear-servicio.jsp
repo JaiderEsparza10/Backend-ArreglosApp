@@ -81,14 +81,18 @@
                                                 </div>
 
                                                 <div class="form-servicio__campo">
-                                                    <label class="form-servicio__label"
-                                                        for="descripcionServicio">Descripción</label>
+                                                    <label class="form-servicio__label" for="descripcionServicio">
+                                                        Descripción <span aria-hidden="true">*</span>
+                                                    </label>
                                                     <textarea id="descripcionServicio" name="descripcion"
                                                         class="form-servicio__textarea"
                                                         placeholder="Describe el servicio..."
-                                                        aria-describedby="descripcionServicio-hint"><%= valDesc %></textarea>
-                                                    <span id="descripcionServicio-hint"
-                                                        style="font-size:11px;color:#888;">Opcional</span>
+                                                        aria-required="true"
+                                                        aria-describedby="descripcionServicio-error" required><%= valDesc %></textarea>
+                                                    <span id="descripcionServicio-error" class="campo-error" role="alert"
+                                                        style="display:none;">
+                                                        La descripción del servicio es obligatoria
+                                                    </span>
                                                 </div>
 
                                                 <div class="form-servicio__fila">

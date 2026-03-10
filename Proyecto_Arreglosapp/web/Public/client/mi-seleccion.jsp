@@ -35,8 +35,7 @@
 
                 <% if (misFavoritos !=null && !misFavoritos.isEmpty()) { for (Favorito fav : misFavoritos) { String
                   imgUrl=fav.getImagenUrl(); if (imgUrl !=null) { if (imgUrl.startsWith("Public/")) {
-                  imgUrl=imgUrl.substring(7); } if (!imgUrl.startsWith("/") && !imgUrl.startsWith("http")) { imgUrl=ctx
-                  + "/" + imgUrl; } } %>
+                  imgUrl=imgUrl.substring(7); } if (!imgUrl.startsWith("/") && !imgUrl.startsWith("http")) { imgUrl="../../Assets/image/" + imgUrl; } } %>
                   <section class="contenido-seleccion__contenedor">
                     <img class="contenedor__imagen" src="<%= imgUrl %>" alt="Imagen del arreglo">
                     <div class="contenido-seleccion__contenedor-informacion">

@@ -106,8 +106,8 @@ public class PerfilServlet extends HttpServlet {
                     return;
                 }
 
-                if (passwordNueva.length() < 6) {
-                    session.setAttribute("errorPassword", "La contraseña debe tener al menos 6 caracteres");
+                if (!passwordNueva.matches("^(?=.*[A-Z])(?=.*\\d).{8,}$")) {
+                    session.setAttribute("errorPassword", "La contraseña debe tener mínimo 8 caracteres, una mayúscula y un número");
                     response.sendRedirect("Public/client/mi-perfil.jsp#cambiarPassword");
                     return;
                 }

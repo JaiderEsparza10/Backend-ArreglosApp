@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
   <%@ page import="java.util.List" %>
     <%@ page import="model.Personalizacion" %>
       <%@ page import="model.Usuario" %>
@@ -48,13 +48,11 @@
                     <% for (Personalizacion arreglo : misArreglos) { %>
                       <% String imgUrl=arreglo.getImagenReferencia(); if (imgUrl==null || imgUrl.trim().isEmpty()) {
                         String cat=arreglo.getCategoria() !=null ? arreglo.getCategoria().toLowerCase() : "" ; if
-                        (cat.contains("dobladillo") || cat.contains("sastr")) { imgUrl=ctx
-                        + "/Assets/image/imagen-sastreria.jpg" ; } else if (cat.contains("estrech") ||
-                        cat.contains("ensanch")) { imgUrl=ctx
-                        + "/Assets/image/imagen-arreglos-de-vestidos-de-fiesta.jpg" ; } else if
-                        (cat.contains("recortar")) { imgUrl=ctx + "/Assets/image/image-arreglo-bolsillos.jpg" ; } else {
-                        imgUrl=ctx + "/Assets/image/imagen-costura.jpg" ; } } else if (!imgUrl.startsWith("http") &&
-                        !imgUrl.startsWith("/") && !imgUrl.startsWith("../../")) { imgUrl=ctx + "/" + imgUrl; } String
+                        (cat.contains("dobladillo") || cat.contains("sastr")) { imgUrl="../../Assets/image/imagen-sastreria.jpg" ; } else if (cat.contains("estrech") ||
+                        cat.contains("ensanch")) { imgUrl="../../Assets/image/imagen-arreglos-de-vestidos-de-fiesta.jpg" ; } else if
+                        (cat.contains("recortar")) { imgUrl="../../Assets/image/image-arreglo-bolsillos.jpg" ; } else {
+                        imgUrl="../../Assets/image/imagen-costura.jpg" ; } } else if (!imgUrl.startsWith("http") &&
+                        !imgUrl.startsWith("/") && !imgUrl.startsWith("../../")) { imgUrl="../../Assets/image/" + imgUrl; } String
                         fechaTexto="Sin fecha" ; if (arreglo.getFechaCreacion() !=null) {
                         fechaTexto=arreglo.getFechaCreacion().format(fmt); } String estado=arreglo.getEstado() !=null ?
                         arreglo.getEstado() : "pendiente" ; String badgeClase="badge--pendiente" ; String
