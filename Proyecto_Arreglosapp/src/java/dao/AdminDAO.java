@@ -35,11 +35,11 @@ public class AdminDAO {
     }
 
     public List<Map<String, Object>> obtenerPedidosRecientes() throws Exception {
-        String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, " +
+        String sql = "SELECT p.*, " +
                 "u.user_nombre, u.user_email, " +
                 "c.cita_fecha_hora, c.cita_estado " +
                 "FROM pedidos p " +
-                "JOIN usuarios u ON p.usuario_id = u.user_id " +
+                "LEFT JOIN usuarios u ON p.usuario_id = u.user_id " +
                 "LEFT JOIN citas c ON c.pedido_id = p.pedido_id " +
                 "ORDER BY p.pedido_fecha_creacion DESC LIMIT 10";
 
@@ -56,17 +56,23 @@ public class AdminDAO {
                 pedido.put("cliente", rs.getString("user_nombre"));
                 pedido.put("email", rs.getString("user_email"));
                 pedido.put("citaFecha", rs.getTimestamp("cita_fecha_hora"));
+                
+                // Columnas opcionales (Robustez)
+                pedido.put("pagoEstado", obtenerColumnaOpcionalString(rs, "pedido_pago_estado", "pendiente"));
+                pedido.put("entregaEstado", obtenerColumnaOpcionalString(rs, "pedido_entrega_estado", "pendiente"));
+                pedido.put("montoAbonado", obtenerColumnaOpcionalDouble(rs, "pedido_monto_abonado", 0.0));
+                pedido.put("total", obtenerColumnaOpcionalDouble(rs, "pedido_total", 0.0));
+                
                 lista.add(pedido);
             }
         } catch (SQLException e) {
-            throw new Exception("Error al obtener pedidos: " + e.getMessage());
+            throw new Exception("Error al obtener pedidos recientes: " + e.getMessage());
         }
         return lista;
     }
 
     public List<Map<String, Object>> obtenerTodasLasCitas() throws Exception {
-        String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, " +
-                "c.cita_motivo, c.cita_asistencia, " +
+        String sql = "SELECT c.*, " +
                 "u.user_nombre, p.pedido_id " +
                 "FROM citas c " +
                 "JOIN pedidos p ON p.pedido_id = c.pedido_id " +
@@ -84,9 +90,12 @@ public class AdminDAO {
                 cita.put("fechaHora", rs.getTimestamp("cita_fecha_hora"));
                 cita.put("estado", rs.getString("cita_estado"));
                 cita.put("notas", rs.getString("cita_notas"));
-                cita.put("motivo", rs.getString("cita_motivo"));
-                cita.put("asistencia", rs.getString("cita_asistencia"));
                 cita.put("cliente", rs.getString("user_nombre"));
+
+                // Columnas Robustas
+                cita.put("motivo", obtenerColumnaOpcionalString(rs, "cita_motivo", "consulta"));
+                cita.put("asistencia", obtenerColumnaOpcionalString(rs, "cita_asistencia", "pendiente"));
+                
                 lista.add(cita);
             }
         } catch (SQLException e) {
@@ -339,11 +348,14 @@ public class AdminDAO {
                     detalle.put("citaNotas", rs.getString("cita_notas"));
                     detalle.put("citaEstado", rs.getString("cita_estado"));
                     detalle.put("servicio", rs.getString("arreglo_nombre"));
-                    detalle.put("precio", rs.getDouble("arreglo_precio_base"));
-                    detalle.put("pagoEstado", rs.getString("pedido_pago_estado"));
-                    detalle.put("entregaEstado", rs.getString("pedido_entrega_estado"));
-                    detalle.put("montoAbonado", rs.getDouble("pedido_monto_abonado"));
-                    detalle.put("total", rs.getDouble("pedido_total"));
+                    detalle.put("precio", obtenerColumnaOpcionalDouble(rs, "arreglo_precio_base", 0.0));
+                    
+                    // Columnas opcionales (Robustez)
+                    detalle.put("pagoEstado", obtenerColumnaOpcionalString(rs, "pedido_pago_estado", "pendiente"));
+                    detalle.put("entregaEstado", obtenerColumnaOpcionalString(rs, "pedido_entrega_estado", "pendiente"));
+                    detalle.put("montoAbonado", obtenerColumnaOpcionalDouble(rs, "pedido_monto_abonado", 0.0));
+                    detalle.put("total", obtenerColumnaOpcionalDouble(rs, "pedido_total", 0.0));
+                    
                     return detalle;
                 }
             }
@@ -354,8 +366,7 @@ public class AdminDAO {
     }
 
     public List<Map<String, Object>> obtenerCitasHoy() throws Exception {
-        String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, " +
-                "c.cita_motivo, c.cita_asistencia, " +
+        String sql = "SELECT c.*, " +
                 "u.user_nombre, u.user_email, p.pedido_id " +
                 "FROM citas c " +
                 "JOIN pedidos p ON p.pedido_id = c.pedido_id " +
@@ -374,9 +385,12 @@ public class AdminDAO {
                 cita.put("fechaHora", rs.getTimestamp("cita_fecha_hora"));
                 cita.put("estado", rs.getString("cita_estado"));
                 cita.put("notas", rs.getString("cita_notas"));
-                cita.put("motivo", rs.getString("cita_motivo"));
-                cita.put("asistencia", rs.getString("cita_asistencia"));
                 cita.put("cliente", rs.getString("user_nombre"));
+
+                // Columnas Robustas
+                cita.put("motivo", obtenerColumnaOpcionalString(rs, "cita_motivo", "consulta"));
+                cita.put("asistencia", obtenerColumnaOpcionalString(rs, "cita_asistencia", "pendiente"));
+
                 lista.add(cita);
             }
         } catch (SQLException e) {
@@ -437,7 +451,7 @@ public class AdminDAO {
 
     public List<Map<String, Object>> obtenerCitasFiltradas(String fecha, String clienteNombre) throws Exception {
         StringBuilder sql = new StringBuilder(
-            "SELECT c.cita_id, c.cita_fecha_hora, u.user_nombre, c.cita_motivo, c.cita_asistencia, c.cita_estado, c.cita_notas " +
+            "SELECT c.*, u.user_nombre, p.pedido_id " +
             "FROM citas c " +
             "JOIN pedidos p ON c.pedido_id = p.pedido_id " +
             "JOIN usuarios u ON p.usuario_id = u.user_id WHERE 1=1 ");
@@ -464,10 +478,13 @@ public class AdminDAO {
                     c.put("citaId", rs.getInt("cita_id"));
                     c.put("fechaHora", rs.getTimestamp("cita_fecha_hora"));
                     c.put("cliente", rs.getString("user_nombre"));
-                    c.put("motivo", rs.getString("cita_motivo"));
-                    c.put("asistencia", rs.getString("cita_asistencia"));
                     c.put("estado", rs.getString("cita_estado"));
                     c.put("notas", rs.getString("cita_notas"));
+
+                    // Columnas Robustas
+                    c.put("motivo", obtenerColumnaOpcionalString(rs, "cita_motivo", "consulta"));
+                    c.put("asistencia", obtenerColumnaOpcionalString(rs, "cita_asistencia", "pendiente"));
+
                     citas.add(c);
                 }
             }
@@ -483,7 +500,7 @@ public class AdminDAO {
             "p.pedido_pago_estado, p.pedido_entrega_estado, p.pedido_estado, " +
             "c.cita_fecha_hora, c.cita_estado " +
             "FROM pedidos p " +
-            "JOIN usuarios u ON p.usuario_id = u.user_id " +
+            "LEFT JOIN usuarios u ON p.usuario_id = u.user_id " +
             "LEFT JOIN citas c ON p.pedido_id = c.pedido_id WHERE 1=1 ");
         
         if (estadoPago != null && !estadoPago.isEmpty()) {
@@ -507,13 +524,16 @@ public class AdminDAO {
                     Map<String, Object> p = new HashMap<>();
                     p.put("pedidoId", rs.getInt("pedido_id"));
                     p.put("cliente", rs.getString("user_nombre"));
-                    p.put("total", rs.getDouble("pedido_total"));
-                    p.put("abonado", rs.getDouble("pedido_monto_abonado"));
-                    p.put("pagoEstado", rs.getString("pedido_pago_estado"));
-                    p.put("entregaEstado", rs.getString("pedido_entrega_estado"));
                     p.put("estado", rs.getString("pedido_estado"));
                     p.put("citaFecha", rs.getTimestamp("cita_fecha_hora"));
                     p.put("citaEstado", rs.getString("cita_estado"));
+                    
+                    // Columnas opcionales (Robustez)
+                    p.put("total", obtenerColumnaOpcionalDouble(rs, "pedido_total", 0.0));
+                    p.put("abonado", obtenerColumnaOpcionalDouble(rs, "pedido_monto_abonado", 0.0));
+                    p.put("pagoEstado", obtenerColumnaOpcionalString(rs, "pedido_pago_estado", "pendiente"));
+                    p.put("entregaEstado", obtenerColumnaOpcionalString(rs, "pedido_entrega_estado", "pendiente"));
+                    
                     pedidos.add(p);
                 }
             }
@@ -521,5 +541,24 @@ public class AdminDAO {
             throw new Exception("Error al filtrar pedidos: " + e.getMessage());
         }
         return pedidos;
+    }
+
+    // --- MÉTODOS AUXILIARES DE ROBUSTEZ ---
+
+    private String obtenerColumnaOpcionalString(ResultSet rs, String columna, String valorDefecto) {
+        try {
+            String val = rs.getString(columna);
+            return val != null ? val : valorDefecto;
+        } catch (SQLException e) {
+            return valorDefecto;
+        }
+    }
+
+    private double obtenerColumnaOpcionalDouble(ResultSet rs, String columna, double valorDefecto) {
+        try {
+            return rs.getDouble(columna);
+        } catch (SQLException e) {
+            return valorDefecto;
+        }
     }
 }

@@ -23,7 +23,8 @@
                         String email = (String) detalle.get("email");
                         String direccion = (String) detalle.get("direccion");
                         String servicio = (String) detalle.get("servicio");
-                        double precio = (double) detalle.get("precio");
+                        Object precioObj = detalle.get("precio");
+                        double precio = (precioObj instanceof Number) ? ((Number) precioObj).doubleValue() : 0.0;
                         String citaNotas = (String) detalle.get("citaNotas");
                         java.sql.Timestamp citaFecha = (java.sql.Timestamp) detalle.get("citaFecha");
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -41,8 +42,10 @@
                         
                         String pagoEstado = (String) detalle.get("pagoEstado");
                         String entregaEstado = (String) detalle.get("entregaEstado");
-                        double montoAbonado = (double) detalle.get("montoAbonado");
-                        double totalPedido = (double) detalle.get("total");
+                        Object montoAbonadoObj = detalle.get("montoAbonado");
+                        double montoAbonado = (montoAbonadoObj instanceof Number) ? ((Number) montoAbonadoObj).doubleValue() : 0.0;
+                        Object totalPedidoObj = detalle.get("total");
+                        double totalPedido = (totalPedidoObj instanceof Number) ? ((Number) totalPedidoObj).doubleValue() : 0.0;
                         %>
                         <!DOCTYPE html>
                         <html lang="es">
