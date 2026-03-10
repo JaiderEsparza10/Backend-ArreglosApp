@@ -66,6 +66,7 @@ public class AdminDAO {
 
     public List<Map<String, Object>> obtenerTodasLasCitas() throws Exception {
         String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, " +
+                "c.cita_motivo, c.cita_asistencia, " +
                 "u.user_nombre, p.pedido_id " +
                 "FROM citas c " +
                 "JOIN pedidos p ON p.pedido_id = c.pedido_id " +
@@ -83,6 +84,8 @@ public class AdminDAO {
                 cita.put("fechaHora", rs.getTimestamp("cita_fecha_hora"));
                 cita.put("estado", rs.getString("cita_estado"));
                 cita.put("notas", rs.getString("cita_notas"));
+                cita.put("motivo", rs.getString("cita_motivo"));
+                cita.put("asistencia", rs.getString("cita_asistencia"));
                 cita.put("cliente", rs.getString("user_nombre"));
                 lista.add(cita);
             }
@@ -274,18 +277,42 @@ public class AdminDAO {
 
     public boolean actualizarEstadoPedido(int pedidoId, String nuevoEstado) throws Exception {
         String sql = "UPDATE pedidos SET pedido_estado = ? WHERE pedido_id = ?";
-        try (Connection con = ConectionDB.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, nuevoEstado);
-            ps.setInt(2, pedidoId);
-            return ps.executeUpdate() > 0;
+        String sqlNotif = "INSERT INTO NOTIFICACIONES (user_id, mensaje) SELECT usuario_id, ? FROM pedidos WHERE pedido_id = ?";
+        
+        Connection con = null;
+        try {
+            con = ConectionDB.getConexion();
+            con.setAutoCommit(false);
+            
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, nuevoEstado);
+                ps.setInt(2, pedidoId);
+                ps.executeUpdate();
+            }
+            
+            String mensaje = "Tu pedido #P-" + String.format("%05d", pedidoId) + " ha cambiado su estado a: " + nuevoEstado;
+            try (PreparedStatement ps = con.prepareStatement(sqlNotif)) {
+                ps.setString(1, mensaje);
+                ps.setInt(2, pedidoId);
+                ps.executeUpdate();
+            }
+            
+            con.commit();
+            return true;
         } catch (SQLException e) {
+            if (con != null) con.rollback();
             throw new Exception("Error al actualizar estado: " + e.getMessage());
+        } finally {
+            if (con != null) {
+                con.setAutoCommit(true);
+                con.close();
+            }
         }
     }
 
     public Map<String, Object> obtenerDetallePedido(int pedidoId) throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, " +
+                "p.pedido_pago_estado, p.pedido_entrega_estado, p.pedido_monto_abonado, p.pedido_total, " +
                 "u.user_nombre, u.user_email, u.user_ubicacion_direccion, " +
                 "c.cita_fecha_hora, c.cita_notas, c.cita_estado, " +
                 "a.arreglo_nombre, a.arreglo_precio_base " +
@@ -313,6 +340,10 @@ public class AdminDAO {
                     detalle.put("citaEstado", rs.getString("cita_estado"));
                     detalle.put("servicio", rs.getString("arreglo_nombre"));
                     detalle.put("precio", rs.getDouble("arreglo_precio_base"));
+                    detalle.put("pagoEstado", rs.getString("pedido_pago_estado"));
+                    detalle.put("entregaEstado", rs.getString("pedido_entrega_estado"));
+                    detalle.put("montoAbonado", rs.getDouble("pedido_monto_abonado"));
+                    detalle.put("total", rs.getDouble("pedido_total"));
                     return detalle;
                 }
             }
@@ -324,6 +355,7 @@ public class AdminDAO {
 
     public List<Map<String, Object>> obtenerCitasHoy() throws Exception {
         String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, " +
+                "c.cita_motivo, c.cita_asistencia, " +
                 "u.user_nombre, u.user_email, p.pedido_id " +
                 "FROM citas c " +
                 "JOIN pedidos p ON p.pedido_id = c.pedido_id " +
@@ -342,6 +374,8 @@ public class AdminDAO {
                 cita.put("fechaHora", rs.getTimestamp("cita_fecha_hora"));
                 cita.put("estado", rs.getString("cita_estado"));
                 cita.put("notas", rs.getString("cita_notas"));
+                cita.put("motivo", rs.getString("cita_motivo"));
+                cita.put("asistencia", rs.getString("cita_asistencia"));
                 cita.put("cliente", rs.getString("user_nombre"));
                 lista.add(cita);
             }
@@ -349,5 +383,143 @@ public class AdminDAO {
             throw new Exception("Error al obtener citas: " + e.getMessage());
         }
         return lista;
+    }
+
+    public boolean actualizarPagoPedido(int pedidoId, String estado) throws Exception {
+        String sql = "UPDATE pedidos SET pedido_pago_estado = ? WHERE pedido_id = ?";
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, estado);
+            ps.setInt(2, pedidoId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new Exception("Error al actualizar pago: " + e.getMessage());
+        }
+    }
+
+    public boolean actualizarEntregaPedido(int pedidoId, String estado) throws Exception {
+        String sql = "UPDATE pedidos SET pedido_entrega_estado = ? WHERE pedido_id = ?";
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, estado);
+            ps.setInt(2, pedidoId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new Exception("Error al actualizar entrega: " + e.getMessage());
+        }
+    }
+
+    public boolean registrarAbono(int pedidoId, double monto) throws Exception {
+        String sql = "UPDATE pedidos SET pedido_monto_abonado = pedido_monto_abonado + ? WHERE pedido_id = ?";
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setDouble(1, monto);
+            ps.setInt(2, pedidoId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new Exception("Error al registrar abono: " + e.getMessage());
+        }
+    }
+
+    public boolean actualizarAsistenciaCita(int citaId, String asistencia) throws Exception {
+        String sql = "UPDATE citas SET cita_asistencia = ? WHERE cita_id = ?";
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, asistencia);
+            ps.setInt(2, citaId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new Exception("Error al actualizar asistencia: " + e.getMessage());
+        }
+    }
+
+    // --- MÉTODOS DE FILTRADO (ADMIN) ---
+
+    public List<Map<String, Object>> obtenerCitasFiltradas(String fecha, String clienteNombre) throws Exception {
+        StringBuilder sql = new StringBuilder(
+            "SELECT c.cita_id, c.cita_fecha_hora, u.user_nombre, c.cita_motivo, c.cita_asistencia, c.cita_estado, c.cita_notas " +
+            "FROM citas c " +
+            "JOIN pedidos p ON c.pedido_id = p.pedido_id " +
+            "JOIN usuarios u ON p.usuario_id = u.user_id WHERE 1=1 ");
+        
+        if (fecha != null && !fecha.isEmpty()) {
+            sql.append(" AND DATE(c.cita_fecha_hora) = ? ");
+        }
+        if (clienteNombre != null && !clienteNombre.isEmpty()) {
+            sql.append(" AND u.user_nombre LIKE ? ");
+        }
+        sql.append(" ORDER BY c.cita_fecha_hora ASC");
+
+        List<Map<String, Object>> citas = new ArrayList<>();
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
+            
+            int paramIdx = 1;
+            if (fecha != null && !fecha.isEmpty()) ps.setString(paramIdx++, fecha);
+            if (clienteNombre != null && !clienteNombre.isEmpty()) ps.setString(paramIdx++, "%" + clienteNombre + "%");
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> c = new HashMap<>();
+                    c.put("citaId", rs.getInt("cita_id"));
+                    c.put("fechaHora", rs.getTimestamp("cita_fecha_hora"));
+                    c.put("cliente", rs.getString("user_nombre"));
+                    c.put("motivo", rs.getString("cita_motivo"));
+                    c.put("asistencia", rs.getString("cita_asistencia"));
+                    c.put("estado", rs.getString("cita_estado"));
+                    c.put("notas", rs.getString("cita_notas"));
+                    citas.add(c);
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al filtrar citas: " + e.getMessage());
+        }
+        return citas;
+    }
+
+    public List<Map<String, Object>> obtenerPedidosFiltrados(String estadoPago, String estadoPedido) throws Exception {
+        StringBuilder sql = new StringBuilder(
+            "SELECT p.pedido_id, u.user_nombre, p.pedido_total, p.pedido_monto_abonado, " +
+            "p.pedido_pago_estado, p.pedido_entrega_estado, p.pedido_estado, " +
+            "c.cita_fecha_hora, c.cita_estado " +
+            "FROM pedidos p " +
+            "JOIN usuarios u ON p.usuario_id = u.user_id " +
+            "LEFT JOIN citas c ON p.pedido_id = c.pedido_id WHERE 1=1 ");
+        
+        if (estadoPago != null && !estadoPago.isEmpty()) {
+            sql.append(" AND p.pedido_pago_estado = ? ");
+        }
+        if (estadoPedido != null && !estadoPedido.isEmpty()) {
+            sql.append(" AND p.pedido_estado = ? ");
+        }
+        sql.append(" ORDER BY p.pedido_fecha_creacion DESC");
+
+        List<Map<String, Object>> pedidos = new ArrayList<>();
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
+            
+            int paramIdx = 1;
+            if (estadoPago != null && !estadoPago.isEmpty()) ps.setString(paramIdx++, estadoPago);
+            if (estadoPedido != null && !estadoPedido.isEmpty()) ps.setString(paramIdx++, estadoPedido);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> p = new HashMap<>();
+                    p.put("pedidoId", rs.getInt("pedido_id"));
+                    p.put("cliente", rs.getString("user_nombre"));
+                    p.put("total", rs.getDouble("pedido_total"));
+                    p.put("abonado", rs.getDouble("pedido_monto_abonado"));
+                    p.put("pagoEstado", rs.getString("pedido_pago_estado"));
+                    p.put("entregaEstado", rs.getString("pedido_entrega_estado"));
+                    p.put("estado", rs.getString("pedido_estado"));
+                    p.put("citaFecha", rs.getTimestamp("cita_fecha_hora"));
+                    p.put("citaEstado", rs.getString("cita_estado"));
+                    pedidos.add(p);
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al filtrar pedidos: " + e.getMessage());
+        }
+        return pedidos;
     }
 }

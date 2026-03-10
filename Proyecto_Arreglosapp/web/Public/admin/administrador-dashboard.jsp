@@ -16,9 +16,26 @@
                                                     totalPedidosActivos = adminDAO.contarPedidosActivos();
                                                     totalCitasHoy = adminDAO.contarCitasHoy();
                                                     totalTodasCitas = adminDAO.contarTodasLasCitas();
-                                                    pedidosRecientes = adminDAO.obtenerPedidosRecientes();
+                                                    
+                                                    // Captura de filtros
+                                                    String fFecha = request.getParameter("fFecha");
+                                                    String fCliente = request.getParameter("fCliente");
+                                                    String fPago = request.getParameter("fPago");
+                                                    String fEstado = request.getParameter("fEstado");
+
+                                                    if (fFecha != null || fCliente != null) {
+                                                        todasLasCitas = adminDAO.obtenerCitasFiltradas(fFecha, fCliente);
+                                                    } else {
+                                                        todasLasCitas = adminDAO.obtenerTodasLasCitas();
+                                                    }
+
+                                                    if (fPago != null || fEstado != null) {
+                                                        pedidosRecientes = adminDAO.obtenerPedidosFiltrados(fPago, fEstado);
+                                                    } else {
+                                                        pedidosRecientes = adminDAO.obtenerPedidosRecientes();
+                                                    }
+                                                    
                                                     citasHoy = adminDAO.obtenerCitasHoy();
-                                                    todasLasCitas = adminDAO.obtenerTodasLasCitas();
                                                     } catch (Exception e) {
                                                     e.printStackTrace();
                                                     }
@@ -101,20 +118,25 @@
                                                             <!-- VISTA PEDIDOS -->
                                                             <section class="dashboard__seccion-pedidos"
                                                                 id="vistaPedidos">
-                                                                <div class="pedidos__encabezado-filtro">
-                                                                    <h2 class="pedidos__titulo">Pedidos Recientes</h2>
-                                                                    <div class="pedidos__filtros">
-                                                                        <button
-                                                                            class="pedidos__filtro-btn pedidos__filtro-btn--activo"
-                                                                            onclick="filtrarPedidos(this, 'todos')">Todos</button>
-                                                                        <button class="pedidos__filtro-btn"
-                                                                            onclick="filtrarPedidos(this, 'confirmada')">Confirmada</button>
-                                                                        <button class="pedidos__filtro-btn"
-                                                                            onclick="filtrarPedidos(this, 'completada')">Completada</button>
-                                                                        <button class="pedidos__filtro-btn"
-                                                                            onclick="filtrarPedidos(this, 'cancelada')">Cancelada</button>
-                                                                    </div>
-                                                                </div>
+                                                                <div class="pedidos__encabezado-filtro" style="flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 25px;">
+                                                                    <h2 class="pedidos__titulo">Control de Taller e Ingresos</h2>
+                                                                    <form action="administrador-dashboard.jsp" method="get" class="pedidos__filtros" style="display: flex; flex-wrap: wrap; gap: 12px; width: 100%;">
+                                                                        <input type="hidden" name="vista" value="pedidos">
+                                                                        <select name="fEstado" class="pedidos__filtro-btn" style="padding: 8px 15px; border-radius: 25px; border: 1px solid #e0e0e0; background: white; font-size: 14px; color: #555; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05); outline: none;">
+                                                                            <option value="">Estado: Todos</option>
+                                                                            <option value="en_proceso" <%= "en_proceso".equals(request.getParameter("fEstado")) ? "selected" : "" %>>En Proceso</option>
+                                                                            <option value="terminado" <%= "terminado".equals(request.getParameter("fEstado")) ? "selected" : "" %>>Listos para Entrega</option>
+                                                                            <option value="cancelado" <%= "cancelado".equals(request.getParameter("fEstado")) ? "selected" : "" %>>Cancelados</option>
+                                                                        </select>
+                                                                        <select name="fPago" class="pedidos__filtro-btn" style="padding: 8px 15px; border-radius: 25px; border: 1px solid #e0e0e0; background: white; font-size: 14px; color: #555; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05); outline: none;">
+                                                                            <option value="">Pago: Todos</option>
+                                                                            <option value="pendiente" <%= "pendiente".equals(request.getParameter("fPago")) ? "selected" : "" %>>Pendiente de Cobro</option>
+                                                                            <option value="pagado" <%= "pagado".equals(request.getParameter("fPago")) ? "selected" : "" %>>Pagados</option>
+                                                                        </select>
+                                                                        <button type="submit" class="pedidos__filtro-btn pedidos__filtro-btn--activo" style="padding: 8px 20px; border-radius: 25px; background: #673ab7; color: white; border: none; font-weight: 500; cursor: pointer; box-shadow: 0 2px 5px rgba(103,58,183,0.3); transition: transform 0.2s ease;">Filtrar</button>
+                                                                        <a href="administrador-dashboard.jsp" class="pedidos__filtro-btn" style="padding: 8px 18px; border-radius: 25px; border: 1px solid #673ab7; color: #673ab7; background: transparent; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease;">Limpiar</a>
+                                                                    </form>
+                                                                 </div>
                                                                 <div class="pedidos__lista" id="listaPedidos"
                                                                     style="margin-top:12px;">
                                                                     <% if (pedidosRecientes==null ||
@@ -250,11 +272,16 @@
                                                                                 "pedido__estado--cancelado";
                                                                                 estadoCitaLabel = "Cancelada"; }
                                                                                 }
+                                                                                String motivoCita = (String)cita.get("motivo");
+                                                                                String asistenciaCita = (String)cita.get("asistencia");
+                                                                                String motivoLabel = "Consulta";
+                                                                                if("entrega_prenda".equals(motivoCita)) motivoLabel = "Entrega";
+                                                                                else if("recogida_prenda".equals(motivoCita)) motivoLabel = "Recogida";
+                                                                                else if("toma_medidas".equals(motivoCita)) motivoLabel = "Medidas";
                                                                                 %>
                                                                                 <article class="pedido">
                                                                                     <div class="pedido__contenido">
-                                                                                        <span class="pedido__id">🕐 <%=
-                                                                                                horaStr %></span>
+                                                                                        <span class="pedido__id">🕐 <%= horaStr %> — <b><%= motivoLabel %></b></span>
                                                                                         <div
                                                                                             class="pedido__info-cliente">
                                                                                             <div
@@ -266,6 +293,9 @@
                                                                                                     <%= clienteCita %>
                                                                                                 </span>
                                                                                             </div>
+                                                                                            <span style="font-size:11px; color:<%= "asistio".equals(asistenciaCita) ? "#4caf50" : ("no_asistio".equals(asistenciaCita) ? "#f44336" : "#888") %>">
+                                                                                                Asistencia: <%= asistenciaCita != null ? asistenciaCita.toUpperCase() : "PENDIENTE" %>
+                                                                                            </span>
                                                                                             <% if
                                                                                                 (!notasTexto.isEmpty())
                                                                                                 { %>
@@ -293,7 +323,16 @@
                                                             <!-- VISTA TODAS LAS CITAS -->
                                                             <section class="dashboard__seccion-pedidos"
                                                                 id="vistaTodasCitas" style="display:none;">
-                                                                <h2 class="pedidos__titulo">Todas las Citas</h2>
+                                                                <div class="pedidos__encabezado-filtro" style="flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 25px;">
+                                                                    <h2 class="pedidos__titulo">Historial y Agenda Completa</h2>
+                                                                    <form action="administrador-dashboard.jsp" method="get" class="pedidos__filtros" style="display: flex; flex-wrap: wrap; gap: 12px; width: 100%;">
+                                                                        <input type="hidden" name="vista" value="todasCitas">
+                                                                        <input type="date" name="fFecha" value="<%= request.getParameter("fFecha") != null ? request.getParameter("fFecha") : "" %>" class="pedidos__filtro-btn" style="padding: 8px 15px; border-radius: 25px; border: 1px solid #e0e0e0; background: white; font-size: 14px; color: #555; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); outline: none;">
+                                                                        <input type="text" name="fCliente" placeholder="Nombre cliente..." value="<%= request.getParameter("fCliente") != null ? request.getParameter("fCliente") : "" %>" class="pedidos__filtro-btn" style="padding: 8px 15px; border-radius: 25px; border: 1px solid #e0e0e0; background: white; font-size: 14px; color: #555; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-grow:1; outline: none;">
+                                                                        <button type="submit" class="pedidos__filtro-btn pedidos__filtro-btn--activo" style="padding: 8px 20px; border-radius: 25px; background: #673ab7; color: white; border: none; font-weight: 500; cursor: pointer; box-shadow: 0 2px 5px rgba(103,58,183,0.3); transition: transform 0.2s ease;">Buscar</button>
+                                                                        <a href="administrador-dashboard.jsp?vista=todasCitas" class="pedidos__filtro-btn" style="padding: 8px 18px; border-radius: 25px; border: 1px solid #673ab7; color: #673ab7; background: transparent; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease;">Limpiar</a>
+                                                                    </form>
+                                                                 </div>
                                                                 <div class="pedidos__lista">
                                                                     <% if (todasLasCitas==null ||
                                                                         todasLasCitas.isEmpty()) { %>
@@ -388,20 +427,31 @@
                                                                 <h2 class="modal__titulo">Cambiar Estado</h2>
                                                                 <p class="modal__descripcion">Selecciona el nuevo estado
                                                                     para esta cita</p>
-                                                                <div class="modal-cita__opciones">
-                                                                    <button
-                                                                        class="modal-cita__btn modal-cita__btn--confirmar"
-                                                                        onclick="cambiarEstado('confirmada')">✓
-                                                                        Confirmar</button>
-                                                                    <button
-                                                                        class="modal-cita__btn modal-cita__btn--completar"
-                                                                        onclick="cambiarEstado('completada')">✅
-                                                                        Completar</button>
-                                                                    <button
-                                                                        class="modal-cita__btn modal-cita__btn--cancelar"
-                                                                        onclick="cambiarEstado('cancelada')">✕
-                                                                        Cancelar</button>
-                                                                </div>
+                                                                 <div class="modal-cita__opciones">
+                                                                     <button
+                                                                         class="modal-cita__btn modal-cita__btn--confirmar"
+                                                                         onclick="registrarAsistencia('asistio')">🙋
+                                                                         Asistió</button>
+                                                                     <button
+                                                                         class="modal-cita__btn modal-cita__btn--cancelar"
+                                                                         onclick="registrarAsistencia('no_asistio')">🚫
+                                                                         No asistió</button>
+                                                                 </div>
+                                                                 <div style="border-top:1px solid #eee; margin:10px 0;"></div>
+                                                                 <div class="modal-cita__opciones">
+                                                                     <button
+                                                                         class="modal-cita__btn modal-cita__btn--confirmar"
+                                                                         onclick="cambiarEstado('confirmada')">✓
+                                                                         Confirmar</button>
+                                                                     <button
+                                                                         class="modal-cita__btn modal-cita__btn--completar"
+                                                                         onclick="cambiarEstado('completada')">✅
+                                                                         Completar</button>
+                                                                     <button
+                                                                         class="modal-cita__btn modal-cita__btn--cancelar"
+                                                                         onclick="cambiarEstado('cancelada')">✕
+                                                                         Cancelar</button>
+                                                                 </div>
                                                                 <form method="post"
                                                                     action="/Proyecto_Arreglosapp/AdminServlet"
                                                                     id="formCita">
@@ -440,6 +490,13 @@
                                                                     <img src="../../Assets/icons/anadir-grupo.png" 
                                                                          class="navbar-inferior__icono" alt="">
                                                                     <span class="navbar-inferior__texto">Usuarios</span>
+                                                                </a>
+                                                                <a href="../client/mi-perfil.jsp" 
+                                                                   class="navbar-inferior__item"
+                                                                   aria-label="Perfil">
+                                                                    <img src="../../Assets/icons/usuario-transparente.png" 
+                                                                         class="navbar-inferior__icono" alt="">
+                                                                    <span class="navbar-inferior__texto">Perfil</span>
                                                                 </a>
                                                                 <a href="/Proyecto_Arreglosapp/LogoutServlet" 
                                                                    class="navbar-inferior__item"
@@ -501,8 +558,18 @@
                                                                 document.getElementById('modalCita').style.display = 'flex';
                                                             }
 
+                                                            function registrarAsistencia(valor) {
+                                                                const form = document.getElementById('formCita');
+                                                                form.querySelector('[name="accion"]').value = 'registrarAsistencia';
+                                                                document.getElementById('inputNuevoEstado').name = 'asistencia';
+                                                                document.getElementById('inputNuevoEstado').value = valor;
+                                                                form.submit();
+                                                            }
+
                                                             function cambiarEstado(nuevoEstado) {
+                                                                document.getElementById('inputNuevoEstado').name = 'nuevoEstado'; // Reset name in case it was changed by registrarAsistencia
                                                                 document.getElementById('inputNuevoEstado').value = nuevoEstado;
+                                                                document.getElementById('formCita').querySelector('[name="accion"]').value = 'cambiarEstadoCita'; // Reset accion
                                                                 document.getElementById('formCita').submit();
                                                             }
 

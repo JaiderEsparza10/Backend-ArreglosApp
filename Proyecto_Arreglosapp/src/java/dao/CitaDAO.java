@@ -135,7 +135,7 @@ public class CitaDAO {
     }
 
     public boolean crearCita(Cita cita) throws Exception {
-        String sql = "INSERT INTO citas (pedido_id, cita_fecha_hora, cita_estado, cita_notas) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO citas (pedido_id, cita_fecha_hora, cita_estado, cita_notas, cita_motivo) VALUES (?, ?, ?, ?, ?)";
         try (Connection con = ConectionDB.getConexion();
                 PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, cita.getPedidoId());
@@ -146,6 +146,7 @@ public class CitaDAO {
                 notasCompletas += " | Notas: " + cita.getCitaNotas();
             }
             ps.setString(4, notasCompletas);
+            ps.setString(5, cita.getCitaMotivo());
             int filas = ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next())

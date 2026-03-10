@@ -62,10 +62,54 @@ public class AdminServlet extends HttpServlet {
                             + pedidoId + "&actualizado=1");
                     break;
                 }
+
+                case "cambiarEstadoPago": {
+                    int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
+                    adminDAO.actualizarPagoPedido(pedidoId, "pagado");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/detalle-pedido-admin.jsp?pedidoId="
+                            + pedidoId + "&actualizado=1");
+                    break;
+                }
+
+                case "cambiarEstadoEntrega": {
+                    int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
+                    adminDAO.actualizarEntregaPedido(pedidoId, "entregado");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/detalle-pedido-admin.jsp?pedidoId="
+                            + pedidoId + "&actualizado=1");
+                    break;
+                }
+
+                case "confirmarPagoEntrega": {
+                    int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
+                    adminDAO.actualizarPagoPedido(pedidoId, "pagado");
+                    adminDAO.actualizarEntregaPedido(pedidoId, "entregado");
+                    adminDAO.actualizarEstadoPedido(pedidoId, "terminado");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/detalle-pedido-admin.jsp?pedidoId="
+                            + pedidoId + "&actualizado=1");
+                    break;
+                }
+
+                case "registrarAbono": {
+                    int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
+                    double monto = Double.parseDouble(request.getParameter("montoAbono"));
+                    adminDAO.registrarAbono(pedidoId, monto);
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/detalle-pedido-admin.jsp?pedidoId="
+                            + pedidoId + "&actualizado=1");
+                    break;
+                }
                 case "cambiarEstadoCita": {
                     int citaId = Integer.parseInt(request.getParameter("citaId"));
                     String nuevoEstado = request.getParameter("nuevoEstado");
                     adminDAO.cambiarEstadoCita(citaId, nuevoEstado);
+                    response.sendRedirect(
+                            "/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp?vista=citas&actualizado=1");
+                    break;
+                }
+
+                case "registrarAsistencia": {
+                    int citaId = Integer.parseInt(request.getParameter("citaId"));
+                    String asistencia = request.getParameter("asistencia");
+                    adminDAO.actualizarAsistenciaCita(citaId, asistencia);
                     response.sendRedirect(
                             "/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp?vista=citas&actualizado=1");
                     break;

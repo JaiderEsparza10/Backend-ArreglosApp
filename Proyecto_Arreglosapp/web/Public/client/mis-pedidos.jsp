@@ -11,8 +11,15 @@
                                 pedidoDAO=new PedidoDAO(); List<Map<String, Object>> pedidosActivos = null;
                                 List<Map<String, Object>> historialPedidos = null;
 
+                                    // Captura de filtros
+                                    String fEstado = request.getParameter("fEstado");
+
                                     try {
-                                    pedidosActivos = pedidoDAO.obtenerPedidosActivos(usuario.getId());
+                                    if (fEstado != null && !fEstado.isEmpty()) {
+                                        pedidosActivos = pedidoDAO.obtenerPedidosPorEstado(usuario.getId(), fEstado);
+                                    } else {
+                                        pedidosActivos = pedidoDAO.obtenerPedidosActivos(usuario.getId());
+                                    }
                                     historialPedidos = pedidoDAO.obtenerHistorialPedidos(usuario.getId());
                                     } catch (Exception e) {
                                     e.printStackTrace();
@@ -69,6 +76,20 @@
                                                 </button>
                                             </div>
 
+                                            <div id="filterSection" style="margin: 15px 20px; display: flex; gap: 10px; align-items: center;">
+                                                <form action="mis-pedidos.jsp" method="get" style="display: flex; gap: 10px; width: 100%;">
+                                                    <select name="fEstado" style="flex-grow: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd; background: #fff; font-family: inherit;">
+                                                        <option value="">Todos los activos</option>
+                                                        <option value="en_proceso" <%= "en_proceso".equals(request.getParameter("fEstado")) ? "selected" : "" %>>En proceso (Taller)</option>
+                                                        <option value="terminado" <%= "terminado".equals(request.getParameter("fEstado")) ? "selected" : "" %>>Listos para recoger</option>
+                                                    </select>
+                                                    <button type="submit" style="background: #673ab7; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer;">Filtrar</button>
+                                                    <% if (request.getParameter("fEstado") != null && !request.getParameter("fEstado").isEmpty()) { %>
+                                                        <a href="mis-pedidos.jsp" style="text-decoration: none; color: #666; font-size: 13px; display: flex; align-items: center;">Limpiar</a>
+                                                    <% } %>
+                                                </form>
+                                            </div>
+
                                             <!-- ACTIVOS -->
                                             <section id="panelActivos" class="pedidos__panel">
                                                 <% if (pedidosActivos !=null && !pedidosActivos.isEmpty()) { %>
@@ -106,16 +127,46 @@
                                                                             fechaStr %></span>
                                                                 </div>
 
-                                                                <% if (citaFechaStr !=null) { %>
-                                                                    <div class="pedido-card__cita">
+                                                                <!-- RESUMEN DE CUENTA CLIENTE -->
+                                                                <%
+                                                                double totalParaSaldo = 0;
+                                                                double abonadoParaSaldo = 0;
+                                                                if(pedido.get("pedidoTotal") != null) totalParaSaldo = ((java.math.BigDecimal)pedido.get("pedidoTotal")).doubleValue();
+                                                                if(pedido.get("pedidoMontoAbonado") != null) abonadoParaSaldo = ((java.math.BigDecimal)pedido.get("pedidoMontoAbonado")).doubleValue();
+                                                                double saldoRestante = totalParaSaldo - abonadoParaSaldo;
+                                                                %>
+                                                                <div style="background:#f9f9f9; padding:10px; border-radius:8px; margin:10px 0; border:1px solid #eee;">
+                                                                    <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+                                                                        <span style="color:#666;">Total servicio:</span>
+                                                                        <span style="font-weight:600;">$<%= String.format("%,.0f", totalParaSaldo) %></span>
+                                                                    </div>
+                                                                    <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+                                                                        <span style="color:#4caf50;">Abonado:</span>
+                                                                        <span style="font-weight:600; color:#4caf50;">$<%= String.format("%,.0f", abonadoParaSaldo) %></span>
+                                                                    </div>
+                                                                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-top:5px; border-top:1px dashed #ccc; padding-top:5px;">
+                                                                        <span style="font-weight:700;">SALDO PENDIENTE (Contra entrega):</span>
+                                                                        <span style="font-weight:800; color:#f44336;">$<%= String.format("%,.0f", saldoRestante) %></span>
+                                                                    </div>
+                                                                </div>
+                                                                <% if (citaFechaStr !=null) {
+                                                                    String motivo = (String)pedido.get("citaMotivo");
+                                                                    String motivoLabel = "Consulta";
+                                                                    if("entrega_prenda".equals(motivo)) motivoLabel = "Entrega de prenda";
+                                                                    else if("recogida_prenda".equals(motivo)) motivoLabel = "Recogida de prenda";
+                                                                    else if("toma_medidas".equals(motivo)) motivoLabel = "Toma de medidas";
+                                                                %>
+                                                                    <div class="pedido-card__cita" style="border-left: 3px solid #673ab7;">
                                                                         <div class="pedido-card__cita-fila">
                                                                             <span
                                                                                 class="pedido-card__cita-icono">📅</span>
-                                                                            <span class="pedido-card__cita-texto">Cita:
-                                                                                <%= citaFechaStr %> a las <%=
-                                                                                        citaHoraStr %>
+                                                                            <span class="pedido-card__cita-texto">
+                                                                                <b><%= motivoLabel %>:</b> <%= citaFechaStr %> a las <%= citaHoraStr %>
                                                                             </span>
                                                                         </div>
+                                                                        <p style="font-size:11px; color:#4caf50; margin-left:24px; margin-top:2px;">
+                                                                            Estado cita: <%= (String)pedido.get("citaEstado") %>
+                                                                        </p>
                                                                         <% if (citaNotas !=null &&
                                                                             !citaNotas.trim().isEmpty()) { %>
                                                                             <p class="pedido-card__cita-notas">

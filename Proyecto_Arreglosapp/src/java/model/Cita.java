@@ -13,16 +13,18 @@ public class Cita {
     private String citaEstado;
     private String citaNotas;
     private String direccionEntrega;
+    private String citaMotivo;
 
     public Cita() {
     }
 
-    public Cita(int pedidoId, LocalDateTime citaFechaHora, String citaNotas, String direccionEntrega) {
+    public Cita(int pedidoId, LocalDateTime citaFechaHora, String citaNotas, String direccionEntrega, String citaMotivo) {
         this.pedidoId = pedidoId;
         this.citaFechaHora = citaFechaHora;
         this.citaEstado = "programada";
         this.citaNotas = citaNotas;
         this.direccionEntrega = direccionEntrega;
+        this.citaMotivo = citaMotivo;
     }
 
     public int getCitaId() {
@@ -71,5 +73,13 @@ public class Cita {
 
     public void setDireccionEntrega(String direccionEntrega) {
         this.direccionEntrega = direccionEntrega;
+    }
+
+    public String getCitaMotivo() {
+        return citaMotivo;
+    }
+
+    public void setCitaMotivo(String citaMotivo) {
+        this.citaMotivo = citaMotivo;
     }
 }

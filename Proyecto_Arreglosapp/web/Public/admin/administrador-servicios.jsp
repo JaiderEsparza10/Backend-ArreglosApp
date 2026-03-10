@@ -110,6 +110,10 @@ String tiempo = s.getTiempoEstimado() != null ? s.getTiempoEstimado() : "No defi
 <img src="../../Assets/icons/anadir-grupo.png" class="navbar-inferior__icono" alt="">
 <span class="navbar-inferior__texto">Usuarios</span>
 </a>
+<a href="../client/mi-perfil.jsp" class="navbar-inferior__item" aria-label="Perfil">
+<img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono" alt="">
+<span class="navbar-inferior__texto">Perfil</span>
+</a>
 <a href="/Proyecto_Arreglosapp/LogoutServlet" class="navbar-inferior__item" aria-label="Cerrar sesión">
 <img src="../../Assets/icons/salir-aplicacion.png" class="navbar-inferior__icono" alt="">
 <span class="navbar-inferior__texto">Salir</span>

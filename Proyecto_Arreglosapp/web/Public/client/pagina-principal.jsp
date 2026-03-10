@@ -40,6 +40,11 @@
                                             <button class="buscador__limpiar" id="btnLimpiar"
                                                 style="display:none;">✕</button>
                                         </div>
+                                        <div class="contenido__filtros" style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center; justify-content: center; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+                                            <label for="precioMax" style="font-size: 13px; font-weight: 500; color: #444;">Precio máximo: </label>
+                                            <input type="range" id="precioMax" min="0" max="500000" step="10000" value="500000" style="cursor: pointer;">
+                                            <span id="labelPrecioMax" style="font-size: 14px; font-weight: 600; color: #7c4dff;">$500.000</span>
+                                        </div>
                                         <div class="busqueda__sin-resultados" id="sinResultados" style="display:none;">
                                             <p>No se encontraron servicios para "<span id="textoBuscado"></span>"</p>
                                         </div>
@@ -64,7 +69,8 @@
                                                             nombreLower=nombre.toLowerCase(); String
                                                             precio=String.format("%,.0f", s.getPrecioBase()); %>
                                                             <article class="tarjeta-arreglo"
-                                                                data-nombre="<%= nombreLower %>">
+                                                                data-nombre="<%= nombreLower %>"
+                                                                data-precio="<%= s.getPrecioBase() %>">
                                                                 <div class="tarjeta-arreglo__imagen-contenedor">
                                                                     <img src="<%= imgSrc %>" alt="<%= nombre %>">
                                                                 </div>

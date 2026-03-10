@@ -14,6 +14,7 @@ public class Favorito {
     private String nombreCategoria;
     private double precio;
     private String imagenUrl;
+    private int cantidad;
     private LocalDateTime fechaAgregado;
 
     public Favorito() {
@@ -84,6 +85,14 @@ public class Favorito {
 
     public void setImagenUrl(String imagenUrl) {
         this.imagenUrl = imagenUrl;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
     }
 
     public LocalDateTime getFechaAgregado() {

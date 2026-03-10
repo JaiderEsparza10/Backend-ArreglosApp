@@ -19,7 +19,7 @@ public class FavoritoDAO {
      * @return true si se agregó correctamente, false en caso contrario.
      */
     public boolean agregarFavorito(Favorito favorito) throws Exception {
-        String sql = "INSERT INTO FAVORITOS (user_id, arreglo_id, categoria, nombre_categoria, precio, imagen_url) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO FAVORITOS (user_id, arreglo_id, categoria, nombre_categoria, precio, imagen_url, cantidad) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = ConectionDB.getConexion();
                 PreparedStatement ps = con.prepareStatement(sql)) {
@@ -30,6 +30,7 @@ public class FavoritoDAO {
             ps.setString(4, favorito.getNombreCategoria());
             ps.setDouble(5, favorito.getPrecio());
             ps.setString(6, favorito.getImagenUrl());
+            ps.setInt(7, favorito.getCantidad() > 0 ? favorito.getCantidad() : 1);
 
             int filasInsertadas = ps.executeUpdate();
             return filasInsertadas > 0;
@@ -59,6 +60,7 @@ public class FavoritoDAO {
                     favorito.setNombreCategoria(rs.getString("nombre_categoria"));
                     favorito.setPrecio(rs.getDouble("precio"));
                     favorito.setImagenUrl(rs.getString("imagen_url"));
+                    favorito.setCantidad(rs.getInt("cantidad"));
 
                     // Convertir timestamp a LocalDateTime si es necesario
                     if (rs.getTimestamp("fecha_agregado") != null) {
@@ -90,6 +92,24 @@ public class FavoritoDAO {
 
         } catch (SQLException e) {
             throw new Exception("Error al eliminar favorito: " + e.getMessage());
+        }
+    }
+
+    // ✅ NUEVO — Actualizar cantidad de un favorito
+    public boolean actualizarCantidad(int favoritoId, int cantidad, int userId) throws Exception {
+        String sql = "UPDATE FAVORITOS SET cantidad = ? WHERE favorito_id = ? AND user_id = ?";
+
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, cantidad);
+            ps.setInt(2, favoritoId);
+            ps.setInt(3, userId);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            throw new Exception("Error al actualizar cantidad: " + e.getMessage());
         }
     }
 

@@ -1,6 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ page import="model.Usuario" %>
         <%@ page import="dao.UsuarioDAO" %>
+        <%@ page import="java.util.List" %>
+        <%@ page import="java.util.Map" %>
+        <%@ page import="java.text.SimpleDateFormat" %>
             <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) {
                 usuario=(Usuario) sesion.getAttribute("usuario"); } if (usuario==null) {
                 response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } UsuarioDAO usuarioDAO=new
@@ -11,8 +14,12 @@
                 totalPedidos=usuarioDAO.contarPedidosActivos(usuario.getId());
                 totalFavoritos=usuarioDAO.contarFavoritos(usuario.getId());
                 totalPersonalizaciones=usuarioDAO.contarPersonalizaciones(usuario.getId()); String
-                tel=usuarioDAO.obtenerTelefonoPrincipal(usuario.getId()); telefono=tel !=null ? tel : "" ; } catch
-                (Exception e) { e.printStackTrace(); } String nombreActual=usuario.getNombre() !=null ?
+                tel=usuarioDAO.obtenerTelefonoPrincipal(usuario.getId()); telefono=tel !=null ? tel : "" ; 
+                List<Map<String, Object>> notificaciones = usuarioDAO.obtenerNotificaciones(usuario.getId());
+                request.setAttribute("notificaciones", notificaciones);
+                } catch (Exception e) { e.printStackTrace(); } 
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                String nombreActual=usuario.getNombre() !=null ?
                 usuario.getNombre() : "" ; String emailActual=usuario.getEmail() !=null ? usuario.getEmail() : "" ;
                 String direccionActual=usuario.getDireccion() !=null ? usuario.getDireccion() : "" ; String
                 rolTexto=usuario.getRolId()==1 ? "Administrador" : "Cliente" ; String
@@ -140,6 +147,31 @@
                                                     <button type="submit" class="perfil__btn-guardar">Guardar
                                                         Cambios</button>
                                                 </form>
+                                            </div>
+                                        </section>
+
+                                        <!-- MENSAJES AUTOMÁTICOS (RF20) -->
+                                        <section class="perfil-seccion" id="notificaciones">
+                                            <div class="perfil-seccion__cabecera" onclick="toggleSeccion('listaNotificaciones')">
+                                                <h3 class="perfil-seccion__titulo">📩 Mensajes y Notificaciones</h3>
+                                                <span class="perfil-seccion__flecha" id="flechaListaNotificaciones">▼</span>
+                                            </div>
+                                            <div class="perfil-seccion__contenido" id="listaNotificaciones" style="display:none; padding: 10px;">
+                                                <% 
+                                                List<Map<String, Object>> notifs = (List<Map<String, Object>>) request.getAttribute("notificaciones");
+                                                if (notifs != null && !notifs.isEmpty()) {
+                                                    for (Map<String, Object> n : notifs) {
+                                                %>
+                                                    <div class="notificacion-item" style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                                                        <p style="font-size: 14px; margin-bottom: 4px; color: #333;"><%= n.get("mensaje") %></p>
+                                                        <span style="font-size: 11px; color: #999;"><%= sdf.format(n.get("fecha")) %></span>
+                                                    </div>
+                                                <% 
+                                                    }
+                                                } else { 
+                                                %>
+                                                    <p style="text-align: center; color: #666; font-size: 14px; padding: 20px;">No tienes notificaciones aún.</p>
+                                                <% } %>
                                             </div>
                                         </section>
 

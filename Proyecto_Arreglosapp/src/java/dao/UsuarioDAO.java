@@ -4,6 +4,10 @@ import config.ConectionDB;
 import model.Usuario;
 import org.mindrot.jbcrypt.BCrypt;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Esta clase proporciona los métodos para gestionar la persistencia de los
@@ -366,5 +370,72 @@ public class UsuarioDAO {
             throw new Exception("Error al contar personalizaciones: " + e.getMessage());
         }
         return 0;
+    }
+
+    // ✅ NUEVO — Obtener notificaciones automáticas (RF20)
+    public List<Map<String, Object>> obtenerNotificaciones(int userId) throws Exception {
+        String sql = "SELECT * FROM NOTIFICACIONES WHERE user_id = ? ORDER BY fecha_creacion DESC LIMIT 5";
+        List<Map<String, Object>> lista = new ArrayList<>();
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> n = new HashMap<>();
+                    n.put("mensaje", rs.getString("mensaje"));
+                    n.put("fecha", rs.getTimestamp("fecha_creacion"));
+                    n.put("leida", rs.getBoolean("leida"));
+                    lista.add(n);
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener notificaciones: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public List<Map<String, Object>> obtenerMisPedidos(int userId) throws Exception {
+        String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, " +
+                "p.pedido_total, p.pedido_monto_abonado, p.pedido_pago_estado, " +
+                "a.arreglo_nombre " +
+                "FROM pedidos p " +
+                "LEFT JOIN personalizaciones per ON per.personalizacion_id = p.pedido_id " +
+                "LEFT JOIN arreglos a ON a.arreglo_id = per.arreglo_id " +
+                "WHERE p.usuario_id = ? ORDER BY p.pedido_fecha_creacion DESC";
+        List<Map<String, Object>> lista = new ArrayList<>();
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> p = new HashMap<>();
+                    p.put("pedidoId", rs.getInt("pedido_id"));
+                    p.put("estado", rs.getString("pedido_estado"));
+                    p.put("fecha", rs.getTimestamp("pedido_fecha_creacion"));
+                    p.put("total", rs.getDouble("pedido_total"));
+                    p.put("abonado", rs.getDouble("pedido_monto_abonado"));
+                    p.put("pagoEstado", rs.getString("pedido_pago_estado"));
+                    p.put("servicio", rs.getString("arreglo_nombre"));
+                    lista.add(p);
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener mis pedidos: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public boolean agendarCita(int pedidoId, String fechaHora, String motivo, String notas) throws Exception {
+        String sql = "INSERT INTO citas (pedido_id, cita_fecha_hora, cita_motivo, cita_notas, cita_estado) VALUES (?, ?, ?, ?, 'programada')";
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, pedidoId);
+            ps.setString(2, fechaHora);
+            ps.setString(3, motivo);
+            ps.setString(4, notas);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new Exception("Error al agendar cita: " + e.getMessage());
+        }
     }
 }

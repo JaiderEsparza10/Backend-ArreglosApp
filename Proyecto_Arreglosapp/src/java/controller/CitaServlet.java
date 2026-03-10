@@ -45,6 +45,7 @@ public class CitaServlet extends HttpServlet {
                 String fechaStr = request.getParameter("fechaCita");
                 String horaStr = request.getParameter("horaCita");
                 String direccion = request.getParameter("direccionEntrega");
+                String motivo = request.getParameter("motivoCita");
                 String notas = request.getParameter("notas");
 
                 // Obtener personalizacionId
@@ -89,7 +90,8 @@ public class CitaServlet extends HttpServlet {
                 }
 
                 // Crear cita
-                Cita cita = new Cita(pedidoId, fechaHora, notas, direccion);
+                if (motivo == null || motivo.trim().isEmpty()) motivo = "entrega_prenda";
+                Cita cita = new Cita(pedidoId, fechaHora, notas, direccion, motivo);
                 boolean creada = citaDAO.crearCita(cita);
 
                 if (creada) {

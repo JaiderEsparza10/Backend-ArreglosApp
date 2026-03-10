@@ -24,8 +24,8 @@ public class PedidoDAO {
      * @return Una lista de mapas con la información de los pedidos y sus citas.
      */
     public List<Map<String, Object>> obtenerPedidosActivos(int userId) throws Exception {
-        String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
-                "c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas " +
+        String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, p.pedido_monto_abonado, " +
+                "c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo " +
                 "FROM PEDIDOS p " +
                 "LEFT JOIN CITAS c ON c.pedido_id = p.pedido_id " +
                 "WHERE p.usuario_id = ? " +
@@ -36,8 +36,8 @@ public class PedidoDAO {
 
     // Obtener historial de pedidos de un usuario
     public List<Map<String, Object>> obtenerHistorialPedidos(int userId) throws Exception {
-        String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
-                "c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas " +
+        String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, p.pedido_monto_abonado, " +
+                "c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo " +
                 "FROM PEDIDOS p " +
                 "LEFT JOIN CITAS c ON c.pedido_id = p.pedido_id " +
                 "WHERE p.usuario_id = ? " +
@@ -57,9 +57,11 @@ public class PedidoDAO {
                     fila.put("pedidoId", rs.getInt("pedido_id"));
                     fila.put("pedidoEstado", rs.getString("pedido_estado"));
                     fila.put("pedidoTotal", rs.getBigDecimal("pedido_total"));
+                    fila.put("pedidoMontoAbonado", rs.getBigDecimal("pedido_monto_abonado"));
                     fila.put("citaId", rs.getInt("cita_id"));
                     fila.put("citaEstado", rs.getString("cita_estado"));
                     fila.put("citaNotas", rs.getString("cita_notas"));
+                    fila.put("citaMotivo", rs.getString("cita_motivo"));
 
                     if (rs.getTimestamp("pedido_fecha_creacion") != null) {
                         fila.put("pedidoFecha", rs.getTimestamp("pedido_fecha_creacion").toLocalDateTime());
@@ -90,5 +92,50 @@ public class PedidoDAO {
         } catch (SQLException e) {
             throw new Exception("Error al cancelar pedido: " + e.getMessage());
         }
+    }
+
+    // --- MÉTODOS DE FILTRADO (USUARIO) ---
+
+    public List<Map<String, Object>> obtenerPedidosPorEstado(int userId, String estado) throws Exception {
+        String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, p.pedido_monto_abonado, " +
+                "c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo " +
+                "FROM PEDIDOS p " +
+                "LEFT JOIN CITAS c ON c.pedido_id = p.pedido_id " +
+                "WHERE p.usuario_id = ? AND p.pedido_estado = ? " +
+                "ORDER BY p.pedido_fecha_creacion DESC";
+        return ejecutarConsultaPersonalizada(sql, userId, estado);
+    }
+
+    private List<Map<String, Object>> ejecutarConsultaPersonalizada(String sql, int userId, String estado) throws Exception {
+        List<Map<String, Object>> lista = new ArrayList<>();
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setString(2, estado);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> fila = new LinkedHashMap<>();
+                    fila.put("pedidoId", rs.getInt("pedido_id"));
+                    fila.put("pedidoEstado", rs.getString("pedido_estado"));
+                    fila.put("pedidoTotal", rs.getBigDecimal("pedido_total"));
+                    fila.put("pedidoMontoAbonado", rs.getBigDecimal("pedido_monto_abonado"));
+                    fila.put("citaId", rs.getInt("cita_id"));
+                    fila.put("citaEstado", rs.getString("cita_estado"));
+                    fila.put("citaNotas", rs.getString("cita_notas"));
+                    fila.put("citaMotivo", rs.getString("cita_motivo"));
+
+                    if (rs.getTimestamp("pedido_fecha_creacion") != null) {
+                        fila.put("pedidoFecha", rs.getTimestamp("pedido_fecha_creacion").toLocalDateTime());
+                    }
+                    if (rs.getTimestamp("cita_fecha_hora") != null) {
+                        fila.put("citaFechaHora", rs.getTimestamp("cita_fecha_hora").toLocalDateTime());
+                    }
+                    lista.add(fila);
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al filtrar pedidos: " + e.getMessage());
+        }
+        return lista;
     }
 }

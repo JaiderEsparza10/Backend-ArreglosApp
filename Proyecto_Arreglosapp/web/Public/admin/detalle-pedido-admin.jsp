@@ -38,6 +38,11 @@
                         else if ("cancelado".equals(estado)) estadoLabel = "Cancelado";
                         else if ("confirmado".equals(estado)) { estadoLabel = "Confirmado"; estadoClass =
                         "pedido__estado--confirmado"; }
+                        
+                        String pagoEstado = (String) detalle.get("pagoEstado");
+                        String entregaEstado = (String) detalle.get("entregaEstado");
+                        double montoAbonado = (double) detalle.get("montoAbonado");
+                        double totalPedido = (double) detalle.get("total");
                         %>
                         <!DOCTYPE html>
                         <html lang="es">
@@ -108,7 +113,7 @@
                                             <%= citaStr %>
                                         </span>
                                     </div>
-                                    <% if (citaNotas !=null && !citaNotas.isEmpty()) { %>
+                                <% if (citaNotas !=null && !citaNotas.isEmpty()) { %>
                                         <div class="info-seccion__campo">
                                             <span class="info-seccion__label">Notas:</span>
                                             <span class="info-seccion__valor">
@@ -118,17 +123,109 @@
                                         <% } %>
                                 </div>
 
-                                <!-- ESTADO DEL PEDIDO - SOLO LECTURA -->
+                                <!-- CONTROL DE CAJA / ABONOS -->
+                                <div class="info-seccion" style="border-left: 4px solid #4caf50;">
+                                    <h3 class="info-seccion__titulo">Control de Pago y Abonos</h3>
+                                    <div class="info-seccion__campo info-seccion__campo--inline">
+                                        <span class="info-seccion__label">Total Servicio:</span>
+                                        <span class="info-seccion__valor" style="font-weight:700;">$<%= String.format("%,.0f", totalPedido) %></span>
+                                    </div>
+                                    <div class="info-seccion__campo info-seccion__campo--inline">
+                                        <span class="info-seccion__label">Monto Abonado:</span>
+                                        <span class="info-seccion__valor" style="color:#4caf50;">$<%= String.format("%,.0f", montoAbonado) %></span>
+                                    </div>
+                                    <div class="info-seccion__campo info-seccion__campo--inline" style="margin-top:5px; border-top:1px solid #eee; padding-top:5px;">
+                                        <span class="info-seccion__label">Saldo Restante:</span>
+                                        <span class="info-seccion__valor" style="color:#f44336; font-size: 1.1em; font-weight: 700;">
+                                            $<%= String.format("%,.0f", totalPedido - montoAbonado) %>
+                                        </span>
+                                    </div>
+                                    
+                                    <% if (!"pagado".equals(pagoEstado)) { %>
+                                    <form action="/Proyecto_Arreglosapp/AdminServlet" method="post" style="margin-top:15px; display:flex; gap:10px; align-items:center;">
+                                        <input type="hidden" name="accion" value="registrarAbono">
+                                        <input type="hidden" name="pedidoId" value="<%= pedidoId %>">
+                                        <input type="number" name="montoAbono" placeholder="Monto abono" required
+                                               style="flex:1; padding:8px; border:1px solid #ddd; border-radius:4px;">
+                                        <button type="submit" class="perfil__btn-guardar" style="padding: 8px 12px; width:auto; background:#4caf50;">
+                                            + Abono
+                                        </button>
+                                    </form>
+                                    <% } %>
+                                </div>
+
+                                <!-- ESTADO DEL PEDIDO - EDITABLE -->
                                 <div class="estado-pedido">
-                                    <h3 class="estado-pedido__titulo">Estado del Pedido</h3>
+                                    <h3 class="estado-pedido__titulo">Gestión del Pedido</h3>
                                     <div class="estado-pedido__actual">
-                                        <span class="estado-pedido__actual-label">Estado actual:</span>
+                                        <span class="estado-pedido__actual-label">Estado flujo:</span>
                                         <span class="estado-badge <%= estadoClass %>">
                                             <%= estadoLabel %>
                                         </span>
                                     </div>
+                                    <div class="estado-pedido__actual" style="margin-top:5px;">
+                                        <span class="estado-pedido__actual-label">Pago:</span>
+                                        <span class="estado-badge" style="background:<%= "pagado".equals(pagoEstado) ? "#4caf50" : "#ddd" %>; color: white;">
+                                            <%= pagoEstado.toUpperCase() %>
+                                        </span>
+                                        <span class="estado-pedido__actual-label" style="margin-left:15px;">Entrega:</span>
+                                        <span class="estado-badge" style="background:<%= "entregado".equals(entregaEstado) ? "#2196f3" : "#ddd" %>; color: white;">
+                                            <%= entregaEstado.toUpperCase().replace("_", " ") %>
+                                        </span>
+                                    </div>
+                                                                     <div class="gestiones-pedido" style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+                                        <% if (!"pagado".equals(pagoEstado) || !"entregado".equals(entregaEstado)) { %>
+                                        <form action="/Proyecto_Arreglosapp/AdminServlet" method="post" style="display:inline; width:100%;">
+                                            <input type="hidden" name="accion" value="confirmarPagoEntrega">
+                                            <input type="hidden" name="pedidoId" value="<%= pedidoId %>">
+                                            <button type="submit" class="perfil__btn-guardar" style="padding: 12px; font-size: 14px; background: #673ab7; width:100%; font-weight:700;">
+                                                🤝 Confirmar Pago y Entrega (Físico)
+                                            </button>
+                                        </form>
+                                        <% } %>
+
+                                        <div style="width:100%; border-top:1px solid #eee; margin:15px 0;"></div>
+                                        
+                                        <% if (!"pagado".equals(pagoEstado)) { %>
+                                        <form action="/Proyecto_Arreglosapp/AdminServlet" method="post" style="display:inline;">
+                                            <input type="hidden" name="accion" value="cambiarEstadoPago">
+                                            <input type="hidden" name="pedidoId" value="<%= pedidoId %>">
+                                            <button type="submit" class="perfil__btn-guardar" style="padding: 8px 12px; font-size: 12px; background: #4caf50;">
+                                                💰 Solo Pago
+                                            </button>
+                                        </form>
+                                        <% } %>
+
+                                        <% if (!"entregado".equals(entregaEstado)) { %>
+                                        <form action="/Proyecto_Arreglosapp/AdminServlet" method="post" style="display:inline;">
+                                            <input type="hidden" name="accion" value="cambiarEstadoEntrega">
+                                            <input type="hidden" name="pedidoId" value="<%= pedidoId %>">
+                                            <button type="submit" class="perfil__btn-guardar" style="padding: 8px 12px; font-size: 12px; background: #2196f3;">
+                                                📦 Solo Entrega
+                                            </button>
+                                        </form>
+                                        <% } %>
+
+                                        <div style="width:100%; border-top:1px solid #eee; margin:10px 0;"></div>
+
+                                        <form action="/Proyecto_Arreglosapp/AdminServlet" method="post" style="display:inline;">
+                                            <input type="hidden" name="accion" value="actualizarEstado">
+                                            <input type="hidden" name="pedidoId" value="<%= pedidoId %>">
+                                            <select name="nuevoEstado" style="padding:8px; border-radius:4px; border:1px solid #ddd; margin-right:5px;">
+                                                <option value="pendiente" <%= "pendiente".equals(estado) ? "selected" : "" %>>Pendiente</option>
+                                                <option value="confirmado" <%= "confirmado".equals(estado) ? "selected" : "" %>>Confirmado</option>
+                                                <option value="en_proceso" <%= "en_proceso".equals(estado) ? "selected" : "" %>>En Proceso</option>
+                                                <option value="terminado" <%= "terminado".equals(estado) ? "selected" : "" %>>Terminado</option>
+                                                <option value="cancelado" <%= "cancelado".equals(estado) ? "selected" : "" %>>Cancelado</option>
+                                            </select>
+                                            <button type="submit" class="perfil__btn-guardar" style="padding: 8px 15px; font-size: 13px; display:inline-block; width:auto;">
+                                                Actualizar Flujo
+                                            </button>
+                                        </form>
+                                    </div>
+
                                     <p style="font-size:12px;color:#888;margin-top:12px;">
-                                        El estado se actualiza automáticamente al gestionar la cita desde el Dashboard.
+                                        El estado se sincroniza con el flujo de trabajo del administrador.
                                     </p>
                                 </div>
 
@@ -157,6 +254,13 @@
                                         <img src="../../Assets/icons/anadir-grupo.png" 
                                              class="navbar-inferior__icono" alt="">
                                         <span class="navbar-inferior__texto">Usuarios</span>
+                                    </a>
+                                    <a href="../client/mi-perfil.jsp" 
+                                       class="navbar-inferior__item"
+                                       aria-label="Perfil">
+                                        <img src="../../Assets/icons/usuario-transparente.png" 
+                                             class="navbar-inferior__icono" alt="">
+                                        <span class="navbar-inferior__texto">Perfil</span>
                                     </a>
                                     <a href="/Proyecto_Arreglosapp/LogoutServlet" 
                                        class="navbar-inferior__item"

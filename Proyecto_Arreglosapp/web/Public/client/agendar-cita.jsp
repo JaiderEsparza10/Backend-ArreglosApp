@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ page import="model.Usuario" %>
         <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) { usuario=(Usuario)
             sesion.getAttribute("usuario"); } if (usuario==null) {
@@ -78,6 +78,19 @@
                                     <p class="cita__hora-seleccionada" id="textoHoraSeleccionada">
                                         Ninguna hora seleccionada
                                     </p>
+                                </div>
+
+                                <!-- MOTIVO DE LA CITA -->
+                                <div class="cita__seccion">
+                                    <h2 class="cita__titulo-seccion">Motivo de la Cita</h2>
+                                    <div class="cita__input-icono">
+                                        <select name="motivoCita" class="cita__input" required style="padding-left:10px;">
+                                            <option value="entrega_prenda">Entrega de prenda para arreglo</option>
+                                            <option value="recogida_prenda">Recogida de prenda terminada</option>
+                                            <option value="toma_medidas">Toma de medidas</option>
+                                            <option value="otro">Otro motivo</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <!-- LUGAR DE ENTREGA -->
