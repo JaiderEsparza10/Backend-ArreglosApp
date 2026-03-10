@@ -83,7 +83,8 @@ public class AuthFilter implements Filter {
                 path.equals("/UsuarioServlet") ||
                 path.equals("/RecuperarPasswordServlet") ||
                 path.equals("/LogoutServlet") ||
-                path.equals("/AdminServlet");
+                path.equals("/AdminServlet") ||
+                path.equals("/ServicioServlet");
     }
 
     private boolean hasAccess(String path, int rolId) {

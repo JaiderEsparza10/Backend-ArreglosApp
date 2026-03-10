@@ -201,4 +201,33 @@ public class AdminDAO {
         }
         return null;
     }
+
+    public List<Map<String, Object>> obtenerCitasHoy() throws Exception {
+        String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, " +
+                "u.user_nombre, u.user_email, p.pedido_id " +
+                "FROM citas c " +
+                "JOIN pedidos p ON p.pedido_id = c.pedido_id " +
+                "JOIN usuarios u ON u.user_id = p.usuario_id " +
+                "WHERE DATE(c.cita_fecha_hora) = CURDATE() " +
+                "ORDER BY c.cita_fecha_hora ASC";
+
+        List<Map<String, Object>> lista = new ArrayList<>();
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Map<String, Object> cita = new LinkedHashMap<>();
+                cita.put("citaId", rs.getInt("cita_id"));
+                cita.put("pedidoId", rs.getInt("pedido_id"));
+                cita.put("fechaHora", rs.getTimestamp("cita_fecha_hora"));
+                cita.put("estado", rs.getString("cita_estado"));
+                cita.put("notas", rs.getString("cita_notas"));
+                cita.put("cliente", rs.getString("user_nombre"));
+                lista.add(cita);
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener citas: " + e.getMessage());
+        }
+        return lista;
+    }
 }

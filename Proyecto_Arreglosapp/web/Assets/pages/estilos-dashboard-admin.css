@@ -405,3 +405,24 @@
     transform: scale(1.02);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
+
+/* SECCIÓN DE LA SELECCIÓN DE LAS CITAS PROGRAMADAS PARA HOY */
+.pedido__estado--confirmado {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.pedido__estado--cancelado {
+    background-color: #fdecea;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.estadistica {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.estadistica:hover {
+    transform: translateY(-2px);
+}

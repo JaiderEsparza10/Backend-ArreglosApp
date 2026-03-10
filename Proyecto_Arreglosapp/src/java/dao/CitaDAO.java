@@ -14,20 +14,63 @@ public class CitaDAO {
             con = ConectionDB.getConexion();
             con.setAutoCommit(false);
 
-            // 1. Obtener arreglo_id y precio desde personalizaciones
+            // 1. Obtener categoría desde personalizaciones y mapear a arreglo_id
             int arregloId = -1;
             double precio = 0;
 
-            String sqlPer = "SELECT p.arreglo_id, a.arreglo_precio_base " +
+            String sqlPer = "SELECT p.categoria, a.arreglo_id, a.arreglo_precio_base " +
                     "FROM personalizaciones p " +
-                    "JOIN arreglos a ON a.arreglo_id = p.arreglo_id " +
-                    "WHERE p.personalizacion_id = ?";
+                    "JOIN categorias c ON LOWER(c.categoria_nombre) LIKE CONCAT('%', LOWER(SUBSTRING_INDEX(p.categoria, '/', 1)), '%') "
+                    +
+                    "JOIN arreglos a ON a.categoria_id = c.categoria_id " +
+                    "WHERE p.personalizacion_id = ? LIMIT 1";
+
             try (PreparedStatement ps = con.prepareStatement(sqlPer)) {
                 ps.setInt(1, personalizacionId);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         arregloId = rs.getInt("arreglo_id");
                         precio = rs.getDouble("arreglo_precio_base");
+                    }
+                }
+            }
+
+            // Si no encuentra por JOIN, buscar por mapeo directo
+            if (arregloId == -1 && personalizacionId != -1) {
+                String sqlCat = "SELECT categoria FROM personalizaciones WHERE personalizacion_id = ?";
+                String categoria = "";
+                try (PreparedStatement ps = con.prepareStatement(sqlCat)) {
+                    ps.setInt(1, personalizacionId);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next())
+                            categoria = rs.getString("categoria");
+                    }
+                }
+
+                // Mapeo manual por nombre de categoría
+                String sqlArreglo = "";
+                if (categoria.toLowerCase().contains("dobladillo") || categoria.toLowerCase().contains("sastr")) {
+                    sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 1";
+                } else if (categoria.toLowerCase().contains("costura")) {
+                    sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 2";
+                } else if (categoria.toLowerCase().contains("planch")) {
+                    sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 3";
+                } else if (categoria.toLowerCase().contains("medida") || categoria.toLowerCase().contains("ajuste")) {
+                    sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 4";
+                } else if (categoria.toLowerCase().contains("estrech") || categoria.toLowerCase().contains("ensanch")
+                        || categoria.toLowerCase().contains("vestido")) {
+                    sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 5";
+                } else if (categoria.toLowerCase().contains("recortar")) {
+                    sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 1";
+                }
+
+                if (!sqlArreglo.isEmpty()) {
+                    try (PreparedStatement ps = con.prepareStatement(sqlArreglo);
+                            ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            arregloId = rs.getInt("arreglo_id");
+                            precio = rs.getDouble("arreglo_precio_base");
+                        }
                     }
                 }
             }
@@ -59,6 +102,16 @@ public class CitaDAO {
                     ps.setInt(2, arregloId);
                     ps.setDouble(3, precio);
                     ps.setDouble(4, precio);
+                    ps.executeUpdate();
+                }
+            }
+
+            // 4. Actualizar arreglo_id en personalizaciones
+            if (arregloId != -1 && personalizacionId != -1) {
+                String sqlUpdate = "UPDATE personalizaciones SET arreglo_id = ? WHERE personalizacion_id = ?";
+                try (PreparedStatement ps = con.prepareStatement(sqlUpdate)) {
+                    ps.setInt(1, arregloId);
+                    ps.setInt(2, personalizacionId);
                     ps.executeUpdate();
                 }
             }
