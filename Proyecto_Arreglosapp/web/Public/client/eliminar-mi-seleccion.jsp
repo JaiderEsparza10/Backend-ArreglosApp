@@ -37,7 +37,7 @@
           alt="flecha de volver atras">
       </a>
     </div>
-    <div id="modalEliminar" class="modal"> <div class="modal-fondo"> <div class="modal-contenido"> <h3 class="modal__titulo">Â¿Elimina de la lista?</h3> <p class="modal__descripcion">Â¿estás seguro que quieres eliminar este artículo de la lista?</p> <div class="modal__acciones"> <a href="#" class="btn-modal btn-modal--cancelar">CANCELAR</a> <button class="btn-modal btn-modal--eliminar">ELIMINAR</button>
+    <div id="modalEliminar" class="modal"> <div class="modal-fondo"> <div class="modal-contenido"> <h3 class="modal__titulo">¿Elimina de la lista?</h3> <p class="modal__descripcion">¿estás seguro que quieres eliminar este artículo de la lista?</p> <div class="modal__acciones"> <a href="#" class="btn-modal btn-modal--cancelar">CANCELAR</a> <button class="btn-modal btn-modal--eliminar">ELIMINAR</button>
           </div>
         </div>
       </div>

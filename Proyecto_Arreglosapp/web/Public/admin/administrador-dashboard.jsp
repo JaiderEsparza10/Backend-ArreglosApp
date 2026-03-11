@@ -213,7 +213,7 @@
                                                                                             <% if (notasCita !=null &&
                                                                                                 !notasCita.trim().isEmpty())
                                                                                                 { %><span
-                                                                                                    class="pedido__cita">€œÂ
+                                                                                                    class="pedido__cita">
                                                                                                     <%= notasCita %>
                                                                                                         </span>
                                                                                                 <% } %>
@@ -298,8 +298,7 @@
                                                                                 boolean citaFinalizada2 =
                                                                                 "completada".equals(estadoCita2) || "cancelada".equals(estadoCita2);
                                                                                 %>
-                                                                                <article class="pedido"> <div class="pedido__contenido"> <span class="pedido__id">€”€œ <%=
-                                                                                                fechaStr2 %></span>
+                                                                                <article class="pedido"> <div class="pedido__contenido"> <span class="pedido__id"> <%= fechaStr2 %></span>
                                                                                         <div
                                                                                             class="pedido__info-cliente">
                                                                                             <div
@@ -311,7 +310,7 @@
                                                                                             <% if (notasCita2 !=null &&
                                                                                                 !notasCita2.trim().isEmpty())
                                                                                                 { %><span
-                                                                                                    class="pedido__cita">€œÂ
+                                                                                                    class="pedido__cita">
                                                                                                     <%= notasCita2 %>
                                                                                                         </span>
                                                                                                 <% } %>
