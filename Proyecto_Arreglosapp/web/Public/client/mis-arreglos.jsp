@@ -46,27 +46,52 @@
 
                   <% if (misArreglos !=null && !misArreglos.isEmpty()) { %>
                     <% for (Personalizacion arreglo : misArreglos) { %>
-                      <% String imgUrl=arreglo.getImagenReferencia(); if (imgUrl==null || imgUrl.trim().isEmpty()) {
-                        String cat=arreglo.getCategoria() !=null ? arreglo.getCategoria().toLowerCase() : "" ; if
-                        (cat.contains("dobladillo") || cat.contains("sastr")) { imgUrl="../../Assets/image/imagen-sastreria.jpg" ; } else if (cat.contains("estrech") ||
-                        cat.contains("ensanch")) { imgUrl="../../Assets/image/imagen-arreglos-de-vestidos-de-fiesta.jpg" ; } else if
-                        (cat.contains("recortar")) { imgUrl="../../Assets/image/image-arreglo-bolsillos.jpg" ; } else {
-                        imgUrl="../../Assets/image/imagen-costura.jpg" ; } } else if (!imgUrl.startsWith("http") &&
-                        !imgUrl.startsWith("/") && !imgUrl.startsWith("../../")) { imgUrl="../../Assets/image/" + imgUrl; } String
-                        fechaTexto="Sin fecha" ; if (arreglo.getFechaCreacion() !=null) {
-                        fechaTexto=arreglo.getFechaCreacion().format(fmt); } String estado=arreglo.getEstado() !=null ?
-                        arreglo.getEstado() : "pendiente" ; String badgeClase="badge--pendiente" ; String
-                        estadoTexto="Pendiente" ; if (estado.equalsIgnoreCase("en_proceso")) {
-                        badgeClase="badge--proceso" ; estadoTexto="En proceso" ; } else if
-                        (estado.equalsIgnoreCase("completado")) { badgeClase="badge--completado" ;
-                        estadoTexto="Completado" ; } String desc=arreglo.getDescripcion() !=null ?
-                        arreglo.getDescripcion() : "" ; String descCorta=desc.length()> 60 ? desc.substring(0, 60) +
-                        "..." : desc;
+                      <% 
+                        String imgUrl = arreglo.getImagenReferencia();
+                        String imgSrc = "";
+                        if (imgUrl == null || imgUrl.trim().isEmpty()) {
+                          String cat = arreglo.getCategoria() != null ? arreglo.getCategoria().toLowerCase() : "";
+                          if (cat.contains("dobladillo") || cat.contains("sastr")) {
+                            imgSrc = ctx + "/Assets/image/imagen-sastreria.jpg";
+                          } else if (cat.contains("estrech") || cat.contains("ensanch")) {
+                            imgSrc = ctx + "/Assets/image/imagen-arreglos-de-vestidos-de-fiesta.jpg";
+                          } else if (cat.contains("recortar")) {
+                            imgSrc = ctx + "/Assets/image/image-arreglo-bolsillos.jpg";
+                          } else {
+                            imgSrc = ctx + "/Assets/image/imagen-costura.jpg";
+                          }
+                        } else {
+                          if (imgUrl.startsWith("http")) {
+                            imgSrc = imgUrl;
+                          } else if (imgUrl.startsWith("/")) {
+                            imgSrc = ctx + imgUrl;
+                          } else if (imgUrl.startsWith("../../")) {
+                            imgSrc = ctx + "/" + imgUrl.replace("../../", "");
+                          } else {
+                            imgSrc = ctx + "/" + imgUrl;
+                          }
+                        }
+                        String fechaTexto = "Sin fecha";
+                        if (arreglo.getFechaCreacion() != null) {
+                          fechaTexto = arreglo.getFechaCreacion().format(fmt);
+                        }
+                        String estado = arreglo.getEstado() != null ? arreglo.getEstado() : "pendiente";
+                        String badgeClase = "badge--pendiente";
+                        String estadoTexto = "Pendiente";
+                        if (estado.equalsIgnoreCase("en_proceso")) {
+                          badgeClase = "badge--proceso";
+                          estadoTexto = "En proceso";
+                        } else if (estado.equalsIgnoreCase("completado")) {
+                          badgeClase = "badge--completado";
+                          estadoTexto = "Completado";
+                        }
+                        String desc = arreglo.getDescripcion() != null ? arreglo.getDescripcion() : "";
+                        String descCorta = desc.length() > 60 ? desc.substring(0, 60) + "..." : desc;
                         String urlEditar = "personalizar-arreglo.jsp?id=" + arreglo.getPersonalizacionId();
                         String urlCita = "agendar-cita.jsp?personalizacionId=" + arreglo.getPersonalizacionId();
                         %>
                         <section class="contenido-seleccion__contenedor arreglo-card">
-                          <img class="contenedor__imagen" src="<%= imgUrl %>" alt="Imagen del arreglo">
+                          <img class="contenedor__imagen" src="<%= imgSrc %>" alt="Imagen del arreglo">
                           <div class="contenido-seleccion__contenedor-informacion">
                             <div class="contenedor-informacion__informacion">
                               <div class="informacion__fila-titulo">

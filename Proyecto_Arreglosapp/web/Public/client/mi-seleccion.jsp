@@ -33,11 +33,28 @@
               <main class="contenido-seleccion" id="contenido-principal" role="main">
                 <h1 class="contenido__titulo-seleccion">Mi selección</h1>
 
-                <% if (misFavoritos !=null && !misFavoritos.isEmpty()) { for (Favorito fav : misFavoritos) { String
-                  imgUrl=fav.getImagenUrl(); if (imgUrl !=null) { if (imgUrl.startsWith("Public/")) {
-                  imgUrl=imgUrl.substring(7); } if (!imgUrl.startsWith("/") && !imgUrl.startsWith("http")) { imgUrl="../../Assets/image/" + imgUrl; } } %>
+                <% if (misFavoritos !=null && !misFavoritos.isEmpty()) { 
+                  for (Favorito fav : misFavoritos) { 
+                    String imgUrl = fav.getImagenUrl(); 
+                    String imgSrc = ctx + "/Assets/image/logo-app.png"; 
+                    if (imgUrl != null && !imgUrl.trim().isEmpty()) { 
+                      if (imgUrl.startsWith("Public/")) {
+                        imgUrl = imgUrl.substring(7);
+                      }
+                      if (imgUrl.startsWith("http")) {
+                        imgSrc = imgUrl;
+                      } else if (imgUrl.startsWith("/")) {
+                        imgSrc = ctx + imgUrl;
+                      } else if (imgUrl.startsWith("../../")) {
+                        imgSrc = ctx + "/" + imgUrl.replace("../../", "");
+                      } else if (imgUrl.startsWith("Assets/")) {
+                        imgSrc = ctx + "/" + imgUrl;
+                      } else {
+                        imgSrc = ctx + "/Assets/image/" + imgUrl;
+                      }
+                    } %>
                   <section class="contenido-seleccion__contenedor">
-                    <img class="contenedor__imagen" src="<%= imgUrl %>" alt="Imagen del arreglo">
+                    <img class="contenedor__imagen" src="<%= imgSrc %>" alt="Imagen del arreglo">
                     <div class="contenido-seleccion__contenedor-informacion">
                       <div class="contenedor-informacion__informacion">
                         <h2 class="informacion__titulo-arreglo">
