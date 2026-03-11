@@ -438,4 +438,17 @@ public class UsuarioDAO {
             throw new Exception("Error al agendar cita: " + e.getMessage());
         }
     }
+
+    // ✅ NUEVO — Insertar notificación (RF20)
+    public boolean insertarNotificacion(int userId, String mensaje) throws Exception {
+        String sql = "INSERT INTO NOTIFICACIONES (user_id, mensaje) VALUES (?, ?)";
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setString(2, mensaje);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new Exception("Error al insertar notificación: " + e.getMessage());
+        }
+    }
 }

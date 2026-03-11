@@ -250,6 +250,27 @@ public class AdminDAO {
                 }
             }
 
+            // ✅ TRIGGER NOTIFICACIÓN (RF20)
+            String sqlGetUserId = "SELECT p.usuario_id FROM pedidos p JOIN citas c ON p.pedido_id = c.pedido_id WHERE c.cita_id = ?";
+            int userId = -1;
+            try (PreparedStatement ps = con.prepareStatement(sqlGetUserId)) {
+                ps.setInt(1, citaId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next())
+                        userId = rs.getInt("usuario_id");
+                }
+            }
+
+            if (userId != -1) {
+                String mensaje = "Tu cita ha sido marcada como: " + nuevoEstado;
+                String sqlNotif = "INSERT INTO NOTIFICACIONES (user_id, mensaje) VALUES (?, ?)";
+                try (PreparedStatement ps = con.prepareStatement(sqlNotif)) {
+                    ps.setInt(1, userId);
+                    ps.setString(2, mensaje);
+                    ps.executeUpdate();
+                }
+            }
+
             con.commit();
             return true;
         } catch (SQLException e) {
@@ -265,14 +286,48 @@ public class AdminDAO {
     }
 
     public boolean actualizarEstadoPedido(int pedidoId, String nuevoEstado) throws Exception {
-        String sql = "UPDATE pedidos SET pedido_estado = ?, pedido_fecha_actualizacion = CURRENT_TIMESTAMP WHERE pedido_id = ?";
-        try (Connection con = ConectionDB.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, nuevoEstado);
-            ps.setInt(2, pedidoId);
-            return ps.executeUpdate() > 0;
+        Connection con = null;
+        try {
+            con = ConectionDB.getConexion();
+            con.setAutoCommit(false);
+
+            String sql = "UPDATE pedidos SET pedido_estado = ?, pedido_fecha_actualizacion = CURRENT_TIMESTAMP WHERE pedido_id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, nuevoEstado);
+                ps.setInt(2, pedidoId);
+                ps.executeUpdate();
+            }
+
+            // ✅ TRIGGER NOTIFICACIÓN (RF20)
+            String sqlGetUserId = "SELECT usuario_id FROM pedidos WHERE pedido_id = ?";
+            int userId = -1;
+            try (PreparedStatement ps = con.prepareStatement(sqlGetUserId)) {
+                ps.setInt(1, pedidoId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next())
+                        userId = rs.getInt("usuario_id");
+                }
+            }
+
+            if (userId != -1) {
+                String mensaje = "El estado de tu pedido #" + pedidoId + " ha cambiado a: " + nuevoEstado;
+                String sqlNotif = "INSERT INTO NOTIFICACIONES (user_id, mensaje) VALUES (?, ?)";
+                try (PreparedStatement ps = con.prepareStatement(sqlNotif)) {
+                    ps.setInt(1, userId);
+                    ps.setString(2, mensaje);
+                    ps.executeUpdate();
+                }
+            }
+
+            con.commit();
+            return true;
         } catch (SQLException e) {
+            if (con != null)
+                con.rollback();
             throw new Exception("Error al actualizar estado: " + e.getMessage());
+        } finally {
+            if (con != null)
+                con.close();
         }
     }
 
