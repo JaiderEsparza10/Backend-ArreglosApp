@@ -1,6 +1,11 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <% 
-    // Obtener parámetros de la URL para mantener valores después de validaciones
+    /**
+     * VISTA: Registro de Usuario.
+     * Propósito: Permitir a los nuevos clientes crear una cuenta en el sistema.
+     * Requisitos Funcionales: RF2 (Registro de clientes).
+     * Nota: Mantiene los valores ingresados en caso de error de validación para mejorar la UX.
+     */
     String msg = request.getParameter("msg"); 
     String nombre = request.getParameter("nombre"); 
     String email = request.getParameter("email"); 

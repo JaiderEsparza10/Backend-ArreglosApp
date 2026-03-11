@@ -16,9 +16,12 @@ import model.Usuario;
 import java.io.IOException;
 
 /**
- * Este servlet permite a los usuarios personalizar sus arreglos de ropa.
- * Maneja la creación, edición y eliminación de personalizaciones, incluyendo la
- * subida de imágenes.
+ * Controlador de Personalización de Arreglos.
+ * RF-06: Personalización de Servicios.
+ * Permite a los usuarios definir especificaciones técnicas para sus prendas (material, descripción) 
+ * y adjuntar imágenes de referencia.
+ * 
+ * @author Antigravity - Senior Architect
  */
 @WebServlet("/PersonalizacionServlet")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
@@ -26,20 +29,15 @@ public class PersonalizacionServlet extends HttpServlet {
 
     private PersonalizacionDAO personalizacionDAO;
 
-    /**
-     * Inicializa el DAO de personalización para gestionar los datos de los
-     * arreglos.
-     */
     @Override
     public void init() throws ServletException {
+        // Inicialización de la capa de persistencia para personalizaciones
         personalizacionDAO = new PersonalizacionDAO();
     }
 
     /**
-     * Procesa las solicitudes POST para crear o editar una personalización de
-     * arreglo.
-     * Valida la sesión del usuario y procesa la imagen de referencia si se
-     * proporciona.
+     * Procesa la creación y edición de especificaciones de arreglo.
+     * Gestiona el flujo de subida de archivos (imágenes) y datos de formulario.
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -48,6 +46,7 @@ public class PersonalizacionServlet extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
 
+        // Regla de Seguridad: Verificación de sesión de cliente activa
         HttpSession session = request.getSession(false);
         Usuario usuario = (session != null) ? (Usuario) session.getAttribute("usuario") : null;
 
@@ -58,21 +57,25 @@ public class PersonalizacionServlet extends HttpServlet {
 
         String accion = request.getParameter("accion");
 
-        // ─── CREAR ───────────────────────────────────────────────
+        // ─── CREAR NUEVA PERSONALIZACIÓN ──────────────────────────────
         if ("crear".equals(accion)) {
             try {
+                // Extracción de metadatos descriptivos
                 String categoria = request.getParameter("categoria");
                 String descripcion = request.getParameter("descripcion");
                 String materialTela = request.getParameter("materialTela");
 
+                // Validación de integridad obligatoria
                 if (categoria == null || categoria.trim().isEmpty()) {
                     session.setAttribute("errorPersonalizacion", "Debes seleccionar una categoría");
                     response.sendRedirect("Public/client/personalizar-arreglo.jsp");
                     return;
                 }
 
+                // Procesamiento de archivo binario (Imagen de referencia)
                 String imagenReferencia = procesarImagen(request);
 
+                // Mapeo al modelo de datos
                 Personalizacion personalizacion = new Personalizacion(
                         usuario.getId(), categoria, descripcion, materialTela, imagenReferencia);
 
@@ -90,7 +93,7 @@ public class PersonalizacionServlet extends HttpServlet {
                 response.sendRedirect("Public/client/personalizar-arreglo.jsp");
             }
 
-            // ─── EDITAR ───────────────────────────────────────────────
+            // ─── EDITAR PERSONALIZACIÓN EXISTENTE ────────────────────────
         } else if ("editar".equals(accion)) {
             try {
                 int personalizacionId = Integer.parseInt(request.getParameter("personalizacionId"));
@@ -104,6 +107,7 @@ public class PersonalizacionServlet extends HttpServlet {
                     return;
                 }
 
+                // Actualización de imagen (opcional en edición)
                 String imagenReferencia = procesarImagen(request);
 
                 Personalizacion personalizacion = new Personalizacion(
@@ -130,6 +134,9 @@ public class PersonalizacionServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Procesa solicitudes GET, principalmente para la eliminación de registros.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -144,11 +151,12 @@ public class PersonalizacionServlet extends HttpServlet {
 
         String accion = request.getParameter("accion");
 
-        // ─── ELIMINAR ─────────────────────────────────────────────
+        // ─── ELIMINAR PERSONALIZACIÓN ─────────────────────────────────
         if ("eliminar".equals(accion)) {
             try {
                 int personalizacionId = Integer.parseInt(request.getParameter("id"));
 
+                // Borrado físico (Cascade Delete no implementado o evitado por seguridad)
                 boolean eliminada = personalizacionDAO.eliminarPersonalizacion(
                         personalizacionId, usuario.getId());
 
@@ -172,19 +180,25 @@ public class PersonalizacionServlet extends HttpServlet {
         }
     }
 
-    // ─── MÉTODO AUXILIAR: procesar imagen subida ──────────────────
+    /**
+     * Método Auxiliar: Gestiona el almacenamiento físico de imágenes en el servidor.
+     * RNF: Persistencia de Medios.
+     */
     private String procesarImagen(HttpServletRequest request) throws Exception {
         Part filePart = request.getPart("imagenReferencia");
         if (filePart != null && filePart.getSize() > 0) {
+            // Generación de ruta absoluta en el sistema de archivos del servidor
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
             String uploadPath = getServletContext().getRealPath("")
                     + File.separator + "Assets"
                     + File.separator + "uploads";
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists())
-                uploadDir.mkdirs();
+                uploadDir.mkdirs(); // Creación recursiva de directorios si no existen
+            
+            // Escritura del binario
             filePart.write(uploadPath + File.separator + fileName);
-            return "Assets/uploads/" + fileName;
+            return "Assets/uploads/" + fileName; // Retorno de ruta relativa para almacenamiento en DB
         }
         return null;
     }

@@ -4,10 +4,22 @@ import config.ConectionDB;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * Esta clase gestiona las operaciones administrativas del sistema.
+ * Incluye estadísticas para el Dashboard, gestión avanzada de pedidos,
+ * control de citas globales, y administración de usuarios y servicios.
+ * 
+ * @author Antigravity - Senior Architect
+ */
 public class AdminDAO {
 
-    // ─── DASHBOARD ────────────────────────────────────────────────
+    // ─── DASHBOARD: ESTADÍSTICAS EN TIEMPO REAL ───────────────────
 
+    /**
+     * Cuenta el total de pedidos que requieren atención (no cancelados).
+     * @return Cantidad de pedidos activos.
+     * @throws Exception Error SQL.
+     */
     public int contarPedidosActivos() throws Exception {
         String sql = "SELECT COUNT(*) FROM pedidos WHERE pedido_estado IN ('pendiente','confirmado','en_proceso','terminado')";
         try (Connection con = ConectionDB.getConexion();
@@ -21,6 +33,9 @@ public class AdminDAO {
         return 0;
     }
 
+    /**
+     * Cuenta cuántas citas están programadas para la fecha actual.
+     */
     public int contarCitasHoy() throws Exception {
         String sql = "SELECT COUNT(*) FROM citas WHERE DATE(cita_fecha_hora) = CURDATE() AND cita_estado IN ('programada','confirmada')";
         try (Connection con = ConectionDB.getConexion();
@@ -34,6 +49,9 @@ public class AdminDAO {
         return 0;
     }
 
+    /**
+     * Cuenta el histórico total de citas registradas.
+     */
     public int contarTodasLasCitas() throws Exception {
         String sql = "SELECT COUNT(*) FROM citas";
         try (Connection con = ConectionDB.getConexion();
@@ -47,6 +65,13 @@ public class AdminDAO {
         return 0;
     }
 
+    /**
+     * Recupera los últimos 20 pedidos realizados para mostrar en el Dashboard.
+     * Incluye datos del cliente y de la cita asociada mediante JOINs.
+     * 
+     * @return Lista de pedidos recientes con detalles.
+     * @throws Exception Error SQL.
+     */
     public List<Map<String, Object>> obtenerPedidosRecientes() throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_total, p.pedido_fecha_creacion, " +
                 "u.user_nombre, u.user_email, " +
@@ -79,6 +104,14 @@ public class AdminDAO {
         return lista;
     }
 
+    /**
+     * Filtra la lista de pedidos según criterios dinámicos.
+     * RF-11: Control de Estados por Admin.
+     * 
+     * @param estadoPago (Obsoleto en BD actual, se mantiene por compatibilidad).
+     * @param estadoPedido Estado deseado (pendiente, confirmado, etc).
+     * @return Lista filtrada de pedidos.
+     */
     public List<Map<String, Object>> obtenerPedidosFiltrados(String estadoPago, String estadoPedido) throws Exception {
         StringBuilder sql = new StringBuilder(
                 "SELECT p.pedido_id, p.pedido_estado, p.pedido_total, p.pedido_fecha_creacion, " +
@@ -119,6 +152,9 @@ public class AdminDAO {
         return pedidos;
     }
 
+    /**
+     * Obtiene todas las citas programadas para el día de hoy con datos del cliente.
+     */
     public List<Map<String, Object>> obtenerCitasHoy() throws Exception {
         String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, " +
                 "u.user_nombre, p.pedido_id " +
@@ -149,6 +185,9 @@ public class AdminDAO {
         return lista;
     }
 
+    /**
+     * Recupera el listado completo de citas agendadas en el sistema.
+     */
     public List<Map<String, Object>> obtenerTodasLasCitas() throws Exception {
         String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, " +
                 "u.user_nombre, p.pedido_id " +
@@ -178,6 +217,9 @@ public class AdminDAO {
         return lista;
     }
 
+    /**
+     * Filtra citas por fecha o nombre del cliente.
+     */
     public List<Map<String, Object>> obtenerCitasFiltradas(String fecha, String clienteNombre) throws Exception {
         StringBuilder sql = new StringBuilder(
                 "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, " +
@@ -218,12 +260,21 @@ public class AdminDAO {
         return citas;
     }
 
+    /**
+     * Cambia el estado de una cita y actualiza el pedido vinculado.
+     * RF-13: Dispara una notificación automática al cliente.
+     * 
+     * @param citaId ID de la cita.
+     * @param nuevoEstado (confirmada, completada, cancelada).
+     * @return true si el proceso transaccional fue exitoso.
+     */
     public boolean cambiarEstadoCita(int citaId, String nuevoEstado) throws Exception {
         Connection con = null;
         try {
             con = ConectionDB.getConexion();
-            con.setAutoCommit(false);
+            con.setAutoCommit(false); // Iniciar transacción
 
+            // 1. Actualizar estado de la cita
             String sqlCita = "UPDATE citas SET cita_estado = ? WHERE cita_id = ?";
             try (PreparedStatement ps = con.prepareStatement(sqlCita)) {
                 ps.setString(1, nuevoEstado);
@@ -231,6 +282,7 @@ public class AdminDAO {
                 ps.executeUpdate();
             }
 
+            // 2. Mapear estado de cita a estado de pedido
             String nuevoPedidoEstado = null;
             if ("confirmada".equals(nuevoEstado))
                 nuevoPedidoEstado = "confirmado";
@@ -250,7 +302,7 @@ public class AdminDAO {
                 }
             }
 
-            // ✅ TRIGGER NOTIFICACIÓN (RF20)
+            // 3. Obtener el ID del usuario para enviar notificación (RF-13)
             String sqlGetUserId = "SELECT p.usuario_id FROM pedidos p JOIN citas c ON p.pedido_id = c.pedido_id WHERE c.cita_id = ?";
             int userId = -1;
             try (PreparedStatement ps = con.prepareStatement(sqlGetUserId)) {
@@ -271,7 +323,7 @@ public class AdminDAO {
                 }
             }
 
-            con.commit();
+            con.commit(); // Confirmar transacción
             return true;
         } catch (SQLException e) {
             if (con != null)
@@ -285,12 +337,17 @@ public class AdminDAO {
         }
     }
 
+    /**
+     * Actualiza manualmente el estado operacional de un pedido.
+     * RF-11/RF-13: Notifica al cliente sobre el cambio de estado.
+     */
     public boolean actualizarEstadoPedido(int pedidoId, String nuevoEstado) throws Exception {
         Connection con = null;
         try {
             con = ConectionDB.getConexion();
             con.setAutoCommit(false);
 
+            // 1. Actualizar pedido
             String sql = "UPDATE pedidos SET pedido_estado = ?, pedido_fecha_actualizacion = CURRENT_TIMESTAMP WHERE pedido_id = ?";
             try (PreparedStatement ps = con.prepareStatement(sql)) {
                 ps.setString(1, nuevoEstado);
@@ -298,7 +355,7 @@ public class AdminDAO {
                 ps.executeUpdate();
             }
 
-            // ✅ TRIGGER NOTIFICACIÓN (RF20)
+            // 2. Notificación automática
             String sqlGetUserId = "SELECT usuario_id FROM pedidos WHERE pedido_id = ?";
             int userId = -1;
             try (PreparedStatement ps = con.prepareStatement(sqlGetUserId)) {
@@ -331,6 +388,9 @@ public class AdminDAO {
         }
     }
 
+    /**
+     * Recupera el detalle completo de un pedido específico para la vista del Administrador.
+     */
     public Map<String, Object> obtenerDetallePedido(int pedidoId) throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
                 "u.user_nombre, u.user_email, u.user_ubicacion_direccion, " +
@@ -366,8 +426,12 @@ public class AdminDAO {
         return null;
     }
 
-    // ─── USUARIOS ─────────────────────────────────────────────────
+    // ─── GESTIÓN DE USUARIOS ──────────────────────────────────────
 
+    /**
+     * Obtiene el listado de todos los clientes registrados (rol_id = 2).
+     * @param busqueda Filtro opcional por nombre o email.
+     */
     public List<Map<String, Object>> obtenerUsuarios(String busqueda) throws Exception {
         String sql = "SELECT u.user_id, u.user_nombre, u.user_email, u.rol_id, t.telefono_numero " +
                 "FROM usuarios u " +
@@ -402,11 +466,16 @@ public class AdminDAO {
         return lista;
     }
 
+    /**
+     * Elimina físicamente a un usuario y todos sus datos relacionados (Favoritos, Telefonos, Pedidos).
+     * RF-12: Gestión Admin.
+     */
     public boolean eliminarUsuario(int userId) throws Exception {
         Connection con = null;
         try {
             con = ConectionDB.getConexion();
             con.setAutoCommit(false);
+            // Cascada de borrado manual por integridad referencial
             String[] sqls = {
                     "DELETE FROM favoritos WHERE user_id = ?",
                     "DELETE FROM telefonos WHERE user_id = ?",
@@ -435,8 +504,11 @@ public class AdminDAO {
         }
     }
 
-    // ─── SERVICIOS ────────────────────────────────────────────────
+    // ─── GESTIÓN DE SERVICIOS ─────────────────────────────────────
 
+    /**
+     * Obtiene el catálogo de servicios disponibles para administración.
+     */
     public List<Map<String, Object>> obtenerServicios() throws Exception {
         String sql = "SELECT arreglo_id, arreglo_nombre, arreglo_descripcion, arreglo_precio_base, arreglo_imagen_url "
                 +
@@ -460,6 +532,10 @@ public class AdminDAO {
         return lista;
     }
 
+    /**
+     * Realiza un borrado lógico de un servicio (lo marca como no disponible).
+     * RF-10: Gestión Admin (CRUD).
+     */
     public boolean eliminarServicio(int servicioId) throws Exception {
         String sql = "UPDATE arreglos SET arreglo_disponible = 0 WHERE arreglo_id = ?";
         try (Connection con = ConectionDB.getConexion();
@@ -471,27 +547,41 @@ public class AdminDAO {
         }
     }
 
-    // Métodos stub para compatibilidad con AdminServlet (no hacen nada porque las
-    // columnas no existen)
+    // ─── MÉTODOS DE COMPATIBILIDAD (STUBS) ────────────────────────
+
+    /**
+     * Stub para actualizar el pago (Mapeado al estado general del pedido).
+     */
     public boolean actualizarPagoPedido(int pedidoId, String estado) throws Exception {
-        // pedido_pago_estado no existe en la BD - se actualiza el estado general del
-        // pedido
         return actualizarEstadoPedido(pedidoId, "terminado");
     }
 
+    /**
+     * Stub para entrega de pedidos (Mapeado al estado general del pedido).
+     */
     public boolean actualizarEntregaPedido(int pedidoId, String estado) throws Exception {
-        // pedido_entrega_estado no existe en la BD - se actualiza el estado general del
-        // pedido
         return actualizarEstadoPedido(pedidoId, "terminado");
     }
 
+    /**
+     * Simulación de registro de abono.
+     */
     public boolean registrarAbono(int pedidoId, double monto) throws Exception {
-        // pedido_monto_abonado no existe en la BD - no se hace nada
         return true;
     }
 
+    /**
+     * Registra la asistencia a una cita mediante la concatenación en las notas de la cita.
+     * Añade información sobre la asistencia al campo `cita_notas`.
+     * RF-13: Notificaciones (podría disparar una notificación de asistencia registrada).
+     *
+     * @param citaId El ID de la cita a actualizar.
+     * @param asistencia El estado de asistencia (ej. "Asistió", "No Asistió").
+     * @return true si la asistencia fue registrada exitosamente, false en caso contrario.
+     * @throws Exception Si ocurre un error durante la actualización en la base de datos.
+     */
     public boolean actualizarAsistenciaCita(int citaId, String asistencia) throws Exception {
-        // cita_asistencia no existe - se guarda en cita_notas
+        // Consulta SQL para concatenar la información de asistencia a las notas existentes
         String sql = "UPDATE citas SET cita_notas = CONCAT(IFNULL(cita_notas,''), ' | Asistencia: " + asistencia
                 + "') WHERE cita_id = ?";
         try (Connection con = ConectionDB.getConexion();

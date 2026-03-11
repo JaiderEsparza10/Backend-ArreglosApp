@@ -1,3 +1,9 @@
+/**
+ * ARCHIVO: mi-perfil.js
+ * PROPÓSITO: Lógica de interfaz para la gestión del perfil del usuario, incluyendo toggles de secciones y notificaciones.
+ * REQUISITOS FUNCIONALES: RF3, RF4, RF20.
+ */
+
 // =====================
 // TOGGLE SECCIONES
 // =====================

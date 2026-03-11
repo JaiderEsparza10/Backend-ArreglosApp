@@ -1,3 +1,8 @@
+/**
+ * ARCHIVO: mi-seleccion.js
+ * PROPÓSITO: Gestión de la lista de servicios favoritos/seleccionados, permitiendo la eliminación asíncrona mediante Fetch API.
+ * REQUISITOS FUNCIONALES: RF1, RF4.
+ */
 var favoritoIdAEliminar = null;
 var elementoAEliminar = null;
 

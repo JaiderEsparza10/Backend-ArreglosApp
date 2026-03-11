@@ -6,8 +6,18 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Gestiona el catálogo de arreglos (servicios) disponibles en el sistema.
+ * RF-06: Catálogo de Servicios.
+ * 
+ * @author Antigravity - Senior Architect
+ */
 public class ServicioDAO {
 
+    /**
+     * Obtiene la lista de todos los arreglos marcados como disponibles.
+     * @return Lista de objetos Servicio.
+     */
     public List<Servicio> obtenerServicios() throws Exception {
         String sql = "SELECT arreglo_id, arreglo_nombre, arreglo_descripcion, arreglo_precio_base, " +
                 "arreglo_imagen_url, arreglo_tiempo_estimado, arreglo_disponible FROM arreglos " +
@@ -35,6 +45,11 @@ public class ServicioDAO {
         return lista;
     }
 
+    /**
+     * Busca un arreglo específico por su identificador único.
+     * @param arregloId ID del arreglo.
+     * @return Objeto Servicio o null si no se encuentra.
+     */
     public Servicio obtenerPorId(int arregloId) throws Exception {
         String sql = "SELECT arreglo_id, arreglo_nombre, arreglo_descripcion, arreglo_precio_base, " +
                 "arreglo_imagen_url, arreglo_tiempo_estimado, arreglo_disponible FROM arreglos WHERE arreglo_id = ?";
@@ -62,6 +77,10 @@ public class ServicioDAO {
         return null;
     }
 
+    /**
+     * Inserta un nuevo arreglo en el catálogo.
+     * RF-10: Gestión de Servicios (Admin).
+     */
     public boolean crearServicio(Servicio s) throws Exception {
         String sql = "INSERT INTO arreglos (categoria_id, arreglo_nombre, arreglo_descripcion, " +
                 "arreglo_precio_base, arreglo_imagen_url, arreglo_tiempo_estimado, arreglo_disponible) " +
@@ -82,6 +101,9 @@ public class ServicioDAO {
         }
     }
 
+    /**
+     * Actualiza la información técnica o visual de un arreglo existente.
+     */
     public boolean actualizarServicio(Servicio s) throws Exception {
         String sql = "UPDATE arreglos SET arreglo_nombre = ?, arreglo_descripcion = ?, " +
                 "arreglo_precio_base = ?, arreglo_tiempo_estimado = ?, " +
@@ -104,6 +126,9 @@ public class ServicioDAO {
         }
     }
 
+    /**
+     * Realiza un borrado lógico del servicio marcándolo como no disponible.
+     */
     public boolean eliminarServicio(int arregloId) throws Exception {
         String sql = "UPDATE arreglos SET arreglo_disponible = 0 WHERE arreglo_id = ?";
 

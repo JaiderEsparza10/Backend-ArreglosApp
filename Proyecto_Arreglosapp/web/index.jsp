@@ -1,6 +1,15 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-  <% String msg=request.getParameter("msg"); String email=request.getParameter("email"); String
-    passwordRecuperada=request.getParameter("passwordRecuperada"); %>
+<% 
+    /**
+     * VISTA: Inicio de Sesión (Index).
+     * Propósito: Punto de entrada principal para el acceso de usuarios (Clientes y Administradores).
+     * Requisitos Funcionales: RF1 (Autenticación).
+     * Nota: Maneja mensajes de respuesta (éxito/error) desde AuthServlet mediante parámetros de URL.
+     */
+    String msg = request.getParameter("msg"); 
+    String email = request.getParameter("email"); 
+    String passwordRecuperada = request.getParameter("passwordRecuperada"); 
+%>
     <!DOCTYPE html>
     <html lang="es">
 

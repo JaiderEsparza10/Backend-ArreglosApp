@@ -1,29 +1,50 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <%@ page import="java.util.List" %>
-        <%@ page import="java.util.Map" %>
-            <%@ page import="model.Usuario" %>
-                <%@ page import="dao.PedidoDAO" %>
-                    <%@ page import="java.time.LocalDateTime" %>
-                        <%@ page import="java.time.format.DateTimeFormatter" %>
-                            <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) {
-                                usuario=(Usuario) sesion.getAttribute("usuario"); } if (usuario==null) {
-                                response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } PedidoDAO
-                                pedidoDAO=new PedidoDAO(); List<Map<String, Object>> pedidosActivos = null;
-                                List<Map<String, Object>> historialPedidos = null;
-                                    String fEstado = request.getParameter("fEstado");
-                                    try {
-                                    if (fEstado != null && !fEstado.isEmpty()) {
-                                    pedidosActivos = pedidoDAO.obtenerPedidosPorEstado(usuario.getId(), fEstado);
-                                    } else {
-                                    pedidosActivos = pedidoDAO.obtenerPedidosActivos(usuario.getId());
-                                    }
-                                    historialPedidos = pedidoDAO.obtenerHistorialPedidos(usuario.getId());
-                                    } catch (Exception e) {
-                                    e.printStackTrace();
-                                    }
-                                    DateTimeFormatter fmtFecha = DateTimeFormatter.ofPattern("dd MMM yyyy");
-                                    DateTimeFormatter fmtHora = DateTimeFormatter.ofPattern("hh:mm a");
-                                    %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="model.Usuario" %>
+<%@ page import="dao.PedidoDAO" %>
+<%@ page import="java.time.LocalDateTime" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+
+<% 
+    /**
+     * VISTA: Mis Pedidos.
+     * Propósito: Permitir al cliente visualizar el estado de sus pedidos activos y su historial de servicios completados.
+     * Requisitos Funcionales: RF4, RF5, RF6, RF8.
+     * Nota: Separa la vista en pestañas dinámicas (Activos/Historial) mediante JavaScript.
+     */
+    HttpSession sesion = request.getSession(false); 
+    Usuario usuario = null; 
+    
+    if (sesion != null) {
+        usuario = (Usuario) sesion.getAttribute("usuario"); 
+    } 
+
+    if (usuario == null) {
+        response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); 
+        return; 
+    } 
+
+    PedidoDAO pedidoDAO = new PedidoDAO(); 
+    List<Map<String, Object>> pedidosActivos = null;
+    List<Map<String, Object>> historialPedidos = null;
+    String fEstado = request.getParameter("fEstado");
+
+    try {
+        // Filtrado por estado específico o carga de todos los pedidos activos del usuario
+        if (fEstado != null && !fEstado.isEmpty()) {
+            pedidosActivos = pedidoDAO.obtenerPedidosPorEstado(usuario.getId(), fEstado);
+        } else {
+            pedidosActivos = pedidoDAO.obtenerPedidosActivos(usuario.getId());
+        }
+        historialPedidos = pedidoDAO.obtenerHistorialPedidos(usuario.getId());
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    DateTimeFormatter fmtFecha = DateTimeFormatter.ofPattern("dd MMM yyyy");
+    DateTimeFormatter fmtHora = DateTimeFormatter.ofPattern("hh:mm a");
+%>
                                     <!DOCTYPE html>
                                     <html lang="es">
 

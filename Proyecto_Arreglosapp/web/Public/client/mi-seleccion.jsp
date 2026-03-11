@@ -1,18 +1,33 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-  <%@ page import="java.util.List" %>
-    <%@ page import="model.Favorito" %>
-      <%@ page import="dao.FavoritoDAO" %>
-        <%@ page import="model.Usuario" %>
-          <% Usuario usuario=(Usuario) session.getAttribute("usuario"); if (usuario==null) {
-            response.sendRedirect("../../../index.jsp"); return; } FavoritoDAO favoritoDAO=new FavoritoDAO();
-            List<Favorito> misFavoritos = null;
-            try {
-            misFavoritos = favoritoDAO.obtenerFavoritosPorUsuario(usuario.getId());
-            } catch (Exception e) {
-            e.printStackTrace();
-            }
-            String ctx = request.getContextPath();
-            %>
+<%@ page import="java.util.List" %>
+<%@ page import="model.Favorito" %>
+<%@ page import="dao.FavoritoDAO" %>
+<%@ page import="model.Usuario" %>
+
+<% 
+    /**
+     * VISTA: Mi Selección.
+     * Propósito: Mostrar el catálogo de servicios que el usuario ha marcado como favoritos/seleccionados.
+     * Requisitos Funcionales: RF1, RF4 (Gestión de preferencias).
+     * Nota: Permite iniciar el flujo de personalización desde un servicio predefinido.
+     */
+    Usuario usuario = (Usuario) session.getAttribute("usuario"); 
+    if (usuario == null) {
+        response.sendRedirect("../../../index.jsp"); 
+        return; 
+    } 
+
+    FavoritoDAO favoritoDAO = new FavoritoDAO();
+    List<Favorito> misFavoritos = null;
+    
+    try {
+        misFavoritos = favoritoDAO.obtenerFavoritosPorUsuario(usuario.getId());
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    
+    String ctx = request.getContextPath();
+%>
             <!DOCTYPE html>
             <html lang="es">
 

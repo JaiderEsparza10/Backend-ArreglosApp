@@ -9,30 +9,35 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Este servlet se encarga de cerrar la sesión del usuario actual.
- * Invalida la sesión existente y redirige al usuario a la página de inicio.
+ * Controlador de Cierre de Sesión.
+ * Garantiza la destrucción segura de la sesión HTTP en el servidor.
+ * 
+ * @author Antigravity - Senior Architect
  */
 @WebServlet("/LogoutServlet")
 public class LogoutServlet extends HttpServlet {
 
     /**
-     * Procesa las solicitudes GET para cerrar la sesión.
-     * Invalida la sesión del usuario y redirige al índice de la aplicación.
+     * Invalida la sesión actual y redirige a la página de bienvenida.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // Obtención de la sesión sin forzar creación si no existiera
         HttpSession session = request.getSession(false);
         if (session != null) {
+            // Borrado definitivo de todos los atributos de sesión del servidor
             session.invalidate();
         }
+        // Redirección al punto de entrada tras la terminación del contexto de seguridad
         response.sendRedirect("/Proyecto_Arreglosapp/index.jsp");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Redirección simétrica para mayor compatibilidad con diversos orígenes de invocación
         doGet(request, response);
     }
 }

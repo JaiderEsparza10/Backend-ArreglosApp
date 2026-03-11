@@ -1,26 +1,46 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-  <%@ page import="java.util.List" %>
-    <%@ page import="model.Personalizacion" %>
-      <%@ page import="model.Usuario" %>
-        <%@ page import="dao.PersonalizacionDAO" %>
-          <%@ page import="java.time.format.DateTimeFormatter" %>
-            <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) {
-              usuario=(Usuario) sesion.getAttribute("usuario"); } if (usuario==null) {
-              response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } String mensajeOk=(String)
-              sesion.getAttribute("mensajePersonalizacion"); String mensajeErr=(String)
-              sesion.getAttribute("errorPersonalizacion"); sesion.removeAttribute("mensajePersonalizacion");
-              sesion.removeAttribute("errorPersonalizacion"); PersonalizacionDAO personalizacionDAO=new
-              PersonalizacionDAO(); List<Personalizacion> misArreglos = null;
+<%@ page import="java.util.List" %>
+<%@ page import="model.Personalizacion" %>
+<%@ page import="model.Usuario" %>
+<%@ page import="dao.PersonalizacionDAO" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 
-              try {
-              misArreglos = personalizacionDAO.obtenerPersonalizacionesPorUsuario(usuario.getId());
-              } catch (Exception e) {
-              e.printStackTrace();
-              }
+<% 
+    /**
+     * VISTA: Mis Arreglos.
+     * Propósito: Mostrar las prendas que el usuario ha personalizado y están en proceso de cotización o taller.
+     * Requisitos Funcionales: RF10, RF11, RF12.
+     * Nota: Permite gestionar (editar/eliminar) y agendar citas para cada personalización.
+     */
+    HttpSession sesion = request.getSession(false); 
+    Usuario usuario = null; 
+    
+    if (sesion != null) {
+        usuario = (Usuario) sesion.getAttribute("usuario"); 
+    } 
 
-              DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd - MM - yyyy");
-              String ctx = request.getContextPath();
-              %>
+    if (usuario == null) {
+        response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); 
+        return; 
+    } 
+
+    String mensajeOk = (String) sesion.getAttribute("mensajePersonalizacion"); 
+    String mensajeErr = (String) sesion.getAttribute("errorPersonalizacion"); 
+    sesion.removeAttribute("mensajePersonalizacion");
+    sesion.removeAttribute("errorPersonalizacion"); 
+
+    PersonalizacionDAO personalizacionDAO = new PersonalizacionDAO(); 
+    List<Personalizacion> misArreglos = null;
+
+    try {
+        misArreglos = personalizacionDAO.obtenerPersonalizacionesPorUsuario(usuario.getId());
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd - MM - yyyy");
+    String ctx = request.getContextPath();
+%>
               <!DOCTYPE html>
               <html lang="es">
 

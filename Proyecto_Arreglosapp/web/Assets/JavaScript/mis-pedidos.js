@@ -1,3 +1,8 @@
+/**
+ * ARCHIVO: mis-pedidos.js
+ * PROPÓSITO: Gestión de la interfaz de pedidos del cliente, incluyendo cambio de pestañas (Activos/Historial) y cancelación de pedidos vía Fetch API.
+ * REQUISITOS FUNCIONALES: RF6, RF8.
+ */
 var pedidoIdACancelar = null;
 
 // =====================

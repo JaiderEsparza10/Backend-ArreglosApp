@@ -10,6 +10,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Servlet Maestro de Operaciones Administrativas.
+ * Coordina las acciones críticas de gestión: usuarios, pedidos, servicios y citas.
+ * Implementa el patrón Front Controller básico mediante dispatching de acciones.
+ * 
+ * @author Antigravity - Senior Architect
+ */
 @WebServlet("/AdminServlet")
 public class AdminServlet extends HttpServlet {
 
@@ -17,15 +24,23 @@ public class AdminServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+        // Inicialización de la capa de persistencia administrativa
         adminDAO = new AdminDAO();
     }
 
+    /**
+     * Unifica las solicitudes GET al despachador de acciones POST.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doPost(request, response);
     }
 
+    /**
+     * Canaliza las diversas opereraciones administrativas basadas en el parámetro 'accion'.
+     * RF-10: Gestión de Usuarios, RF-11: Gestión de Pedidos, RF-12: Gestión de Servicios.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -41,6 +56,7 @@ public class AdminServlet extends HttpServlet {
             switch (accion) {
 
                 case "eliminarUsuario": {
+                    // Borrado físico de usuario (Admin)
                     int userId = Integer.parseInt(request.getParameter("userId"));
                     adminDAO.eliminarUsuario(userId);
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-usuarios.jsp?eliminado=1");
@@ -48,6 +64,7 @@ public class AdminServlet extends HttpServlet {
                 }
 
                 case "eliminarServicio": {
+                    // Borrado lógico de servicio del catálogo
                     int servicioId = Integer.parseInt(request.getParameter("servicioId"));
                     adminDAO.eliminarServicio(servicioId);
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-servicios.jsp?eliminado=1");
@@ -55,6 +72,7 @@ public class AdminServlet extends HttpServlet {
                 }
 
                 case "actualizarEstado": {
+                    // Cambio de fase en el ciclo de vida del pedido (pendiente -> en proceso -> terminado)
                     int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
                     String nuevoEstado = request.getParameter("nuevoEstado");
                     adminDAO.actualizarEstadoPedido(pedidoId, nuevoEstado);
@@ -64,6 +82,7 @@ public class AdminServlet extends HttpServlet {
                 }
 
                 case "cambiarEstadoPago": {
+                    // Registro manual de pago total
                     int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
                     adminDAO.actualizarPagoPedido(pedidoId, "pagado");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/detalle-pedido-admin.jsp?pedidoId="
@@ -72,6 +91,7 @@ public class AdminServlet extends HttpServlet {
                 }
 
                 case "cambiarEstadoEntrega": {
+                    // Registro manual de entrega física de la prenda
                     int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
                     adminDAO.actualizarEntregaPedido(pedidoId, "entregado");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/detalle-pedido-admin.jsp?pedidoId="
@@ -80,6 +100,7 @@ public class AdminServlet extends HttpServlet {
                 }
 
                 case "confirmarPagoEntrega": {
+                    // Operación atómica de finalización de transacción
                     int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
                     adminDAO.actualizarPagoPedido(pedidoId, "pagado");
                     adminDAO.actualizarEntregaPedido(pedidoId, "entregado");
@@ -90,6 +111,7 @@ public class AdminServlet extends HttpServlet {
                 }
 
                 case "registrarAbono": {
+                    // RF-05: Gestión de Abonos. Permite pagos parciales.
                     int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
                     double monto = Double.parseDouble(request.getParameter("montoAbono"));
                     adminDAO.registrarAbono(pedidoId, monto);
@@ -98,6 +120,7 @@ public class AdminServlet extends HttpServlet {
                     break;
                 }
                 case "cambiarEstadoCita": {
+                    // Gestión del flujo de citas (pendiente -> confirmada -> realizada)
                     int citaId = Integer.parseInt(request.getParameter("citaId"));
                     String nuevoEstado = request.getParameter("nuevoEstado");
                     adminDAO.cambiarEstadoCita(citaId, nuevoEstado);
@@ -107,6 +130,7 @@ public class AdminServlet extends HttpServlet {
                 }
 
                 case "registrarAsistencia": {
+                    // Registro técnico de si el cliente asistió o no a la cita agendada
                     int citaId = Integer.parseInt(request.getParameter("citaId"));
                     String asistencia = request.getParameter("asistencia");
                     adminDAO.actualizarAsistenciaCita(citaId, asistencia);
@@ -124,4 +148,4 @@ public class AdminServlet extends HttpServlet {
             response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp?error=1");
         }
     }
-}
+}

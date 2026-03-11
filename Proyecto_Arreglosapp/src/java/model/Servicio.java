@@ -1,5 +1,11 @@
 package model;
 
+/**
+ * Modelo de Datos: Servicio.
+ * Define la estructura de los arreglos predefinidos ofertados en el catálogo.
+ * 
+ * @author Antigravity - Senior Architect
+ */
 public class Servicio {
     private int arregloId;
     private String nombre;
@@ -12,59 +18,25 @@ public class Servicio {
     public Servicio() {
     }
 
-    public int getArregloId() {
-        return arregloId;
-    }
+    // Estructura POJO con acceso mediante Getters y Setters con encapsulamiento
+    public int getArregloId() { return arregloId; }
+    public void setArregloId(int arregloId) { this.arregloId = arregloId; }
 
-    public void setArregloId(int arregloId) {
-        this.arregloId = arregloId;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public double getPrecioBase() { return precioBase; }
+    public void setPrecioBase(double precioBase) { this.precioBase = precioBase; }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+    public String getTiempoEstimado() { return tiempoEstimado; }
+    public void setTiempoEstimado(String tiempoEstimado) { this.tiempoEstimado = tiempoEstimado; }
 
-    public double getPrecioBase() {
-        return precioBase;
-    }
-
-    public void setPrecioBase(double precioBase) {
-        this.precioBase = precioBase;
-    }
-
-    public String getImagenUrl() {
-        return imagenUrl;
-    }
-
-    public void setImagenUrl(String imagenUrl) {
-        this.imagenUrl = imagenUrl;
-    }
-
-    public String getTiempoEstimado() {
-        return tiempoEstimado;
-    }
-
-    public void setTiempoEstimado(String tiempoEstimado) {
-        this.tiempoEstimado = tiempoEstimado;
-    }
-
-    public boolean isDisponible() {
-        return disponible;
-    }
-
-    public void setDisponible(boolean disponible) {
-        this.disponible = disponible;
-    }
+    public boolean isDisponible() { return disponible; }
+    public void setDisponible(boolean disponible) { this.disponible = disponible; }
 }

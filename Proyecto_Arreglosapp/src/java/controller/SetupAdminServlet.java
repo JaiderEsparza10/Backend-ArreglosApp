@@ -11,18 +11,17 @@ import java.io.PrintWriter;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
- * Este servlet de utilidad facilita la configuración inicial del administrador
- * del sistema.
- * Genera el hash de la contraseña y proporciona el script SQL para la inserción
- * manual o automática.
+ * Servlet de Utilidad: Configuración Inicial del Sistema.
+ * Facilita el aprovisionamiento manual del primer usuario administrador mediante la generación de Hash BCrypt.
+ * Proporciona scripts SQL e intentos de inserción automática para bootstrapping.
+ * 
+ * @author Antigravity - Senior Architect
  */
 @WebServlet("/SetupAdminServlet")
 public class SetupAdminServlet extends HttpServlet {
 
     /**
-     * Procesa las solicitudes GET para mostrar la información de configuración del
-     * administrador.
-     * Genera un hash BCrypt y verifica si el administrador ya existe en el sistema.
+     * Genera y visualiza la información del bootstrap administrativo.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -31,7 +30,7 @@ public class SetupAdminServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
 
-            // Generar hash para la contraseña admin123
+            // Generación de Hash Seguro BCrypt para credenciales estáticas iniciales
             String password = "admin123";
             String hash = BCrypt.hashpw(password, BCrypt.gensalt());
 
@@ -46,12 +45,13 @@ public class SetupAdminServlet extends HttpServlet {
             out.println(hash);
             out.println("</code>");
 
+            // Exposición de scripts SQL para despliegue manual en entornos de producción
             out.println("<h2>SQL para insertar el administrador:</h2>");
             out.println("<pre style='background:#f0f0f0;padding:10px;overflow-x:auto;'>");
-            out.println("-- Primero eliminar si existe");
+            out.println("-- Paso 1: Limpiar registros previos con el mismo identificador");
             out.println("DELETE FROM USUARIOS WHERE user_email = 'admin@arreglosapp.com';");
             out.println();
-            out.println("-- Insertar nuevo administrador");
+            out.println("-- Paso 2: Inserción de cuenta administrativa raíz");
             out.println(
                     "INSERT INTO USUARIOS (user_email, user_password_hash, user_nombre, user_ubicacion_direccion, rol_id)");
             out.println("VALUES (");
@@ -63,34 +63,33 @@ public class SetupAdminServlet extends HttpServlet {
             out.println(");");
             out.println("</pre>");
 
-            out.println("<h2>Verificación:</h2>");
+            out.println("<h2>Verificación de integridad de Hash:</h2>");
             boolean verifica = BCrypt.checkpw(password, hash);
             out.println("<p>Verificación del hash: <strong>" + (verifica ? "CORRECTO ✓" : "INCORRECTO ✗")
                     + "</strong></p>");
 
-            out.println("<p><a href='index.jsp'>Ir al login</a></p>");
+            out.println("<p><a href='index.jsp'>Ir al inicio de sesión</a></p>");
 
-            // Intentar crear el administrador automáticamente
+            // Intento de Bootstrapping Automático: Provisión directa en la DB si está disponible
             try {
                 UsuarioDAO usuarioDAO = new UsuarioDAO();
 
-                // Verificar si ya existe un administrador
                 if (usuarioDAO.existeAdministrador()) {
-                    out.println("<p style='color:orange;'>⚠️ Ya existe un administrador en el sistema.</p>");
+                    out.println("<p style='color:orange;'>⚠️ El administrador maestro ya existe en el sistema.</p>");
                 } else {
-                    // Crear administrador por defecto
+                    // Inserción programática mediante la capa DAO
                     boolean creado = usuarioDAO.crearAdministradorPorDefecto();
 
                     if (creado) {
                         out.println(
-                                "<p style='color:green;'>✅ Administrador creado exitosamente usando el método del DAO.</p>");
+                                "<p style='color:green;'>✅ Bootstrap Exitoso: Administrador creado mediante DAO.</p>");
                     } else {
-                        out.println("<p style='color:red;'>❌ No se pudo crear el administrador automáticamente.</p>");
+                        out.println("<p style='color:red;'>❌ Fallo en el Bootstrap automático.</p>");
                     }
                 }
 
             } catch (Exception e) {
-                out.println("<p style='color:red;'>Error al crear administrador: " + e.getMessage() + "</p>");
+                out.println("<p style='color:red;'>Excepción durante Bootstrap: " + e.getMessage() + "</p>");
             }
         }
     }

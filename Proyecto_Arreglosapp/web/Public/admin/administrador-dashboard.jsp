@@ -1,41 +1,72 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <%@ page import="dao.AdminDAO" %>
-        <%@ page import="model.Usuario" %>
-            <%@ page import="java.util.List" %>
-                <%@ page import="java.util.Map" %>
-                    <%@ page import="java.util.ArrayList" %>
-                        <%@ page import="java.text.SimpleDateFormat" %>
-                            <% Usuario admin=(Usuario) session.getAttribute("usuario"); if (admin==null ||
-                                admin.getRolId() !=1) { response.sendRedirect("/Proyecto_Arreglosapp/index.jsp");
-                                return; } AdminDAO adminDAO=new AdminDAO(); int totalPedidosActivos=0; int
-                                totalCitasHoy=0; int totalTodasCitas=0; List<Map<String, Object>> pedidosRecientes = new
-                                ArrayList<>();
-                                    List<Map<String, Object>> citasHoy = new ArrayList<>();
-                                            List<Map<String, Object>> todasLasCitas = new ArrayList<>();
-                                                    try {
-                                                    totalPedidosActivos = adminDAO.contarPedidosActivos();
-                                                    totalCitasHoy = adminDAO.contarCitasHoy();
-                                                    totalTodasCitas = adminDAO.contarTodasLasCitas();
-                                                    String fFecha = request.getParameter("fFecha");
-                                                    String fCliente = request.getParameter("fCliente");
-                                                    String fEstado = request.getParameter("fEstado");
-                                                    if (fFecha != null || fCliente != null) { todasLasCitas =
-                                                    adminDAO.obtenerCitasFiltradas(fFecha, fCliente); }
-                                                    else { todasLasCitas = adminDAO.obtenerTodasLasCitas(); }
-                                                    if (fEstado != null && !fEstado.isEmpty()) { pedidosRecientes =
-                                                    adminDAO.obtenerPedidosFiltrados(null, fEstado); }
-                                                    else { pedidosRecientes = adminDAO.obtenerPedidosRecientes(); }
-                                                    citasHoy = adminDAO.obtenerCitasHoy();
-                                                    } catch (Exception e) { e.printStackTrace(); }
-                                                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-                                                    SimpleDateFormat sdfHora = new SimpleDateFormat("hh:mm a");
-                                                    String vistaParam = request.getParameter("vista");
-                                                    String vistaInicial = "pedidos";
-                                                    if ("citas".equals(vistaParam)) vistaInicial = "citas";
-                                                    else if ("todasCitas".equals(vistaParam)) vistaInicial =
-                                                    "todasCitas";
-                                                    String fEstadoActual = request.getParameter("fEstado");
-                                                    %>
+<%@ page import="dao.AdminDAO" %>
+<%@ page import="model.Usuario" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+
+<% 
+    /**
+     * VISTA: Dashboard del Administrador.
+     * Propósito: Centralizar la gestión de pedidos, citas y visualización de métricas críticas.
+     * Requisitos Funcionales: RF1, RF4, RF5, RF6, RF8, RF9.
+     * Seguridad: Solo accesible para usuarios con rolId = 1 (Admin).
+     */
+    Usuario admin = (Usuario) session.getAttribute("usuario"); 
+    if (admin == null || admin.getRolId() != 1) { 
+        response.sendRedirect("/Proyecto_Arreglosapp/index.jsp");
+        return; 
+    } 
+
+    AdminDAO adminDAO = new AdminDAO(); 
+    int totalPedidosActivos = 0; 
+    int totalCitasHoy = 0; 
+    int totalTodasCitas = 0; 
+    List<Map<String, Object>> pedidosRecientes = new ArrayList<>();
+    List<Map<String, Object>> citasHoy = new ArrayList<>();
+    List<Map<String, Object>> todasLasCitas = new ArrayList<>();
+
+    try {
+        // Carga de métricas para el resumen superior
+        totalPedidosActivos = adminDAO.contarPedidosActivos();
+        totalCitasHoy = adminDAO.contarCitasHoy();
+        totalTodasCitas = adminDAO.contarTodasLasCitas();
+
+        // Lógica de filtrado dinámico para la tabla de citas
+        String fFecha = request.getParameter("fFecha");
+        String fCliente = request.getParameter("fCliente");
+        String fEstado = request.getParameter("fEstado");
+
+        if (fFecha != null || fCliente != null) { 
+            todasLasCitas = adminDAO.obtenerCitasFiltradas(fFecha, fCliente); 
+        } else { 
+            todasLasCitas = adminDAO.obtenerTodasLasCitas(); 
+        }
+
+        // Gestión de pedidos activos filtrados por estado
+        if (fEstado != null && !fEstado.isEmpty()) { 
+            pedidosRecientes = adminDAO.obtenerPedidosFiltrados(null, fEstado); 
+        } else { 
+            pedidosRecientes = adminDAO.obtenerPedidosRecientes(); 
+        }
+
+        citasHoy = adminDAO.obtenerCitasHoy();
+    } catch (Exception e) { 
+        e.printStackTrace(); 
+    }
+
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    SimpleDateFormat sdfHora = new SimpleDateFormat("hh:mm a");
+
+    // Persistencia de la vista seleccionada (Pestañas)
+    String vistaParam = request.getParameter("vista");
+    String vistaInicial = "pedidos";
+    if ("citas".equals(vistaParam)) vistaInicial = "citas";
+    else if ("todasCitas".equals(vistaParam)) vistaInicial = "todasCitas";
+    
+    String fEstadoActual = request.getParameter("fEstado");
+%>
                                                     <!DOCTYPE html>
                                                     <html lang="es">
 

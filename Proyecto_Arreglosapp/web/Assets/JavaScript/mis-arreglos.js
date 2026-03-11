@@ -1,3 +1,8 @@
+/**
+ * ARCHIVO: mis-arreglos.js
+ * PROPÓSITO: Manejo de eventos para la vista de personalizaciones del usuario, específicamente para la confirmación de eliminación.
+ * REQUISITOS FUNCIONALES: RF10, RF12.
+ */
 var arregloIdAEliminar = null;
 
 // =====================

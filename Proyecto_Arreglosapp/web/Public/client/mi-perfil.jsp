@@ -1,33 +1,69 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <%@ page import="model.Usuario" %>
-        <%@ page import="dao.UsuarioDAO" %>
-        <%@ page import="java.util.List" %>
-        <%@ page import="java.util.Map" %>
-        <%@ page import="java.text.SimpleDateFormat" %>
-            <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) {
-                usuario=(Usuario) sesion.getAttribute("usuario"); } if (usuario==null) {
-                response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } 
-                if (usuario.getRolId() == 1) { 
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp"); return; 
-                }
-                UsuarioDAO usuarioDAO=new
-                UsuarioDAO(); String errorPerfil=(String) sesion.getAttribute("errorPerfil"); String
-                errorPassword=(String) sesion.getAttribute("errorPassword"); sesion.removeAttribute("errorPerfil");
-                sesion.removeAttribute("errorPassword"); int totalPedidos=0; int totalFavoritos=0; int
-                totalPersonalizaciones=0; String telefono="" ; try {
-                totalPedidos=usuarioDAO.contarPedidosActivos(usuario.getId());
-                totalFavoritos=usuarioDAO.contarFavoritos(usuario.getId());
-                totalPersonalizaciones=usuarioDAO.contarPersonalizaciones(usuario.getId()); String
-                tel=usuarioDAO.obtenerTelefonoPrincipal(usuario.getId()); telefono=tel !=null ? tel : "" ; 
-                List<Map<String, Object>> notificaciones = usuarioDAO.obtenerNotificaciones(usuario.getId());
-                request.setAttribute("notificaciones", notificaciones);
-                } catch (Exception e) { e.printStackTrace(); } 
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-                String nombreActual=usuario.getNombre() !=null ?
-                usuario.getNombre() : "" ; String emailActual=usuario.getEmail() !=null ? usuario.getEmail() : "" ;
-                String direccionActual=usuario.getDireccion() !=null ? usuario.getDireccion() : "" ; String
-                rolTexto=usuario.getRolId()==1 ? "Administrador" : "Cliente" ; String
-                inicialNombre=nombreActual.isEmpty() ? "U" : String.valueOf(nombreActual.charAt(0)).toUpperCase(); %>
+<%@ page import="model.Usuario" %>
+<%@ page import="dao.UsuarioDAO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+
+<% 
+    /**
+     * VISTA: Perfil del Usuario (Cliente).
+     * Propósito: Visualizar información personal, resumen de actividad y gestionar credenciales.
+     * Requisitos Funcionales: RF3, RF4, RF20.
+     * Seguridad: Requiere sesión activa de Cliente. Redirige a Admin Dashboard si el rol es Admin.
+     */
+    HttpSession sesion = request.getSession(false); 
+    Usuario usuario = null; 
+    
+    if (sesion != null) {
+        usuario = (Usuario) sesion.getAttribute("usuario"); 
+    } 
+
+    if (usuario == null) {
+        response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); 
+        return; 
+    } 
+
+    // Redirección lógica para administradores que intentan entrar a vista de cliente
+    if (usuario.getRolId() == 1) { 
+        response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp"); 
+        return; 
+    }
+
+    UsuarioDAO usuarioDAO = new UsuarioDAO(); 
+    String errorPerfil = (String) sesion.getAttribute("errorPerfil"); 
+    String errorPassword = (String) sesion.getAttribute("errorPassword"); 
+    sesion.removeAttribute("errorPerfil");
+    sesion.removeAttribute("errorPassword"); 
+
+    int totalPedidos = 0; 
+    int totalFavoritos = 0; 
+    int totalPersonalizaciones = 0; 
+    String telefono = ""; 
+
+    try {
+        // Carga de contadores para el dashboard de cliente
+        totalPedidos = usuarioDAO.contarPedidosActivos(usuario.getId());
+        totalFavoritos = usuarioDAO.contarFavoritos(usuario.getId());
+        totalPersonalizaciones = usuarioDAO.contarPersonalizaciones(usuario.getId());
+        
+        String tel = usuarioDAO.obtenerTelefonoPrincipal(usuario.getId()); 
+        telefono = tel != null ? tel : ""; 
+
+        // Recuperación de mensajes automáticos (RF20)
+        List<Map<String, Object>> notificaciones = usuarioDAO.obtenerNotificaciones(usuario.getId());
+        request.setAttribute("notificaciones", notificaciones);
+    } catch (Exception e) { 
+        e.printStackTrace(); 
+    } 
+
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    String nombreActual = usuario.getNombre() != null ? usuario.getNombre() : ""; 
+    String emailActual = usuario.getEmail() != null ? usuario.getEmail() : "";
+    String direccionActual = usuario.getDireccion() != null ? usuario.getDireccion() : ""; 
+    String rolTexto = usuario.getRolId() == 1 ? "Administrador" : "Cliente"; 
+    String inicialNombre = nombreActual.isEmpty() ? "U" : String.valueOf(nombreActual.charAt(0)).toUpperCase(); 
+%>
                 <!DOCTYPE html>
                 <html lang="es">
 

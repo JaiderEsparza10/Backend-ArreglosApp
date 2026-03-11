@@ -1,20 +1,40 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <%@ page import="model.Usuario" %>
-        <%@ page import="model.Servicio" %>
-            <%@ page import="dao.ServicioDAO" %>
-                <%@ page import="java.util.List" %>
-                    <%@ page import="java.util.ArrayList" %>
-                        <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) {
-                            usuario=(Usuario) sesion.getAttribute("usuario"); } if (usuario==null) {
-                            response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } ServicioDAO
-                            servicioDAO=new ServicioDAO(); List<Servicio> servicios = new ArrayList<>();
-                                try {
-                                servicios = servicioDAO.obtenerServicios();
-                                } catch (Exception e) {
-                                e.printStackTrace();
-                                }
-                                String ctx = request.getContextPath();
-                                %>
+<%@ page import="model.Usuario" %>
+<%@ page import="model.Servicio" %>
+<%@ page import="dao.ServicioDAO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+
+<% 
+    /**
+     * VISTA: Página Principal (Catálogo).
+     * Propósito: Exhibir el catálogo completo de servicios de arreglos de ropa disponibles.
+     * Requisitos Funcionales: RF1, RF4 (Visualización de servicios).
+     * Nota: Permite filtrar servicios por nombre (buscador JS) y precio.
+     */
+    HttpSession sesion = request.getSession(false); 
+    Usuario usuario = null; 
+    
+    if (sesion != null) {
+        usuario = (Usuario) sesion.getAttribute("usuario"); 
+    } 
+
+    if (usuario == null) {
+        response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); 
+        return; 
+    } 
+
+    ServicioDAO servicioDAO = new ServicioDAO(); 
+    List<Servicio> servicios = new ArrayList<>();
+    
+    try {
+        servicios = servicioDAO.obtenerServicios();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    
+    String ctx = request.getContextPath();
+%>
                                 <!DOCTYPE html>
                                 <html lang="es">
 

@@ -15,30 +15,33 @@ import java.io.PrintWriter;
 import java.util.List;
 
 /**
- * Este servlet gestiona la lista de servicios favoritos o seleccionados por el
- * usuario.
- * Permite agregar, eliminar y listar los favoritos de un usuario autenticado.
+ * Controlador de Gestión de Selección de Servicios (Favoritos).
+ * RF-07: Selección de Servicios.
+ * Permite a los clientes pre-seleccionar servicios para su posterior personalización o agendamiento.
+ * Utiliza respuestas asíncronas JSON para mejorar la experiencia de usuario reactiva.
+ * 
+ * @author Antigravity - Senior Architect
  */
 @WebServlet("/FavoritoServlet")
 public class FavoritoServlet extends HttpServlet {
 
     private FavoritoDAO favoritoDAO = new FavoritoDAO();
-    private Gson gson = new Gson();
+    private Gson gson = new Gson(); // Utilizado para la serialización de respuestas REST-like
 
     /**
-     * Procesa las solicitudes POST para agregar o eliminar servicios de la
-     * selección de favoritos.
-     * Retorna una respuesta en formato JSON indicando el éxito o fracaso de la
-     * operación.
+     * Procesa acciones POST para la persistencia de favoritos.
+     * Soporta las acciones 'agregar' y 'eliminar'.
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // Configuración de cabeceras para interoperabilidad con llamadas AJAX
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
+        // Validación de estado de autenticación (Capa de Seguridad de Aplicación)
         HttpSession session = request.getSession(false);
         Usuario usuario = (session != null) ? (Usuario) session.getAttribute("usuario") : null;
 
@@ -52,17 +55,20 @@ public class FavoritoServlet extends HttpServlet {
 
         if ("agregar".equals(accion)) {
             try {
+                // Extracción y parseo de metadatos del servicio seleccionado
                 int arregloId = Integer.parseInt(request.getParameter("arregloId"));
                 String categoria = request.getParameter("categoria");
                 String nombreCategoria = request.getParameter("nombreCategoria");
                 double precio = Double.parseDouble(request.getParameter("precio"));
                 String imagenUrl = request.getParameter("imagenUrl");
 
+                // Regla de Negocio: Evitar duplicidad de un mismo servicio en la selección del cliente
                 if (favoritoDAO.existeFavoritoPorArreglo(usuario.getId(), arregloId)) {
                     out.print(gson.toJson(new ResponseData(false, "Este servicio ya está en tu selección")));
                     return;
                 }
 
+                // Mapeo a objeto de transferencia para persistencia
                 Favorito favorito = new Favorito(usuario.getId(), arregloId, categoria, nombreCategoria, precio,
                         imagenUrl);
                 boolean agregado = favoritoDAO.agregarFavorito(favorito);
@@ -81,6 +87,7 @@ public class FavoritoServlet extends HttpServlet {
 
         } else if ("eliminar".equals(accion)) {
             try {
+                // Borrado físico del registro de favorito/selección
                 int favoritoId = Integer.parseInt(request.getParameter("favoritoId"));
                 boolean eliminado = favoritoDAO.eliminarFavorito(favoritoId, usuario.getId());
 
@@ -101,6 +108,9 @@ public class FavoritoServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Consulta el listado completo de favoritos del usuario autenticado.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -119,7 +129,7 @@ public class FavoritoServlet extends HttpServlet {
         }
 
         try {
-            // CORREGIDO: List<Favorito> en lugar de var — compatible con Java 8
+            // Recuperación de datos desde la capa DAO y serialización a JSON
             List<Favorito> favoritos = favoritoDAO.obtenerFavoritosPorUsuario(usuario.getId());
             out.print(gson.toJson(new ResponseData(true, "Favoritos obtenidos", favoritos)));
         } catch (Exception e) {
@@ -127,6 +137,9 @@ public class FavoritoServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Estructura interna para el intercambio de datos entre el backend y el cliente.
+     */
     private static class ResponseData {
         boolean success;
         String message;

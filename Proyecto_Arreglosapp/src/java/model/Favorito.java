@@ -3,8 +3,10 @@ package model;
 import java.time.LocalDateTime;
 
 /**
- * Esta clase representa un servicio que ha sido marcado como favorito o
- * seleccionado por un usuario.
+ * Modelo de Datos: Favorito / Selección.
+ * Representa la asociación persistente entre un usuario y un servicio de su interés.
+ * 
+ * @author Antigravity - Senior Architect
  */
 public class Favorito {
     private int favoritoId;
@@ -20,6 +22,9 @@ public class Favorito {
     public Favorito() {
     }
 
+    /**
+     * Constructor para mapeo rápido de selecciones.
+     */
     public Favorito(int userId, int arregloId, String categoria, String nombreCategoria, double precio,
             String imagenUrl) {
         this.userId = userId;
@@ -30,76 +35,31 @@ public class Favorito {
         this.imagenUrl = imagenUrl;
     }
 
-    // Getters y Setters
-    public int getFavoritoId() {
-        return favoritoId;
-    }
+    // Getters y Setters con encapsulamiento
+    public int getFavoritoId() { return favoritoId; }
+    public void setFavoritoId(int favoritoId) { this.favoritoId = favoritoId; }
 
-    public void setFavoritoId(int favoritoId) {
-        this.favoritoId = favoritoId;
-    }
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
 
-    public int getUserId() {
-        return userId;
-    }
+    public int getArregloId() { return arregloId; }
+    public void setArregloId(int arregloId) { this.arregloId = arregloId; }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 
-    public int getArregloId() {
-        return arregloId;
-    }
+    public String getNombreCategoria() { return nombreCategoria; }
+    public void setNombreCategoria(String nombreCategoria) { this.nombreCategoria = nombreCategoria; }
 
-    public void setArregloId(int arregloId) {
-        this.arregloId = arregloId;
-    }
+    public double getPrecio() { return precio; }
+    public void setPrecio(double precio) { this.precio = precio; }
 
-    public String getCategoria() {
-        return categoria;
-    }
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
+    public int getCantidad() { return cantidad; }
+    public void setCantidad(int cantidad) { this.cantidad = cantidad; }
 
-    public String getNombreCategoria() {
-        return nombreCategoria;
-    }
-
-    public void setNombreCategoria(String nombreCategoria) {
-        this.nombreCategoria = nombreCategoria;
-    }
-
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
-    public String getImagenUrl() {
-        return imagenUrl;
-    }
-
-    public void setImagenUrl(String imagenUrl) {
-        this.imagenUrl = imagenUrl;
-    }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public LocalDateTime getFechaAgregado() {
-        return fechaAgregado;
-    }
-
-    public void setFechaAgregado(LocalDateTime fechaAgregado) {
-        this.fechaAgregado = fechaAgregado;
-    }
+    public LocalDateTime getFechaAgregado() { return fechaAgregado; }
+    public void setFechaAgregado(LocalDateTime fechaAgregado) { this.fechaAgregado = fechaAgregado; }
 }

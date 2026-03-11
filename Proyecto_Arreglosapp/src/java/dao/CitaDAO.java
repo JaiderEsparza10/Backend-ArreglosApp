@@ -6,13 +6,27 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Gestiona la creación de pedidos y el agendamiento de citas asociadas.
+ * RF-07: Selección de Servicios y RF-08: Agendamiento de Citas.
+ * 
+ * @author Antigravity - Senior Architect
+ */
 public class CitaDAO {
 
+    /**
+     * Crea un pedido transaccionalmente a partir de una personalización.
+     * Realiza un mapeo dinámico de la categoría al arreglo correspondiente.
+     * 
+     * @param userId ID del cliente.
+     * @param personalizacionId ID de la personalización solicitada.
+     * @return El ID del pedido generado o -1 si falló.
+     */
     public int crearPedido(int userId, int personalizacionId) throws Exception {
         Connection con = null;
         try {
             con = ConectionDB.getConexion();
-            con.setAutoCommit(false);
+            con.setAutoCommit(false); // Iniciar flujo transaccional
 
             // 1. Obtener categoría desde personalizaciones y mapear a arreglo_id
             int arregloId = -1;
@@ -35,7 +49,7 @@ public class CitaDAO {
                 }
             }
 
-            // Si no encuentra por JOIN, buscar por mapeo directo
+            // Si no encuentra por JOIN, buscar por mapeo directo (Lógica de contingencia)
             if (arregloId == -1 && personalizacionId != -1) {
                 String sqlCat = "SELECT categoria FROM personalizaciones WHERE personalizacion_id = ?";
                 String categoria = "";
@@ -47,7 +61,7 @@ public class CitaDAO {
                     }
                 }
 
-                // Mapeo manual por nombre de categoría
+                // Mapeo manual por palabras clave en la categoría
                 String sqlArreglo = "";
                 if (categoria.toLowerCase().contains("dobladillo") || categoria.toLowerCase().contains("sastr")) {
                     sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 1";
@@ -75,7 +89,7 @@ public class CitaDAO {
                 }
             }
 
-            // 2. Crear pedido
+            // 2. Insertar cabecera del pedido
             int pedidoId = -1;
             String sqlPedido = "INSERT INTO pedidos (usuario_id, pedido_estado, pedido_total) VALUES (?, 'pendiente', ?)";
             try (PreparedStatement ps = con.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS)) {
@@ -93,7 +107,7 @@ public class CitaDAO {
                 return -1;
             }
 
-            // 3. Insertar en detalle_pedido si hay arreglo
+            // 3. Insertar detalle del pedido si se identificó un arreglo
             if (arregloId != -1) {
                 String sqlDetalle = "INSERT INTO detalle_pedido (pedido_id, arreglo_id, detalle_cantidad, " +
                         "detalle_precio_unitario, detalle_subtotal) VALUES (?, ?, 1, ?, ?)";
@@ -106,7 +120,7 @@ public class CitaDAO {
                 }
             }
 
-            // 4. Actualizar arreglo_id en personalizaciones
+            // 4. Vincular la personalización con el arreglo definitivo
             if (arregloId != -1 && personalizacionId != -1) {
                 String sqlUpdate = "UPDATE personalizaciones SET arreglo_id = ? WHERE personalizacion_id = ?";
                 try (PreparedStatement ps = con.prepareStatement(sqlUpdate)) {
@@ -116,7 +130,7 @@ public class CitaDAO {
                 }
             }
 
-            con.commit();
+            con.commit(); // Confirmar éxito de toda la operación
             return pedidoId;
 
         } catch (SQLException e) {
@@ -129,11 +143,17 @@ public class CitaDAO {
         }
     }
 
-    // Mantener compatibilidad con llamadas sin personalizacionId
+    /**
+     * Sobrecarga para crear pedidos simples (no requiere personalizacionId).
+     */
     public int crearPedido(int userId) throws Exception {
         return crearPedido(userId, -1);
     }
 
+    /**
+     * Registra una cita física para la entrega o toma de medidas de un pedido.
+     * RF-08: Agendamiento de Citas.
+     */
     public boolean crearCita(Cita cita) throws Exception {
         String sql = "INSERT INTO citas (pedido_id, cita_fecha_hora, cita_estado, cita_notas, cita_motivo) VALUES (?, ?, ?, ?, ?)";
         try (Connection con = ConectionDB.getConexion();
@@ -141,12 +161,15 @@ public class CitaDAO {
             ps.setInt(1, cita.getPedidoId());
             ps.setTimestamp(2, Timestamp.valueOf(cita.getCitaFechaHora()));
             ps.setString(3, cita.getCitaEstado());
+            
+            // Construcción modular de notas
             String notasCompletas = "Dirección: " + cita.getDireccionEntrega();
             if (cita.getCitaNotas() != null && !cita.getCitaNotas().trim().isEmpty()) {
                 notasCompletas += " | Notas: " + cita.getCitaNotas();
             }
             ps.setString(4, notasCompletas);
             ps.setString(5, cita.getCitaMotivo());
+            
             int filas = ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next())
@@ -158,6 +181,9 @@ public class CitaDAO {
         }
     }
 
+    /**
+     * Consulta el listado de citas vinculadas a un cliente específico.
+     */
     public List<Cita> obtenerCitasPorUsuario(int userId) throws Exception {
         String sql = "SELECT c.* FROM citas c " +
                 "JOIN pedidos p ON c.pedido_id = p.pedido_id " +

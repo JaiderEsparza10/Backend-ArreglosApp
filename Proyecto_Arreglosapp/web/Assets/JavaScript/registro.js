@@ -1,9 +1,8 @@
-/* 
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/JavaScript.js to edit this template
+/**
+ * ARCHIVO: registro.js
+ * PROPÓSITO: Validación de lado del cliente para el formulario de registro de nuevos usuarios.
+ * REQUISITOS FUNCIONALES: RF2.
  */
-
-// Assets/js/registro.js
 
 function validarFormulario() {
     const nombre    = document.getElementById("txtNombre").value.trim();
