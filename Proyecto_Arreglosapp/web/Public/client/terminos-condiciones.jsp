@@ -1,21 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../Assets/estilos.css">
+    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <link rel="stylesheet" href="../../Assets/estilos.css">
     <title>Terminos y condiciones</title>
 </head>
 
 <body>
-    <header class="seccion-encabezado">
-        <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png" alt="logo de la aplicación">
+    <header class="seccion-encabezado"> <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png" alt="logo de la aplicación">
     </header>
-    <main class="terminos-condiciones">
-        <h1 class="terminos-condiciones__titulo-principal">Terminos y condiciones</h1>
-        <div class="terminos-condiciones__informacion">
-            <p class="informacion__contenido">
+    <main class="terminos-condiciones"> <h1 class="terminos-condiciones__titulo-principal">Terminos y condiciones</h1> <div class="terminos-condiciones__informacion"> <p class="informacion__contenido">
                 1. aceptación de los términos y Elegibilidad
                 Al acceder y usar ArreglosApp, usted acepta cumplir con todos nuestros términos y condiciones.
                 Debe tener al menos 18 años de edad para poder registrarse y utilizar nuestros servicios, asegurando que
@@ -50,27 +44,15 @@
             </p>
         </div>
     </main>
-    <footer class="navbar">
-        <nav class="navbar-inferior">
-            <a href="pagina-principal.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
-                <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono"></img>
-                <span class="navbar-inferior__texto">Inicio</span>
+    <footer class="navbar"> <nav class="navbar-inferior"> <a href="pagina-principal.jsp" class="navbar-inferior__item navbar-inferior__item--activo"> <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono"></img> <span class="navbar-inferior__texto">Inicio</span>
             </a>
-            <a href="mi-seleccion.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono"></img>
-                <span class="navbar-inferior__texto">Mi selección</span>
+            <a href="mi-seleccion.jsp" class="navbar-inferior__item"> <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono"></img> <span class="navbar-inferior__texto">Mi selección</span>
             </a>
-            <a href="mis-arreglos.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono"></img>
-                <span class="navbar-inferior__texto">Mis Arreglos</span>
+            <a href="mis-arreglos.jsp" class="navbar-inferior__item"> <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono"></img> <span class="navbar-inferior__texto">Mis Arreglos</span>
             </a>
-            <a href="mis-pedidos.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono"></img>
-                <span class="navbar-inferior__texto">Pedidos</span>
+            <a href="mis-pedidos.jsp" class="navbar-inferior__item"> <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono"></img> <span class="navbar-inferior__texto">Pedidos</span>
             </a>
-            <a href="mi-perfil.jsp" class="navbar-inferior__item">
-                <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono"></img>
-                <span class="navbar-inferior__texto">Perfil</span>
+            <a href="mi-perfil.jsp" class="navbar-inferior__item"> <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono"></img> <span class="navbar-inferior__texto">Perfil</span>
             </a>
         </nav>
     </footer>

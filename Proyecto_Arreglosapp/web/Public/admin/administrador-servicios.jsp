@@ -51,11 +51,7 @@ Servicio s = servicios.get(i);
 String imgUrl = s.getImagenUrl();
 String imgSrc = ctx + "/Assets/image/logo-app.png";
 if (imgUrl != null && !imgUrl.trim().isEmpty()) {
-    if (imgUrl.startsWith("../../")) {
-        imgSrc = ctx + "/" + imgUrl.replace("../../", "");
-    } else if (imgUrl.startsWith("Assets/")) {
-        imgSrc = ctx + "/" + imgUrl;
-    } else if (imgUrl.startsWith("http")) {
+    if (imgUrl.startsWith("../../")) { imgSrc = ctx + "/" + imgUrl.replace("../../", ""); } else if (imgUrl.startsWith("Assets/")) { imgSrc = ctx + "/" + imgUrl; } else if (imgUrl.startsWith("http")) {
         imgSrc = imgUrl;
     } else {
         imgSrc = ctx + "/" + imgUrl;

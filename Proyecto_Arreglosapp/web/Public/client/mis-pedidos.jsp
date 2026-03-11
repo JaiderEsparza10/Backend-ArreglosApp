@@ -1,72 +1,40 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="model.Usuario" %>
-<%@ page import="dao.PedidoDAO" %>
-<%@ page import="java.time.LocalDateTime" %>
-<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%@ page import="java.util.List" %> <%@ page import="java.util.Map" %> <%@ page import="model.Usuario" %> <%@ page import="dao.PedidoDAO" %> <%@ page import="java.time.LocalDateTime" %> <%@ page import="java.time.format.DateTimeFormatter" %>
 
-<% 
-    /**
-     * VISTA: Mis Pedidos.
-     * Propósito: Permitir al cliente visualizar el estado de sus pedidos activos y su historial de servicios completados.
-     * Requisitos Funcionales: RF4, RF5, RF6, RF8.
-     * Nota: Separa la vista en pestañas dinámicas (Activos/Historial) mediante JavaScript.
-     */
-    HttpSession sesion = request.getSession(false); 
-    Usuario usuario = null; 
-    
-    if (sesion != null) {
-        usuario = (Usuario) sesion.getAttribute("usuario"); 
-    } 
+                            <% /** * VISTA: Mis Pedidos. * Propósito: Permitir al cliente visualizar el estado de sus
+                                pedidos activos y su historial de servicios completados. * Requisitos Funcionales: RF4,
+                                RF5, RF6, RF8. * Nota: Separa la vista en pestañas dinámicas (Activos/Historial)
+                                mediante JavaScript. */ HttpSession sesion=request.getSession(false); Usuario
+                                usuario=null; if (sesion !=null) { usuario=(Usuario) sesion.getAttribute("usuario"); } if (usuario==null) { response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; }
+                                PedidoDAO pedidoDAO=new PedidoDAO(); List<Map<String, Object>> pedidosActivos = null;
+                                List<Map<String, Object>> historialPedidos = null;
+                                    String fEstado = request.getParameter("fEstado");
 
-    if (usuario == null) {
-        response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); 
-        return; 
-    } 
+                                    try {
+                                    // Filtrado por estado específico o carga de todos los pedidos activos del usuario
+                                    if (fEstado != null && !fEstado.isEmpty()) {
+                                    pedidosActivos = pedidoDAO.obtenerPedidosPorEstado(usuario.getId(), fEstado);
+                                    } else {
+                                    pedidosActivos = pedidoDAO.obtenerPedidosActivos(usuario.getId());
+                                    }
+                                    historialPedidos = pedidoDAO.obtenerHistorialPedidos(usuario.getId());
+                                    } catch (Exception e) {
+                                    e.printStackTrace();
+                                    }
 
-    PedidoDAO pedidoDAO = new PedidoDAO(); 
-    List<Map<String, Object>> pedidosActivos = null;
-    List<Map<String, Object>> historialPedidos = null;
-    String fEstado = request.getParameter("fEstado");
-
-    try {
-        // Filtrado por estado específico o carga de todos los pedidos activos del usuario
-        if (fEstado != null && !fEstado.isEmpty()) {
-            pedidosActivos = pedidoDAO.obtenerPedidosPorEstado(usuario.getId(), fEstado);
-        } else {
-            pedidosActivos = pedidoDAO.obtenerPedidosActivos(usuario.getId());
-        }
-        historialPedidos = pedidoDAO.obtenerHistorialPedidos(usuario.getId());
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-
-    DateTimeFormatter fmtFecha = DateTimeFormatter.ofPattern("dd MMM yyyy");
-    DateTimeFormatter fmtHora = DateTimeFormatter.ofPattern("hh:mm a");
-%>
+                                    DateTimeFormatter fmtFecha = DateTimeFormatter.ofPattern("dd MMM yyyy"); DateTimeFormatter fmtHora = DateTimeFormatter.ofPattern("hh:mm a");
+                                    %>
                                     <!DOCTYPE html>
                                     <html lang="es">
 
                                     <head>
-                                        <meta charset="UTF-8">
-                                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                        <link rel="stylesheet" href="../../Assets/estilos.css">
+                                        <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <link rel="stylesheet" href="../../Assets/estilos.css">
                                         <title>Mis Pedidos</title>
                                     </head>
 
-                                    <body class="grid-principal">
-                                        <a href="#contenido-principal" class="skip-link">Saltar al contenido</a>
-                                        <header class="seccion-encabezado">
-                                            <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
-                                                alt="logo">
-                                            <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
+                                    <body class="grid-principal"> <a href="#contenido-principal" class="skip-link">Saltar al contenido</a> <header class="seccion-encabezado"> <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
+                                                alt="logo"> <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
                                         </header>
-                                        <div id="toast" class="toast"></div>
-                                        <main class="contenido-pedidos" id="contenido-principal" role="main">
-                                            <h1 class="contenido__titulo-seleccion">Mis Pedidos</h1>
-                                            <div class="pedidos__tabs">
-                                                <button class="pedidos__tab pedidos__tab--activo" id="tabActivos"
+                                        <div id="toast" class="toast"></div> <main class="contenido-pedidos" id="contenido-principal" role="main"> <h1 class="contenido__titulo-seleccion">Mis Pedidos</h1> <div class="pedidos__tabs"> <button class="pedidos__tab pedidos__tab--activo" id="tabActivos"
                                                     onclick="cambiarTab('activos')">Activos <% if (pedidosActivos !=null
                                                         && !pedidosActivos.isEmpty()) { %><span
                                                             class="pedidos__tab-badge">
@@ -81,19 +49,9 @@
                                                         </span>
                                                         <% } %></button>
                                             </div>
-                                            <div style="margin:15px 20px;display:flex;gap:10px;align-items:center;">
-                                                <form action="mis-pedidos.jsp" method="get"
-                                                    style="display:flex;gap:10px;width:100%;">
-                                                    <select name="fEstado"
-                                                        style="flex-grow:1;padding:10px;border-radius:10px;border:1px solid #ddd;background:#fff;font-family:inherit;">
-                                                        <option value="" <%=(fEstado==null || fEstado.isEmpty())
-                                                            ? "selected" : "" %>>Todos los activos</option>
-                                                        <option value="pendiente" <%="pendiente" .equals(fEstado)
-                                                            ? "selected" : "" %>>Pendiente de Revision</option>
-                                                        <option value="confirmado" <%="confirmado" .equals(fEstado)
-                                                            ? "selected" : "" %>>Pendiente de Inicio</option>
-                                                        <option value="en_proceso" <%="en_proceso" .equals(fEstado)
-                                                            ? "selected" : "" %>>En Taller</option>
+                                            <div style="margin:15px 20px;display:flex;gap:10px;align-items:center;"> <form action="mis-pedidos.jsp" method="get"
+                                                    style="display:flex;gap:10px;width:100%;"> <select name="fEstado"
+                                                        style="flex-grow:1;padding:10px;border-radius:10px;border:1px solid #ddd;background:#fff;font-family:inherit;"> <option value="" <%=(fEstado==null || fEstado.isEmpty()) ? "selected" : "" %>>Todos los activos</option> <option value="pendiente" <%="pendiente" .equals(fEstado) ? "selected" : "" %>>Pendiente de Revision</option> <option value="confirmado" <%="confirmado" .equals(fEstado) ? "selected" : "" %>>Pendiente de Inicio</option>
                                                     </select>
                                                     <button type="submit"
                                                         style="background:#673ab7;color:white;border:none;padding:10px 20px;border-radius:10px;font-weight:600;cursor:pointer;">Filtrar</button>
@@ -107,45 +65,22 @@
                                                 <% if (pedidosActivos !=null && !pedidosActivos.isEmpty()) { for (int
                                                     i=0; i < pedidosActivos.size(); i++) { Map<String, Object> pedido =
                                                     pedidosActivos.get(i); int pedidoId = (Integer)
-                                                    pedido.get("pedidoId"); String estado = (String)
-                                                    pedido.get("pedidoEstado"); LocalDateTime fecha = (LocalDateTime)
-                                                    pedido.get("pedidoFecha"); LocalDateTime citaFecha = (LocalDateTime)
-                                                    pedido.get("citaFechaHora"); String citaNotas = (String)
-                                                    pedido.get("citaNotas"); String citaMotivo = (String)
-                                                    pedido.get("citaMotivo"); String citaEstado = (String)
-                                                    pedido.get("citaEstado"); double total = pedido.get("pedidoTotal")
-                                                    != null ? ((Number) pedido.get("pedidoTotal")).doubleValue() : 0;
-                                                                                                        String fechaStr = fecha != null ? fecha.format(fmtFecha) : "Sin fecha";
-                                                    String citaFechaStr = citaFecha != null ? citaFecha.format(fmtFecha) : null;
-                                                    String citaHoraStr = citaFecha != null ? citaFecha.format(fmtHora) : null;
-                                                    String badgeClase = "badge--pendiente";
-                                                    String estadoTexto = "Pendiente de Revision";
+                                                    pedido.get("pedidoId"); String estado = (String) pedido.get("pedidoEstado"); LocalDateTime fecha = (LocalDateTime) pedido.get("pedidoFecha"); LocalDateTime citaFecha = (LocalDateTime) pedido.get("citaFechaHora"); String citaNotas = (String) pedido.get("citaNotas"); String citaMotivo = (String) pedido.get("citaMotivo"); String citaEstado = (String) pedido.get("citaEstado"); double total = pedido.get("pedidoTotal") != null ? ((Number) pedido.get("pedidoTotal")).doubleValue() : 0; String fechaStr = fecha != null ? fecha.format(fmtFecha) : "Sin fecha";
+                                                    String citaFechaStr = citaFecha != null ? citaFecha.format(fmtFecha)
+                                                    : null;
+                                                    String citaHoraStr = citaFecha != null ? citaFecha.format(fmtHora) :
+                                                    null;
+                                                    String badgeClase = "badge--pendiente"; String estadoTexto = "Pendiente de Revision";
                                                     boolean puedeCancelar = false;
-                                                    if ("pendiente".equals(estado)) {
-                                                        badgeClase = "badge--pendiente";
-                                                        estadoTexto = "Pendiente de Revision";
-                                                        puedeCancelar = true;
-                                                    } else if ("confirmado".equals(estado)) {
-                                                        badgeClase = "badge--proceso";
-                                                        estadoTexto = "Pendiente de Inicio";
-                                                        puedeCancelar = true;
-                                                    } else if ("en_proceso".equals(estado)) {
-                                                        badgeClase = "badge--proceso";
-                                                        estadoTexto = "En Taller";
+                                                    if ("pendiente".equals(estado)) { badgeClase = "badge--pendiente"; estadoTexto = "Pendiente de Revision";
+                                                    puedeCancelar = true;
+                                                    } else if ("confirmado".equals(estado)) { badgeClase = "badge--proceso"; estadoTexto = "Pendiente de Inicio";
+                                                    puedeCancelar = true;
+                                                    } else if ("en_proceso".equals(estado)) { badgeClase = "badge--proceso"; estadoTexto = "En Taller";
                                                     }
-                                                    String numPedido = String.format("#P-%05d", pedidoId);
-                                                    String motivoLabel = "Consulta";
-                                                    if ("entrega_prenda".equals(citaMotivo)) {
-                                                        motivoLabel = "Entrega de prenda";
-                                                    } else if ("recogida_prenda".equals(citaMotivo)) {
-                                                        motivoLabel = "Recogida de prenda";
-                                                    } else if ("toma_medidas".equals(citaMotivo)) {
-                                                        motivoLabel = "Toma de medidas";
+                                                    String numPedido = String.format("#P-%05d", pedidoId); String motivoLabel = "Consulta"; if ("entrega_prenda".equals(citaMotivo)) { motivoLabel = "Entrega de prenda"; } else if ("recogida_prenda".equals(citaMotivo)) { motivoLabel = "Recogida de prenda"; } else if ("toma_medidas".equals(citaMotivo)) { motivoLabel = "Toma de medidas";
                                                     } %>
-                                                    <div class="pedido-card" id="pedido-<%= pedidoId %>">
-                                                        <div class="pedido-card__cabecera">
-                                                            <div class="pedido-card__numero-fila">
-                                                                <span class="pedido-card__numero">
+                                                    <div class="pedido-card" id="pedido-<%= pedidoId %>"> <div class="pedido-card__cabecera"> <div class="pedido-card__numero-fila"> <span class="pedido-card__numero">
                                                                     <%= numPedido %>
                                                                 </span>
                                                                 <span class="informacion__badge <%= badgeClase %>">
@@ -158,18 +93,12 @@
                                                         <div
                                                             style="background:#f9f9f9;padding:10px;border-radius:8px;margin:10px 0;border:1px solid #eee;">
                                                             <div
-                                                                style="display:flex;justify-content:space-between;font-size:13px;">
-                                                                <span style="color:#666;">Total servicio:</span>
-                                                                <span style="font-weight:600;">$<%=
-                                                                        String.format("%,.0f", total) %></span>
+                                                                style="display:flex;justify-content:space-between;font-size:13px;"> <span style="color:#666;">Total servicio:</span> <span style="font-weight:600;">$<%= String.format("%,.0f", total) %></span>
                                                             </div>
                                                         </div>
                                                         <% if (citaFechaStr !=null) { %>
                                                             <div class="pedido-card__cita"
-                                                                style="border-left:3px solid #673ab7;">
-                                                                <div class="pedido-card__cita-fila">
-                                                                    <span class="pedido-card__cita-icono">📅</span>
-                                                                    <span class="pedido-card__cita-texto"><b>
+                                                                style="border-left:3px solid #673ab7;"> <div class="pedido-card__cita-fila"> <span class="pedido-card__cita-icono">📅</span> <span class="pedido-card__cita-texto"><b>
                                                                             <%= motivoLabel %>:
                                                                         </b>
                                                                         <%= citaFechaStr %> a las <%= citaHoraStr %>
@@ -190,16 +119,14 @@
                                                                 <p class="pedido-card__sin-cita">Sin cita agendada</p>
                                                                 <% } %>
                                                                     <% if (puedeCancelar) { %>
-                                                                        <div class="pedido-card__acciones">
-                                                                            <button class="pedido-card__btn-cancelar"
+                                                                        <div class="pedido-card__acciones"> <button class="pedido-card__btn-cancelar"
                                                                                 onclick="prepararCancelacion(<%= pedidoId %>)">Cancelar
                                                                                 pedido</button>
                                                                         </div>
                                                                         <% } %>
                                                     </div>
                                                     <% } } else { %>
-                                                        <div class="pedidos__vacio">
-                                                            <p class="pedidos__vacio-texto">No tienes pedidos activos.
+                                                        <div class="pedidos__vacio"> <p class="pedidos__vacio-texto">No tienes pedidos activos.
                                                             </p>
                                                             <a href="mis-arreglos.jsp" class="pedidos__vacio-btn">Ir a
                                                                 Mis Arreglos</a>
@@ -210,24 +137,11 @@
                                                 <% if (historialPedidos !=null && !historialPedidos.isEmpty()) { for
                                                     (int j=0; j < historialPedidos.size(); j++) { Map<String, Object>
                                                     pedidoH = historialPedidos.get(j); int pedidoIdH = (Integer)
-                                                    pedidoH.get("pedidoId"); String estadoH = (String)
-                                                    pedidoH.get("pedidoEstado"); LocalDateTime fechaH = (LocalDateTime)
-                                                    pedidoH.get("pedidoFecha"); LocalDateTime citaFechaH =
-                                                    (LocalDateTime) pedidoH.get("citaFechaHora"); double totalH =
-                                                    pedidoH.get("pedidoTotal") != null ? ((Number)
-                                                    pedidoH.get("pedidoTotal")).doubleValue() : 0; String fechaStrH =
-                                                    fechaH != null ? fechaH.format(fmtFecha) : "Sin fecha"; String
+                                                    pedidoH.get("pedidoId"); String estadoH = (String) pedidoH.get("pedidoEstado"); LocalDateTime fechaH = (LocalDateTime) pedidoH.get("pedidoFecha"); LocalDateTime citaFechaH = (LocalDateTime) pedidoH.get("citaFechaHora"); double totalH = pedidoH.get("pedidoTotal") != null ? ((Number) pedidoH.get("pedidoTotal")).doubleValue() : 0; String fechaStrH = fechaH != null ? fechaH.format(fmtFecha) : "Sin fecha"; String
                                                     citaFechaStrH = citaFechaH != null ? citaFechaH.format(fmtFecha) :
                                                     null; String citaHoraStrH = citaFechaH != null ?
                                                     citaFechaH.format(fmtHora) : null; String badgeClaseH =
-                                                    "badge--completado"; String estadoTextoH = "Terminado"; if
-                                                    ("cancelado".equals(estadoH)) { badgeClaseH = "badge--cancelado";
-                                                    estadoTextoH = "Cancelado"; } String numPedidoH =
-                                                    String.format("#P-%05d", pedidoIdH); %>
-                                                    <div class="pedido-card pedido-card--historial">
-                                                        <div class="pedido-card__cabecera">
-                                                            <div class="pedido-card__numero-fila">
-                                                                <span class="pedido-card__numero">
+                                                    "badge--completado"; String estadoTextoH = "Terminado"; if ("cancelado".equals(estadoH)) { badgeClaseH = "badge--cancelado"; estadoTextoH = "Cancelado"; } String numPedidoH = String.format("#P-%05d", pedidoIdH); %> <div class="pedido-card pedido-card--historial"> <div class="pedido-card__cabecera"> <div class="pedido-card__numero-fila"> <span class="pedido-card__numero">
                                                                     <%= numPedidoH %>
                                                                 </span>
                                                                 <span class="informacion__badge <%= badgeClaseH %>">
@@ -240,17 +154,11 @@
                                                         <div
                                                             style="background:#f9f9f9;padding:10px;border-radius:8px;margin:10px 0;border:1px solid #eee;">
                                                             <div
-                                                                style="display:flex;justify-content:space-between;font-size:13px;">
-                                                                <span style="color:#666;">Total servicio:</span>
-                                                                <span style="font-weight:600;">$<%=
-                                                                        String.format("%,.0f", totalH) %></span>
+                                                                style="display:flex;justify-content:space-between;font-size:13px;"> <span style="color:#666;">Total servicio:</span> <span style="font-weight:600;">$<%= String.format("%,.0f", totalH) %></span>
                                                             </div>
                                                         </div>
                                                         <% if (citaFechaStrH !=null) { %>
-                                                            <div class="pedido-card__cita">
-                                                                <div class="pedido-card__cita-fila">
-                                                                    <span class="pedido-card__cita-icono">📅</span>
-                                                                    <span class="pedido-card__cita-texto">Cita: <%=
+                                                            <div class="pedido-card__cita"> <div class="pedido-card__cita-fila"> <span class="pedido-card__cita-icono">📅</span> <span class="pedido-card__cita-texto">Cita: <%=
                                                                             citaFechaStrH %> a las <%= citaHoraStrH %>
                                                                     </span>
                                                                 </div>
@@ -258,53 +166,31 @@
                                                             <% } %>
                                                     </div>
                                                     <% } } else { %>
-                                                        <div class="pedidos__vacio">
-                                                            <p class="pedidos__vacio-texto">No tienes pedidos en el
+                                                        <div class="pedidos__vacio"> <p class="pedidos__vacio-texto">No tienes pedidos en el
                                                                 historial.</p>
                                                         </div>
                                                         <% } %>
                                             </section>
                                         </main>
-                                        <div id="modalCancelar" class="modal">
-                                            <div class="modal-contenido">
-                                                <h3 class="modal__titulo">Cancelar pedido</h3>
-                                                <p class="modal__descripcion">Esta accion no se puede deshacer.</p>
-                                                <div class="modal__acciones">
-                                                    <button class="btn-modal btn-modal--cancelar"
-                                                        onclick="cerrarModalCancelacion()">VOLVER</button>
-                                                    <button class="btn-modal btn-modal--eliminar"
+                                        <div id="modalCancelar" class="modal"> <div class="modal-contenido"> <h3 class="modal__titulo">Cancelar pedido</h3> <p class="modal__descripcion">Esta accion no se puede deshacer.</p> <div class="modal__acciones"> <button class="btn-modal btn-modal--cancelar"
+                                                        onclick="cerrarModalCancelacion()">VOLVER</button> <button class="btn-modal btn-modal--eliminar"
                                                         id="btnConfirmarCancelacion">CANCELAR PEDIDO</button>
                                                 </div>
                                             </div>
                                         </div>
-                                        <footer class="navbar">
-                                            <nav class="navbar-inferior" role="navigation"
-                                                aria-label="Navegacion principal">
-                                                <a href="pagina-principal.jsp" class="navbar-inferior__item"
+                                        <footer class="navbar"> <nav class="navbar-inferior" role="navigation"
+                                                aria-label="Navegacion principal"> <a href="pagina-principal.jsp" class="navbar-inferior__item"
                                                     aria-label="Inicio"><img src="../../Assets/icons/casa-blanca.png"
-                                                        class="navbar-inferior__icono" alt=""><span
-                                                        class="navbar-inferior__texto">Inicio</span></a>
-                                                <a href="mi-seleccion.jsp" class="navbar-inferior__item"
-                                                    aria-label="Mi seleccion"><img
-                                                        src="../../Assets/icons/lista-de-deseos-transparente.png"
-                                                        class="navbar-inferior__icono" alt=""><span
-                                                        class="navbar-inferior__texto">Mi seleccion</span></a>
-                                                <a href="mis-arreglos.jsp" class="navbar-inferior__item"
-                                                    aria-label="Mis Arreglos"><img
-                                                        src="../../Assets/icons/cortar-con-tijeras-transparente.png"
-                                                        class="navbar-inferior__icono" alt=""><span
-                                                        class="navbar-inferior__texto">Mis Arreglos</span></a>
-                                                <a href="mis-pedidos.jsp"
+                                                        class="navbar-inferior__icono" alt=""><span class="navbar-inferior__texto">Inicio</span></a> <a href="mi-seleccion.jsp" class="navbar-inferior__item"
+                                                    aria-label="Mi seleccion"><img src="../../Assets/icons/lista-de-deseos-transparente.png"
+                                                        class="navbar-inferior__icono" alt=""><span class="navbar-inferior__texto">Mi seleccion</span></a> <a href="mis-arreglos.jsp" class="navbar-inferior__item"
+                                                    aria-label="Mis Arreglos"><img src="../../Assets/icons/cortar-con-tijeras-transparente.png"
+                                                        class="navbar-inferior__icono" alt=""><span class="navbar-inferior__texto">Mis Arreglos</span></a> <a href="mis-pedidos.jsp"
                                                     class="navbar-inferior__item navbar-inferior__item--activo"
-                                                    aria-current="page" aria-label="Pedidos"><img
-                                                        src="../../Assets/icons/caja-transparente.png"
-                                                        class="navbar-inferior__icono" alt=""><span
-                                                        class="navbar-inferior__texto">Pedidos</span></a>
-                                                <a href="mi-perfil.jsp" class="navbar-inferior__item"
-                                                    aria-label="Perfil"><img
-                                                        src="../../Assets/icons/usuario-transparente.png"
-                                                        class="navbar-inferior__icono" alt=""><span
-                                                        class="navbar-inferior__texto">Perfil</span></a>
+                                                    aria-current="page" aria-label="Pedidos"><img src="../../Assets/icons/caja-transparente.png"
+                                                        class="navbar-inferior__icono" alt=""><span class="navbar-inferior__texto">Pedidos</span></a> <a href="mi-perfil.jsp" class="navbar-inferior__item"
+                                                    aria-label="Perfil"><img src="../../Assets/icons/usuario-transparente.png"
+                                                        class="navbar-inferior__icono" alt=""><span class="navbar-inferior__texto">Perfil</span></a>
                                             </nav>
                                         </footer>
                                         <script src="../../Assets/JavaScript/mis-pedidos.js"></script>

@@ -31,10 +31,7 @@
     }
 
     UsuarioDAO usuarioDAO = new UsuarioDAO(); 
-    String errorPerfil = (String) sesion.getAttribute("errorPerfil"); 
-    String errorPassword = (String) sesion.getAttribute("errorPassword"); 
-    sesion.removeAttribute("errorPerfil");
-    sesion.removeAttribute("errorPassword"); 
+    String errorPerfil = (String) sesion.getAttribute("errorPerfil");  String errorPassword = (String) sesion.getAttribute("errorPassword");  sesion.removeAttribute("errorPerfil"); sesion.removeAttribute("errorPassword"); 
 
     int totalPedidos = 0; 
     int totalFavoritos = 0; 
@@ -57,39 +54,24 @@
         e.printStackTrace(); 
     } 
 
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-    String nombreActual = usuario.getNombre() != null ? usuario.getNombre() : ""; 
-    String emailActual = usuario.getEmail() != null ? usuario.getEmail() : "";
-    String direccionActual = usuario.getDireccion() != null ? usuario.getDireccion() : ""; 
-    String rolTexto = usuario.getRolId() == 1 ? "Administrador" : "Cliente"; 
-    String inicialNombre = nombreActual.isEmpty() ? "U" : String.valueOf(nombreActual.charAt(0)).toUpperCase(); 
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm"); String nombreActual = usuario.getNombre() != null ? usuario.getNombre() : "";  String emailActual = usuario.getEmail() != null ? usuario.getEmail() : ""; String direccionActual = usuario.getDireccion() != null ? usuario.getDireccion() : "";  String rolTexto = usuario.getRolId() == 1 ? "Administrador" : "Cliente";  String inicialNombre = nombreActual.isEmpty() ? "U" : String.valueOf(nombreActual.charAt(0)).toUpperCase(); 
 %>
                 <!DOCTYPE html>
                 <html lang="es">
 
                 <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <link rel="stylesheet" href="../../Assets/estilos.css">
+                    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <link rel="stylesheet" href="../../Assets/estilos.css">
                     <title>Mi Perfil</title>
                 </head>
 
-                <body class="grid-principal">
-                    <a href="#contenido-principal" class="skip-link">Saltar al contenido</a>
-                    <header class="seccion-encabezado">
-                        <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
-                            alt="logo de la aplicación">
-                        <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
+                <body class="grid-principal"> <a href="#contenido-principal" class="skip-link">Saltar al contenido</a> <header class="seccion-encabezado"> <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
+                            alt="logo de la aplicación"> <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
                     </header>
 
-                    <div id="toast" class="toast"></div>
-
-                    <main class="contenido-perfil" id="contenido-principal" role="main">
+                    <div id="toast" class="toast"></div> <main class="contenido-perfil" id="contenido-principal" role="main">
 
                         <!-- ENCABEZADO -->
-                        <div class="contenido-perfil__enlace-volver">
-                            <a href="javascript:history.back()" class="encabezado__btn-volver">
-                                <img src="../../Assets/icons/flecha-izquierda__blanca.png" alt="volver"
+                        <div class="contenido-perfil__enlace-volver"> <a href="javascript:history.back()" class="encabezado__btn-volver"> <img src="../../Assets/icons/flecha-izquierda__blanca.png" alt="volver"
                                     class="btn-volver__icono">
                             </a>
                             <h1 class="enlace-volver__titulo">Mi Perfil</h1>
@@ -106,14 +88,11 @@
                                     <% } %>
 
                                         <!-- TARJETA DE PERFIL -->
-                                        <section class="perfil-informacion">
-                                            <div class="perfil__avatar">
-                                                <span class="perfil__inicial">
+                                        <section class="perfil-informacion"> <div class="perfil__avatar"> <span class="perfil__inicial">
                                                     <%= inicialNombre %>
                                                 </span>
                                             </div>
-                                            <div class="perfil__datos">
-                                                <h2 class="perfil__nombre">
+                                            <div class="perfil__datos"> <h2 class="perfil__nombre">
                                                     <%= nombreActual %>
                                                 </h2>
                                                 <p class="perfil__email">
@@ -134,23 +113,17 @@
                                         </section>
 
                                         <!-- RESUMEN DE ACTIVIDAD -->
-                                        <section class="perfil-resumen">
-                                            <h3 class="resumen__titulo">Resumen de Actividad</h3>
-                                            <div class="resumen__grid">
-                                                <a href="mis-pedidos.jsp" class="resumen__item">
-                                                    <h4 class="resumen__numero">
+                                        <section class="perfil-resumen"> <h3 class="resumen__titulo">Resumen de Actividad</h3> <div class="resumen__grid"> <a href="mis-pedidos.jsp" class="resumen__item"> <h4 class="resumen__numero">
                                                         <%= totalPedidos %>
                                                     </h4>
                                                     <p class="resumen__texto">Pedidos Activos</p>
                                                 </a>
-                                                <a href="mi-seleccion.jsp" class="resumen__item">
-                                                    <h4 class="resumen__numero">
+                                                <a href="mi-seleccion.jsp" class="resumen__item"> <h4 class="resumen__numero">
                                                         <%= totalFavoritos %>
                                                     </h4>
                                                     <p class="resumen__texto">Favoritos</p>
                                                 </a>
-                                                <a href="mis-arreglos.jsp" class="resumen__item">
-                                                    <h4 class="resumen__numero">
+                                                <a href="mis-arreglos.jsp" class="resumen__item"> <h4 class="resumen__numero">
                                                         <%= totalPersonalizaciones %>
                                                     </h4>
                                                     <p class="resumen__texto">Personalizaciones</p>
@@ -159,44 +132,25 @@
                                         </section>
 
                                         <!-- EDITAR DATOS -->
-                                        <section class="perfil-seccion" id="editarDatos">
-                                            <div class="perfil-seccion__cabecera"
-                                                onclick="toggleSeccion('formEditarDatos')">
-                                                <h3 class="perfil-seccion__titulo">✏️ Editar Datos Personales</h3>
-                                                <span class="perfil-seccion__flecha" id="flechaFormEditarDatos">▼</span>
+                                        <section class="perfil-seccion" id="editarDatos"> <div class="perfil-seccion__cabecera"
+                                                onclick="toggleSeccion('formEditarDatos')"> <h3 class="perfil-seccion__titulo">✏️ Editar Datos Personales</h3> <span class="perfil-seccion__flecha" id="flechaFormEditarDatos">▼</span>
                                             </div>
                                             <div class="perfil-seccion__contenido" id="formEditarDatos"
-                                                style="display:none;">
-                                                <form action="/Proyecto_Arreglosapp/PerfilServlet" method="post"
-                                                    class="perfil__form">
-                                                    <input type="hidden" name="accion" value="editarDatos">
-
-                                                    <label class="perfil__label">Nombre completo</label>
-                                                    <input type="text" name="nombre" class="perfil__input"
-                                                        value="<%= nombreActual %>" required>
-
-                                                    <label class="perfil__label">Dirección</label>
-                                                    <input type="text" name="direccion" class="perfil__input"
+                                                style="display:none;"> <form action="/Proyecto_Arreglosapp/PerfilServlet" method="post"
+                                                    class="perfil__form"> <input type="hidden" name="accion" value="editarDatos"> <label class="perfil__label">Nombre completo</label> <input type="text" name="nombre" class="perfil__input"
+                                                        value="<%= nombreActual %>" required> <label class="perfil__label">Dirección</label> <input type="text" name="direccion" class="perfil__input"
                                                         value="<%= direccionActual %>"
-                                                        placeholder="Ej: Calle 10 # 5-20, Barrio Centro">
-
-                                                    <label class="perfil__label">Teléfono</label>
-                                                    <input type="tel" name="telefono" class="perfil__input"
+                                                        placeholder="Ej: Calle 10 # 5-20, Barrio Centro"> <label class="perfil__label">Teléfono</label> <input type="tel" name="telefono" class="perfil__input"
                                                         value="<%= telefono %>" placeholder="Ej: 3001234567"
                                                         pattern="[0-9]*" inputmode="numeric"
-                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-
-                                                    <button type="submit" class="perfil__btn-guardar">Guardar
+                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"> <button type="submit" class="perfil__btn-guardar">Guardar
                                                         Cambios</button>
                                                 </form>
                                             </div>
                                         </section>
 
                                         <!-- MENSAJES AUTOMÁTICOS (RF20) -->
-                                        <section class="perfil-seccion" id="notificaciones">
-                                            <div class="perfil-seccion__cabecera" onclick="toggleSeccion('listaNotificaciones')">
-                                                <h3 class="perfil-seccion__titulo">📩 Mensajes y Notificaciones</h3>
-                                                <span class="perfil-seccion__flecha" id="flechaListaNotificaciones">▼</span>
+                                        <section class="perfil-seccion" id="notificaciones"> <div class="perfil-seccion__cabecera" onclick="toggleSeccion('listaNotificaciones')"> <h3 class="perfil-seccion__titulo">📩 Mensajes y Notificaciones</h3> <span class="perfil-seccion__flecha" id="flechaListaNotificaciones">▼</span>
                                             </div>
                                             <div class="perfil-seccion__contenido" id="listaNotificaciones" style="display:none; padding: 10px;">
                                                 <% 
@@ -204,9 +158,7 @@
                                                 if (notifs != null && !notifs.isEmpty()) {
                                                     for (Map<String, Object> n : notifs) {
                                                 %>
-                                                    <div class="notificacion-item" style="border-bottom: 1px solid #eee; padding: 10px 0;">
-                                                        <p style="font-size: 14px; margin-bottom: 4px; color: #333;"><%= n.get("mensaje") %></p>
-                                                        <span style="font-size: 11px; color: #999;"><%= sdf.format(n.get("fecha")) %></span>
+                                                    <div class="notificacion-item" style="border-bottom: 1px solid #eee; padding: 10px 0;"> <p style="font-size: 14px; margin-bottom: 4px; color: #333;"><%= n.get("mensaje") %></p> <span style="font-size: 11px; color: #999;"><%= sdf.format(n.get("fecha")) %></span>
                                                     </div>
                                                 <% 
                                                     }
@@ -218,45 +170,26 @@
                                         </section>
 
                                         <!-- CAMBIAR CONTRASEÑA -->
-                                        <section class="perfil-seccion" id="cambiarPassword">
-                                            <div class="perfil-seccion__cabecera"
-                                                onclick="toggleSeccion('formPassword')">
-                                                <h3 class="perfil-seccion__titulo">🔒 Cambiar Contraseña</h3>
-                                                <span class="perfil-seccion__flecha" id="flechaFormPassword">▼</span>
+                                        <section class="perfil-seccion" id="cambiarPassword"> <div class="perfil-seccion__cabecera"
+                                                onclick="toggleSeccion('formPassword')"> <h3 class="perfil-seccion__titulo">🔒 Cambiar Contraseña</h3> <span class="perfil-seccion__flecha" id="flechaFormPassword">▼</span>
                                             </div>
                                             <div class="perfil-seccion__contenido" id="formPassword"
-                                                style="display:none;">
-                                                <form action="/Proyecto_Arreglosapp/PerfilServlet" method="post"
-                                                    class="perfil__form">
-                                                    <input type="hidden" name="accion" value="cambiarPassword">
-
-                                                    <label class="perfil__label">Contraseña actual</label>
-                                                    <div class="perfil__input-password">
-                                                        <input type="password" name="passwordActual" id="passActual"
-                                                            class="perfil__input" required>
-                                                        <button type="button" class="perfil__ojo"
-                                                            onclick="togglePass('passActual', 'ojoActual')">
-                                                            <span id="ojoActual">👁</span>
+                                                style="display:none;"> <form action="/Proyecto_Arreglosapp/PerfilServlet" method="post"
+                                                    class="perfil__form"> <input type="hidden" name="accion" value="cambiarPassword"> <label class="perfil__label">Contraseña actual</label> <div class="perfil__input-password"> <input type="password" name="passwordActual" id="passActual"
+                                                            class="perfil__input" required> <button type="button" class="perfil__ojo"
+                                                            onclick="togglePass('passActual', 'ojoActual')"> <span id="ojoActual">👁</span>
                                                         </button>
                                                     </div>
 
-                                                    <label class="perfil__label">Nueva contraseña</label>
-                                                    <div class="perfil__input-password">
-                                                        <input type="password" name="passwordNueva" id="passNueva"
-                                                            class="perfil__input" required minlength="6">
-                                                        <button type="button" class="perfil__ojo"
-                                                            onclick="togglePass('passNueva', 'ojoNueva')">
-                                                            <span id="ojoNueva">👁</span>
+                                                    <label class="perfil__label">Nueva contraseña</label> <div class="perfil__input-password"> <input type="password" name="passwordNueva" id="passNueva"
+                                                            class="perfil__input" required minlength="6"> <button type="button" class="perfil__ojo"
+                                                            onclick="togglePass('passNueva', 'ojoNueva')"> <span id="ojoNueva">👁</span>
                                                         </button>
                                                     </div>
 
-                                                    <label class="perfil__label">Confirmar nueva contraseña</label>
-                                                    <div class="perfil__input-password">
-                                                        <input type="password" name="passwordConfirmar" id="passConfirm"
-                                                            class="perfil__input" required minlength="6">
-                                                        <button type="button" class="perfil__ojo"
-                                                            onclick="togglePass('passConfirm', 'ojoConfirm')">
-                                                            <span id="ojoConfirm">👁</span>
+                                                    <label class="perfil__label">Confirmar nueva contraseña</label> <div class="perfil__input-password"> <input type="password" name="passwordConfirmar" id="passConfirm"
+                                                            class="perfil__input" required minlength="6"> <button type="button" class="perfil__ojo"
+                                                            onclick="togglePass('passConfirm', 'ojoConfirm')"> <span id="ojoConfirm">👁</span>
                                                         </button>
                                                     </div>
 
@@ -267,8 +200,7 @@
                                         </section>
 
                                         <!-- CERRAR SESIÓN -->
-                                        <div class="perfil__cerrar-sesion">
-                                            <a href="/Proyecto_Arreglosapp/LogoutServlet"
+                                        <div class="perfil__cerrar-sesion"> <a href="/Proyecto_Arreglosapp/LogoutServlet"
                                                 class="perfil__btn-cerrar-sesion">
                                                 Cerrar Sesión
                                             </a>
@@ -276,27 +208,15 @@
 
                     </main>
 
-                    <footer class="navbar">
-                        <nav class="navbar-inferior" role="navigation" aria-label="Navegación principal">
-                            <a href="pagina-principal.jsp" class="navbar-inferior__item" aria-label="Inicio">
-                                <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono" alt="">
-                                <span class="navbar-inferior__texto">Inicio</span>
+                    <footer class="navbar"> <nav class="navbar-inferior" role="navigation" aria-label="Navegación principal"> <a href="pagina-principal.jsp" class="navbar-inferior__item" aria-label="Inicio"> <img src="../../Assets/icons/casa-blanca.png" class="navbar-inferior__icono" alt=""> <span class="navbar-inferior__texto">Inicio</span>
                             </a>
-                            <a href="mi-seleccion.jsp" class="navbar-inferior__item" aria-label="Mi selección">
-                                <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono" alt="">
-                                <span class="navbar-inferior__texto">Mi selección</span>
+                            <a href="mi-seleccion.jsp" class="navbar-inferior__item" aria-label="Mi selección"> <img src="../../Assets/icons/lista-de-deseos-transparente.png" class="navbar-inferior__icono" alt=""> <span class="navbar-inferior__texto">Mi selección</span>
                             </a>
-                            <a href="mis-arreglos.jsp" class="navbar-inferior__item" aria-label="Mis Arreglos">
-                                <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono" alt="">
-                                <span class="navbar-inferior__texto">Mis Arreglos</span>
+                            <a href="mis-arreglos.jsp" class="navbar-inferior__item" aria-label="Mis Arreglos"> <img src="../../Assets/icons/cortar-con-tijeras-transparente.png" class="navbar-inferior__icono" alt=""> <span class="navbar-inferior__texto">Mis Arreglos</span>
                             </a>
-                            <a href="mis-pedidos.jsp" class="navbar-inferior__item" aria-label="Pedidos">
-                                <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono" alt="">
-                                <span class="navbar-inferior__texto">Pedidos</span>
+                            <a href="mis-pedidos.jsp" class="navbar-inferior__item" aria-label="Pedidos"> <img src="../../Assets/icons/caja-transparente.png" class="navbar-inferior__icono" alt=""> <span class="navbar-inferior__texto">Pedidos</span>
                             </a>
-                            <a href="mi-perfil.jsp" class="navbar-inferior__item navbar-inferior__item--activo" aria-current="page" aria-label="Perfil">
-                                <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono" alt="">
-                                <span class="navbar-inferior__texto">Perfil</span>
+                            <a href="mi-perfil.jsp" class="navbar-inferior__item navbar-inferior__item--activo" aria-current="page" aria-label="Perfil"> <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono" alt=""> <span class="navbar-inferior__texto">Perfil</span>
                             </a>
                         </nav>
                     </footer>
