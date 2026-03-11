@@ -24,14 +24,15 @@ public class ConectionDB {
      * 
      * @return El objeto Connection si tiene éxito, o null en caso de error.
      */
-    public static Connection getConexion() {
+    public static Connection getConexion() throws SQLException {
         Connection conect = null;
         try {
             Class.forName(DRIVER);
             conect = DriverManager.getConnection(URL, USER, PASSWD);
             System.out.println("Conexión Exitosa");
-        } catch (ClassNotFoundException | SQLException e) {
-            System.out.println("Error de Conexión: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.out.println("Driver no encontrado: " + e.getMessage());
+            throw new SQLException("Error de driver JDBC: " + e.getMessage());
         }
         return conect;
     }

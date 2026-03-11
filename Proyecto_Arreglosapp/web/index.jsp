@@ -77,6 +77,13 @@
             history.replaceState({}, document.title, window.location.pathname);
           }
 
+          if (params.get('msg') === 'exitoRegistro') {
+            toast.textContent = '✅ ¡Registro exitoso! Ya puedes iniciar sesión';
+            toast.className = 'toast toast--exito toast--visible';
+            setTimeout(function () { toast.classList.remove('toast--visible'); }, 4000);
+            history.replaceState({}, document.title, window.location.pathname);
+          }
+
           if (params.get('msg') === 'exitoLogin') {
             toast.textContent = '✅ Bienvenido de nuevo';
             toast.className = 'toast toast--exito toast--visible';

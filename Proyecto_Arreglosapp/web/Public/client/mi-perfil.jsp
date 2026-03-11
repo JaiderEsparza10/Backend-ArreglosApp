@@ -146,7 +146,9 @@
 
                                                     <label class="perfil__label">Teléfono</label>
                                                     <input type="tel" name="telefono" class="perfil__input"
-                                                        value="<%= telefono %>" placeholder="Ej: 3001234567">
+                                                        value="<%= telefono %>" placeholder="Ej: 3001234567"
+                                                        pattern="[0-9]*" inputmode="numeric"
+                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
 
                                                     <button type="submit" class="perfil__btn-guardar">Guardar
                                                         Cambios</button>

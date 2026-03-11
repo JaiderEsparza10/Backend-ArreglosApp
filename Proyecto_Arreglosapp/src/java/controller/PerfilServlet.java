@@ -77,6 +77,11 @@ public class PerfilServlet extends HttpServlet {
 
                 // Actualizar teléfono si fue enviado
                 if (telefono != null && !telefono.trim().isEmpty()) {
+                    if (!telefono.trim().matches("\\d+")) {
+                        session.setAttribute("errorPerfil", "El teléfono solo debe contener números");
+                        response.sendRedirect("Public/client/mi-perfil.jsp");
+                        return;
+                    }
                     usuarioDAO.actualizarTelefono(usuario.getId(), telefono.trim());
                 }
 
