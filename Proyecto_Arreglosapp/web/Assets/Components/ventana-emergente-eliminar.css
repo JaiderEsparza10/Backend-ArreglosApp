@@ -15,9 +15,27 @@
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
+/* Clase para modal-overlay (usada en administrador-usuarios.jsp) */
+.modal-overlay {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
 /* Mostrar modal con :target O con clase --activo (JS) */
 .modal:target,
-.modal--activo {
+.modal--activo,
+.modal-overlay[style*="display: flex"] {
   visibility: visible;
   opacity: 1;
 }

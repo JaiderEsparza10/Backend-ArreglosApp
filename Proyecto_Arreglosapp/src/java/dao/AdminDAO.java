@@ -78,9 +78,11 @@ public class AdminDAO {
      */
     public List<Map<String, Object>> obtenerPedidosRecientes() throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
-                "u.user_nombre " +
+                "u.user_nombre, " +
+                "c.cita_fecha_hora, c.cita_estado " +
                 "FROM pedidos p " +
                 "JOIN usuarios u ON p.usuario_id = u.user_id " +
+                "LEFT JOIN citas c ON c.pedido_id = p.pedido_id " +
                 "ORDER BY p.pedido_fecha_creacion DESC " +
                 "LIMIT 20";
 
@@ -95,6 +97,8 @@ public class AdminDAO {
                 pedido.put("fecha", rs.getTimestamp("pedido_fecha_creacion"));
                 pedido.put("total", rs.getDouble("pedido_total"));
                 pedido.put("cliente", rs.getString("user_nombre"));
+                pedido.put("citaFecha", rs.getTimestamp("cita_fecha_hora"));
+                pedido.put("citaEstado", rs.getString("cita_estado"));
                 lista.add(pedido);
             }
         } catch (SQLException e) {
@@ -109,9 +113,11 @@ public class AdminDAO {
     public List<Map<String, Object>> obtenerPedidosFiltrados(String fecha, String estado) throws Exception {
         StringBuilder sql = new StringBuilder(
                 "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
-                        "u.user_nombre " +
+                        "u.user_nombre, " +
+                        "c.cita_fecha_hora, c.cita_estado " +
                         "FROM pedidos p " +
-                        "JOIN usuarios u ON p.usuario_id = u.user_id WHERE 1=1 ");
+                        "JOIN usuarios u ON p.usuario_id = u.user_id " +
+                        "LEFT JOIN citas c ON c.pedido_id = p.pedido_id WHERE 1=1 ");
 
         if (fecha != null && !fecha.isEmpty())
             sql.append(" AND DATE(p.pedido_fecha_creacion) = ? ");
@@ -135,6 +141,8 @@ public class AdminDAO {
                     p.put("fecha", rs.getTimestamp("pedido_fecha_creacion"));
                     p.put("total", rs.getDouble("pedido_total"));
                     p.put("cliente", rs.getString("user_nombre"));
+                    p.put("citaFecha", rs.getTimestamp("cita_fecha_hora"));
+                    p.put("citaEstado", rs.getString("cita_estado"));
                     pedidos.add(p);
                 }
             }
@@ -473,39 +481,123 @@ public class AdminDAO {
     }
 
     /**
-     * Elimina físicamente a un usuario y todos sus datos relacionados (Favoritos, Telefonos, Pedidos).
-     * RF-12: Gestión Admin.
+     * Elimina usuario y sus dependencias básicas (teléfonos, favoritos, notificaciones).
+     * NO elimina datos importantes como pedidos, personalizaciones o citas.
+     * RF-12: Gestión Admin - Eliminación controlada.
      */
     public boolean eliminarUsuario(int userId) throws Exception {
         Connection con = null;
         try {
             con = ConectionDB.getConexion();
-            con.setAutoCommit(false);
-            // Cascada de borrado manual por integridad referencial
-            String[] sqls = {
-                    "DELETE FROM favoritos WHERE user_id = ?",
-                    "DELETE FROM telefonos WHERE user_id = ?",
-                    "DELETE FROM citas WHERE pedido_id IN (SELECT pedido_id FROM pedidos WHERE usuario_id = ?)",
-                    "DELETE FROM personalizaciones WHERE user_id = ?",
-                    "DELETE FROM pedidos WHERE usuario_id = ?",
-                    "DELETE FROM usuarios WHERE user_id = ? AND rol_id = 2"
-            };
-            for (String sql : sqls) {
-                try (PreparedStatement ps = con.prepareStatement(sql)) {
-                    ps.setInt(1, userId);
-                    ps.executeUpdate();
+            con.setAutoCommit(false); // Iniciar transacción
+            
+            System.out.println("DEBUG: Iniciando eliminación controlada del usuario " + userId);
+            
+            // 1. Eliminar dependencias básicas (seguras)
+            System.out.println("DEBUG: Eliminando teléfonos del usuario " + userId);
+            try (PreparedStatement ps = con.prepareStatement("DELETE FROM telefonos WHERE user_id = ?")) {
+                ps.setInt(1, userId);
+                int telefonosEliminados = ps.executeUpdate();
+                System.out.println("DEBUG: Teléfonos eliminados: " + telefonosEliminados);
+            }
+            
+            System.out.println("DEBUG: Eliminando favoritos del usuario " + userId);
+            try (PreparedStatement ps = con.prepareStatement("DELETE FROM favoritos WHERE user_id = ?")) {
+                ps.setInt(1, userId);
+                int favoritosEliminados = ps.executeUpdate();
+                System.out.println("DEBUG: Favoritos eliminados: " + favoritosEliminados);
+            }
+            
+            System.out.println("DEBUG: Eliminando notificaciones del usuario " + userId);
+            try (PreparedStatement ps = con.prepareStatement("DELETE FROM notificaciones WHERE user_id = ?")) {
+                ps.setInt(1, userId);
+                int notificacionesEliminadas = ps.executeUpdate();
+                System.out.println("DEBUG: Notificaciones eliminadas: " + notificacionesEliminadas);
+            }
+            
+            // 2. Verificar si tiene dependencias importantes (pedidos, personalizaciones, citas)
+            boolean tienePedidos = false;
+            boolean tienePersonalizaciones = false;
+            boolean tieneCitas = false;
+            
+            try (PreparedStatement ps = con.prepareStatement("SELECT COUNT(*) FROM pedidos WHERE usuario_id = ?")) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        tienePedidos = true;
+                        System.out.println("DEBUG: Usuario tiene pedidos asociados");
+                    }
                 }
             }
-            con.commit();
-            return true;
-        } catch (SQLException e) {
-            if (con != null)
+            
+            try (PreparedStatement ps = con.prepareStatement("SELECT COUNT(*) FROM personalizaciones WHERE user_id = ?")) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        tienePersonalizaciones = true;
+                        System.out.println("DEBUG: Usuario tiene personalizaciones asociadas");
+                    }
+                }
+            }
+            
+            try (PreparedStatement ps = con.prepareStatement(
+                "SELECT COUNT(*) FROM citas c JOIN pedidos p ON c.pedido_id = p.pedido_id WHERE p.usuario_id = ?")) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        tieneCitas = true;
+                        System.out.println("DEBUG: Usuario tiene citas asociadas");
+                    }
+                }
+            }
+            
+            // 3. Si tiene dependencias importantes, no permitir eliminación
+            if (tienePedidos || tienePersonalizaciones || tieneCitas) {
+                System.out.println("DEBUG: No se puede eliminar - tiene datos importantes asociados");
                 con.rollback();
+                throw new Exception("NO_SE_PUEDE_ELIMINAR_TIENE_DEPENDENCIAS_IMPORTANTES");
+            }
+            
+            // 4. Eliminar el usuario principal
+            System.out.println("DEBUG: Eliminando usuario principal " + userId);
+            try (PreparedStatement ps = con.prepareStatement("DELETE FROM usuarios WHERE user_id = ? AND rol_id = 2")) {
+                ps.setInt(1, userId);
+                int filas = ps.executeUpdate();
+                
+                if (filas > 0) {
+                    System.out.println("DEBUG: Usuario eliminado exitosamente");
+                    con.commit();
+                    return true;
+                } else {
+                    System.out.println("DEBUG: No se encontró usuario o no es cliente");
+                    con.rollback();
+                    return false;
+                }
+            }
+            
+        } catch (SQLException e) {
+            System.out.println("DEBUG: Error SQL: " + e.getMessage());
+            System.out.println("DEBUG: Código de error: " + e.getErrorCode());
+            if (con != null) {
+                try {
+                    con.rollback();
+                } catch (SQLException rollbackEx) {
+                    System.out.println("DEBUG: Error en rollback: " + rollbackEx.getMessage());
+                }
+            }
+            
+            if (e.getErrorCode() == 1451 || e.getErrorCode() == 1217 || e.getErrorCode() == 1216) {
+                throw new Exception("NO_SE_PUEDE_ELIMINAR_TIENE_DEPENDENCIAS");
+            }
             throw new Exception("Error al eliminar usuario: " + e.getMessage());
         } finally {
             if (con != null) {
-                con.setAutoCommit(true);
-                con.close();
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException e) {
+                    System.out.println("DEBUG: Error cerrando conexión: " + e.getMessage());
+                }
             }
         }
     }

@@ -56,10 +56,25 @@ public class AdminServlet extends HttpServlet {
             switch (accion) {
 
                 case "eliminarUsuario": {
-                    // Borrado físico de usuario (Admin)
+                    // Eliminación con dependencias básicas automáticas
                     int userId = Integer.parseInt(request.getParameter("userId"));
-                    adminDAO.eliminarUsuario(userId);
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-usuarios.jsp?eliminado=1");
+                    try {
+                        boolean eliminado = adminDAO.eliminarUsuario(userId);
+                        if (eliminado) {
+                            response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/usuario-eliminado.jsp");
+                        } else {
+                            response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-usuarios.jsp?error=no_encontrado");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("DEBUG: Error en servlet: " + e.getMessage());
+                        if (e.getMessage().equals("NO_SE_PUEDE_ELIMINAR_TIENE_DEPENDENCIAS")) {
+                            response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-usuarios.jsp?error=dependencias");
+                        } else if (e.getMessage().equals("NO_SE_PUEDE_ELIMINAR_TIENE_DEPENDENCIAS_IMPORTANTES")) {
+                            response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-usuarios.jsp?error=dependencias_importantes");
+                        } else {
+                            response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-usuarios.jsp?error=general&msg=" + e.getMessage());
+                        }
+                    }
                     break;
                 }
 
@@ -148,4 +163,4 @@ public class AdminServlet extends HttpServlet {
             response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp?error=1");
         }
     }
-}
+}
