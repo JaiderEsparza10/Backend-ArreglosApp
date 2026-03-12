@@ -78,8 +78,6 @@ public class AdminDAO {
      */
     public List<Map<String, Object>> obtenerPedidosRecientes() throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
-                "u.user_nombre, " +
-                "c.cita_fecha_hora, c.cita_estado " +
                 "u.user_nombre, c.cita_fecha_hora, c.cita_estado " +
                 "FROM pedidos p " +
                 "JOIN usuarios u ON p.usuario_id = u.user_id " +
@@ -114,8 +112,6 @@ public class AdminDAO {
     public List<Map<String, Object>> obtenerPedidosFiltrados(String fecha, String estado) throws Exception {
         StringBuilder sql = new StringBuilder(
                 "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
-                        "u.user_nombre, " +
-                        "c.cita_fecha_hora, c.cita_estado " +
                         "u.user_nombre, c.cita_fecha_hora, c.cita_estado " +
                         "FROM pedidos p " +
                         "JOIN usuarios u ON p.usuario_id = u.user_id " +
