@@ -67,7 +67,6 @@
                             imgSrc = imgUrl;
                           } else if (imgUrl.startsWith("/")) {
                             imgSrc = ctx + imgUrl;
-                          } else if (imgUrl.startsWith("../../")) { imgSrc = ctx + "/" + imgUrl.replace("../../", "");
                           } else {
                             imgSrc = ctx + "/" + imgUrl;
                           }
