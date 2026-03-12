@@ -58,18 +58,29 @@
                         String imgUrl = arreglo.getImagenReferencia();
                         String imgSrc = "";
                         if (imgUrl == null || imgUrl.trim().isEmpty()) {
-                          String cat = arreglo.getCategoria() != null ? arreglo.getCategoria().toLowerCase() : ""; if (cat.contains("dobladillo") || cat.contains("sastr")) { imgSrc = ctx + "/Assets/image/imagen-sastreria.jpg"; } else if (cat.contains("estrech") || cat.contains("ensanch")) { imgSrc = ctx + "/Assets/image/imagen-arreglos-de-vestidos-de-fiesta.jpg"; } else if (cat.contains("recortar")) { imgSrc = ctx + "/Assets/image/image-arreglo-bolsillos.jpg";
+                          String cat = arreglo.getCategoria() != null ? arreglo.getCategoria().toLowerCase() : ""; 
+                          if (cat.contains("dobladillo") || cat.contains("sastr")) { 
+                            imgSrc = ctx + "/Assets/image/imagen-sastreria.jpg"; 
+                          } else if (cat.contains("estrech") || cat.contains("ensanch")) { 
+                            imgSrc = ctx + "/Assets/image/imagen-arreglos-de-vestidos-de-fiesta.jpg"; 
+                          } else if (cat.contains("recortar")) { 
+                            imgSrc = ctx + "/Assets/image/image-arreglo-bolsillos.jpg";
                           } else {
                             imgSrc = ctx + "/Assets/image/imagen-costura.jpg";
                           }
                         } else {
+                          // Usar siempre el contexto para las imágenes subidas
                           if (imgUrl.startsWith("http")) {
                             imgSrc = imgUrl;
                           } else if (imgUrl.startsWith("/")) {
                             imgSrc = ctx + imgUrl;
                           } else {
+                            // Para uploads, usar contexto + ruta
                             imgSrc = ctx + "/" + imgUrl;
                           }
+                          
+                          System.out.println("DEBUG - imgUrl: " + imgUrl);
+                          System.out.println("DEBUG - imgSrc final: " + imgSrc);
                         }
                         String fechaTexto = "Sin fecha";
                         if (arreglo.getFechaCreacion() != null) {
