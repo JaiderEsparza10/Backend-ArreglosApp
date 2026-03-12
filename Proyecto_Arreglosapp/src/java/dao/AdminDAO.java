@@ -5,36 +5,37 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * Esta clase gestiona las operaciones administrativas del sistema.
- * Incluye estadísticas para el Dashboard, gestión avanzada de pedidos,
- * control de citas globales, y administración de usuarios y servicios.
- * 
+ * Capa de Acceso a Datos para operaciones administrativas del sistema.
+ *
+ * Responsabilidades:
+ *   - Estadísticas del Dashboard (pedidos activos, citas de hoy).
+ *   - Gestión avanzada de pedidos (obtener detalles, actualizar estados).
+ *   - Gestión de usuarios (listado, eliminación).
+ *   - Gestión de servicios (catálogo, desactivación).
+ *   - Gestión de citas (listado, filtrado, cambios de estado).
+ *
  * @author Antigravity - Senior Architect
  */
 public class AdminDAO {
 
-    // ─── DASHBOARD: ESTADÍSTICAS EN TIEMPO REAL ───────────────────
-
     /**
-     * Cuenta el total de pedidos que requieren atención (no cancelados).
-     * @return Cantidad de pedidos activos.
-     * @throws Exception Error SQL.
+     * Cuenta todos los pedidos que están en proceso (no terminados ni cancelados).
      */
     public int contarPedidosActivos() throws Exception {
-        String sql = "SELECT COUNT(*) FROM pedidos WHERE pedido_estado IN ('pendiente','confirmado','en_proceso','terminado')";
+        String sql = "SELECT COUNT(*) FROM pedidos WHERE pedido_estado NOT IN ('terminado', 'cancelado')";
         try (Connection con = ConectionDB.getConexion();
                 PreparedStatement ps = con.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
             if (rs.next())
                 return rs.getInt(1);
         } catch (SQLException e) {
-            throw new Exception("Error al contar pedidos: " + e.getMessage());
+            throw new Exception("Error al contar pedidos activos: " + e.getMessage());
         }
         return 0;
     }
 
     /**
-     * Cuenta cuántas citas están programadas para la fecha actual.
+     * Cuenta las citas programadas para el día de hoy.
      */
     public int contarCitasHoy() throws Exception {
         String sql = "SELECT COUNT(*) FROM citas WHERE DATE(cita_fecha_hora) = CURDATE() AND cita_estado IN ('programada','confirmada')";
@@ -67,20 +68,21 @@ public class AdminDAO {
 
     /**
      * Recupera los últimos 20 pedidos realizados para mostrar en el Dashboard.
-     * Incluye datos del cliente y de la cita asociada mediante JOINs.
-     * 
-     * @return Lista de pedidos recientes con detalles.
-     * @throws Exception Error SQL.
+     */
+    public List<Map<String, Object>> obtenerUltimosPedidos() throws Exception {
+        return obtenerPedidosRecientes();
+    }
+
+    /**
+     * Obtiene los pedidos más recientes (alias de obtenerUltimosPedidos).
      */
     public List<Map<String, Object>> obtenerPedidosRecientes() throws Exception {
-        String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_total, p.pedido_fecha_creacion, " +
-                "u.user_nombre, u.user_email, " +
-                "c.cita_fecha_hora, c.cita_estado " +
+        String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
+                "u.user_nombre " +
                 "FROM pedidos p " +
-                "LEFT JOIN usuarios u ON p.usuario_id = u.user_id " +
-                "LEFT JOIN citas c ON c.pedido_id = p.pedido_id " +
-                "WHERE p.pedido_estado IN ('pendiente','confirmado','en_proceso','terminado') " +
-                "ORDER BY p.pedido_fecha_creacion DESC LIMIT 20";
+                "JOIN usuarios u ON p.usuario_id = u.user_id " +
+                "ORDER BY p.pedido_fecha_creacion DESC " +
+                "LIMIT 20";
 
         List<Map<String, Object>> lista = new ArrayList<>();
         try (Connection con = ConectionDB.getConexion();
@@ -90,59 +92,49 @@ public class AdminDAO {
                 Map<String, Object> pedido = new LinkedHashMap<>();
                 pedido.put("pedidoId", rs.getInt("pedido_id"));
                 pedido.put("estado", rs.getString("pedido_estado"));
-                pedido.put("citaEstado", rs.getString("cita_estado"));
                 pedido.put("fecha", rs.getTimestamp("pedido_fecha_creacion"));
-                pedido.put("cliente", rs.getString("user_nombre"));
-                pedido.put("email", rs.getString("user_email"));
-                pedido.put("citaFecha", rs.getTimestamp("cita_fecha_hora"));
                 pedido.put("total", rs.getDouble("pedido_total"));
+                pedido.put("cliente", rs.getString("user_nombre"));
                 lista.add(pedido);
             }
         } catch (SQLException e) {
-            throw new Exception("Error al obtener pedidos recientes: " + e.getMessage());
+            throw new Exception("Error al obtener últimos pedidos: " + e.getMessage());
         }
         return lista;
     }
 
     /**
-     * Filtra la lista de pedidos según criterios dinámicos.
-     * RF-11: Control de Estados por Admin.
-     * 
-     * @param estadoPago (Obsoleto en BD actual, se mantiene por compatibilidad).
-     * @param estadoPedido Estado deseado (pendiente, confirmado, etc).
-     * @return Lista filtrada de pedidos.
+     * Filtra pedidos por estado u otros criterios.
      */
-    public List<Map<String, Object>> obtenerPedidosFiltrados(String estadoPago, String estadoPedido) throws Exception {
+    public List<Map<String, Object>> obtenerPedidosFiltrados(String fecha, String estado) throws Exception {
         StringBuilder sql = new StringBuilder(
-                "SELECT p.pedido_id, p.pedido_estado, p.pedido_total, p.pedido_fecha_creacion, " +
-                        "u.user_nombre, u.user_email, " +
-                        "c.cita_fecha_hora, c.cita_estado " +
+                "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
+                        "u.user_nombre " +
                         "FROM pedidos p " +
-                        "LEFT JOIN usuarios u ON p.usuario_id = u.user_id " +
-                        "LEFT JOIN citas c ON p.pedido_id = c.pedido_id WHERE 1=1 ");
+                        "JOIN usuarios u ON p.usuario_id = u.user_id WHERE 1=1 ");
 
-        if (estadoPedido != null && !estadoPedido.isEmpty()) {
+        if (fecha != null && !fecha.isEmpty())
+            sql.append(" AND DATE(p.pedido_fecha_creacion) = ? ");
+        if (estado != null && !estado.isEmpty())
             sql.append(" AND p.pedido_estado = ? ");
-        } else {
-            sql.append(" AND p.pedido_estado IN ('pendiente','confirmado','en_proceso','terminado') ");
-        }
-        sql.append(" ORDER BY p.pedido_fecha_creacion DESC");
+        sql.append(" ORDER BY p.pedido_fecha_creacion DESC LIMIT 20");
 
         List<Map<String, Object>> pedidos = new ArrayList<>();
         try (Connection con = ConectionDB.getConexion();
                 PreparedStatement ps = con.prepareStatement(sql.toString())) {
-            if (estadoPedido != null && !estadoPedido.isEmpty())
-                ps.setString(1, estadoPedido);
+            int idx = 1;
+            if (fecha != null && !fecha.isEmpty())
+                ps.setString(idx++, fecha);
+            if (estado != null && !estado.isEmpty())
+                ps.setString(idx++, estado);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Map<String, Object> p = new LinkedHashMap<>();
                     p.put("pedidoId", rs.getInt("pedido_id"));
-                    p.put("cliente", rs.getString("user_nombre"));
-                    p.put("email", rs.getString("user_email"));
                     p.put("estado", rs.getString("pedido_estado"));
-                    p.put("citaFecha", rs.getTimestamp("cita_fecha_hora"));
-                    p.put("citaEstado", rs.getString("cita_estado"));
+                    p.put("fecha", rs.getTimestamp("pedido_fecha_creacion"));
                     p.put("total", rs.getDouble("pedido_total"));
+                    p.put("cliente", rs.getString("user_nombre"));
                     pedidos.add(p);
                 }
             }
@@ -153,7 +145,7 @@ public class AdminDAO {
     }
 
     /**
-     * Obtiene todas las citas programadas para el día de hoy con datos del cliente.
+     * Obtiene las citas agendadas para el día de hoy.
      */
     public List<Map<String, Object>> obtenerCitasHoy() throws Exception {
         String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, " +
@@ -225,8 +217,8 @@ public class AdminDAO {
                 "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, " +
                         "u.user_nombre, p.pedido_id " +
                         "FROM citas c " +
-                        "JOIN pedidos p ON c.pedido_id = p.pedido_id " +
-                        "JOIN usuarios u ON p.usuario_id = u.user_id WHERE 1=1 ");
+                        "JOIN pedidos p ON p.pedido_id = c.pedido_id " +
+                        "JOIN usuarios u ON u.usuario_id = p.usuario_id WHERE 1=1 ");
 
         if (fecha != null && !fecha.isEmpty())
             sql.append(" AND DATE(c.cita_fecha_hora) = ? ");
@@ -394,10 +386,14 @@ public class AdminDAO {
     public Map<String, Object> obtenerDetallePedido(int pedidoId) throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
                 "u.user_nombre, u.user_email, u.user_ubicacion_direccion, " +
-                "c.cita_fecha_hora, c.cita_notas, c.cita_estado, c.cita_motivo " +
+                "c.cita_fecha_hora, c.cita_notas, c.cita_estado, c.cita_motivo, " +
+                "per.personalizacion_id, per.categoria AS per_categoria, " +
+                "per.descripcion AS per_descripcion, per.material_tela AS per_material, " +
+                "per.imagen_referencia AS per_imagen " +
                 "FROM pedidos p " +
                 "JOIN usuarios u ON p.usuario_id = u.user_id " +
                 "LEFT JOIN citas c ON c.pedido_id = p.pedido_id " +
+                "LEFT JOIN personalizaciones per ON per.pedido_id = p.pedido_id " +
                 "WHERE p.pedido_id = ?";
 
         try (Connection con = ConectionDB.getConexion();
@@ -417,6 +413,16 @@ public class AdminDAO {
                     detalle.put("citaNotas", rs.getString("cita_notas"));
                     detalle.put("citaEstado", rs.getString("cita_estado"));
                     detalle.put("citaMotivo", rs.getString("cita_motivo"));
+                    
+                    // Agregar datos de personalización si existen
+                    if (rs.getString("per_descripcion") != null) {
+                        detalle.put("personalizacionId", rs.getInt("personalizacion_id"));
+                        detalle.put("personalizacionCategoria", rs.getString("per_categoria"));
+                        detalle.put("personalizacionDescripcion", rs.getString("per_descripcion"));
+                        detalle.put("personalizacionMaterial", rs.getString("per_material"));
+                        detalle.put("personalizacionImagen", rs.getString("per_imagen"));
+                    }
+                    
                     return detalle;
                 }
             }

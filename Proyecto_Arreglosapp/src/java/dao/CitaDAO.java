@@ -120,13 +120,24 @@ public class CitaDAO {
                 }
             }
 
-            // 4. Vincular la personalización con el arreglo definitivo
-            if (arregloId != -1 && personalizacionId != -1) {
-                String sqlUpdate = "UPDATE personalizaciones SET arreglo_id = ? WHERE personalizacion_id = ?";
-                try (PreparedStatement ps = con.prepareStatement(sqlUpdate)) {
-                    ps.setInt(1, arregloId);
-                    ps.setInt(2, personalizacionId);
-                    ps.executeUpdate();
+            // 4. Vincular la personalización con el arreglo definitivo Y con el pedido creado
+            if (personalizacionId != -1) {
+                String sqlUpdate;
+                if (arregloId != -1) {
+                    sqlUpdate = "UPDATE personalizaciones SET arreglo_id = ?, pedido_id = ? WHERE personalizacion_id = ?";
+                    try (PreparedStatement ps = con.prepareStatement(sqlUpdate)) {
+                        ps.setInt(1, arregloId);
+                        ps.setInt(2, pedidoId);
+                        ps.setInt(3, personalizacionId);
+                        ps.executeUpdate();
+                    }
+                } else {
+                    sqlUpdate = "UPDATE personalizaciones SET pedido_id = ? WHERE personalizacion_id = ?";
+                    try (PreparedStatement ps = con.prepareStatement(sqlUpdate)) {
+                        ps.setInt(1, pedidoId);
+                        ps.setInt(2, personalizacionId);
+                        ps.executeUpdate();
+                    }
                 }
             }
 
