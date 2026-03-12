@@ -80,6 +80,7 @@ public class AdminDAO {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
                 "u.user_nombre, " +
                 "c.cita_fecha_hora, c.cita_estado " +
+                "u.user_nombre, c.cita_fecha_hora, c.cita_estado " +
                 "FROM pedidos p " +
                 "JOIN usuarios u ON p.usuario_id = u.user_id " +
                 "LEFT JOIN citas c ON c.pedido_id = p.pedido_id " +
@@ -115,6 +116,7 @@ public class AdminDAO {
                 "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
                         "u.user_nombre, " +
                         "c.cita_fecha_hora, c.cita_estado " +
+                        "u.user_nombre, c.cita_fecha_hora, c.cita_estado " +
                         "FROM pedidos p " +
                         "JOIN usuarios u ON p.usuario_id = u.user_id " +
                         "LEFT JOIN citas c ON c.pedido_id = p.pedido_id WHERE 1=1 ");
