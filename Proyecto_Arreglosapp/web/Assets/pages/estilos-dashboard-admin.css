@@ -414,9 +414,9 @@
 }
 
 .pedido__estado--cancelado {
-    background-color: #fdecea;
-    color: #c62828;
-    border: 1px solid #ef9a9a;
+    background-color: #424242;
+    color: #ffffff;
+    border: 1px solid #616161;
 }
 
 .estadistica {

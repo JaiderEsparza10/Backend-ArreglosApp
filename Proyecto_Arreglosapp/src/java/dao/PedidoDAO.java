@@ -11,7 +11,7 @@ public class PedidoDAO {
 
     public List<Map<String, Object>> obtenerPedidosActivos(int userId) throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
-                "c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo " +
+                "c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, c.cita_direccion_entrega " +
                 "FROM pedidos p " +
                 "LEFT JOIN citas c ON p.pedido_id = c.pedido_id " +
                 "WHERE p.usuario_id = ? AND p.pedido_estado IN ('pendiente','confirmado','en_proceso') " +
@@ -21,7 +21,7 @@ public class PedidoDAO {
 
     public List<Map<String, Object>> obtenerHistorialPedidos(int userId) throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
-                "c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo " +
+                "c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, c.cita_direccion_entrega " +
                 "FROM pedidos p " +
                 "LEFT JOIN citas c ON p.pedido_id = c.pedido_id " +
                 "WHERE p.usuario_id = ? AND p.pedido_estado IN ('terminado','cancelado') " +
@@ -31,7 +31,7 @@ public class PedidoDAO {
 
     public List<Map<String, Object>> obtenerPedidosPorEstado(int userId, String estado) throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
-                "c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo " +
+                "c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, c.cita_direccion_entrega " +
                 "FROM pedidos p " +
                 "LEFT JOIN citas c ON p.pedido_id = c.pedido_id " +
                 "WHERE p.usuario_id = ? AND p.pedido_estado = ? " +
@@ -77,6 +77,7 @@ public class PedidoDAO {
                     p.put("citaEstado", rs.getString("cita_estado"));
                     p.put("citaNotas", rs.getString("cita_notas"));
                     p.put("citaMotivo", rs.getString("cita_motivo"));
+                    p.put("citaDireccion", rs.getString("cita_direccion_entrega"));
                     lista.add(p);
                 }
             }

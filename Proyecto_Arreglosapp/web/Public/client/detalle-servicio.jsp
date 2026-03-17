@@ -46,7 +46,7 @@
                                     onclick="agregarASeleccion()">
                                     ♡ Agregar a Mi Selección
                                 </button>
-                                <a href="personalizar-arreglo.jsp"
+                                <a href="personalizar-arreglo.jsp?arregloId=<%= servicioId %>"
                                     class="detalle-servicio__btn detalle-servicio__btn--personalizar">
                                     ✂ Personalizar Arreglo
                                 </a>

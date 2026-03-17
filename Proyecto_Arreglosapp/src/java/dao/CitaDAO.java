@@ -86,11 +86,9 @@ public class CitaDAO {
             int arregloId = -1;
             double precio = 0;
 
-            String sqlPer = "SELECT p.categoria, a.arreglo_id, a.arreglo_precio_base " +
+            String sqlPer = "SELECT p.categoria_id, a.arreglo_id, a.arreglo_precio_base " +
                     "FROM personalizaciones p " +
-                    "JOIN categorias c ON LOWER(c.categoria_nombre) LIKE CONCAT('%', LOWER(SUBSTRING_INDEX(p.categoria, '/', 1)), '%') "
-                    +
-                    "JOIN arreglos a ON a.categoria_id = c.categoria_id " +
+                    "JOIN arreglos a ON a.categoria_id = p.categoria_id " +
                     "WHERE p.personalizacion_id = ? LIMIT 1";
 
             try (PreparedStatement ps = con.prepareStatement(sqlPer)) {
@@ -105,31 +103,34 @@ public class CitaDAO {
 
             // Si no encuentra por JOIN, buscar por mapeo directo (Lógica de contingencia)
             if (arregloId == -1 && personalizacionId != -1) {
-                String sqlCat = "SELECT categoria FROM personalizaciones WHERE personalizacion_id = ?";
-                String categoria = "";
+                String sqlCat = "SELECT categoria_id FROM personalizaciones WHERE personalizacion_id = ?";
+                int categoriaId = 0;
                 try (PreparedStatement ps = con.prepareStatement(sqlCat)) {
                     ps.setInt(1, personalizacionId);
                     try (ResultSet rs = ps.executeQuery()) {
                         if (rs.next())
-                            categoria = rs.getString("categoria");
+                            categoriaId = rs.getInt("categoria_id");
                     }
                 }
 
-                // Mapeo manual por palabras clave en la categoría
+                // Mapeo directo por categoria_id
                 String sqlArreglo = "";
-                if (categoria.toLowerCase().contains("dobladillo") || categoria.toLowerCase().contains("sastr")) {
-                    sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 1";
-                } else if (categoria.toLowerCase().contains("costura")) {
-                    sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 2";
-                } else if (categoria.toLowerCase().contains("planch")) {
-                    sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 3";
-                } else if (categoria.toLowerCase().contains("medida") || categoria.toLowerCase().contains("ajuste")) {
-                    sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 4";
-                } else if (categoria.toLowerCase().contains("estrech") || categoria.toLowerCase().contains("ensanch")
-                        || categoria.toLowerCase().contains("vestido")) {
-                    sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 5";
-                } else if (categoria.toLowerCase().contains("recortar")) {
-                    sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE arreglo_id = 1";
+                switch (categoriaId) {
+                    case 1: // Sastreria
+                        sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE categoria_id = 1";
+                        break;
+                    case 2: // Costuras
+                        sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE categoria_id = 2";
+                        break;
+                    case 3: // Planchado
+                        sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE categoria_id = 3";
+                        break;
+                    case 4: // Arreglos de Medidas
+                        sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE categoria_id = 4";
+                        break;
+                    default:
+                        sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE categoria_id = 1";
+                        break;
                 }
 
                 if (!sqlArreglo.isEmpty()) {
@@ -220,20 +221,15 @@ public class CitaDAO {
      * RF-08: Agendamiento de Citas.
      */
     public boolean crearCita(Cita cita) throws Exception {
-        String sql = "INSERT INTO citas (pedido_id, cita_fecha_hora, cita_estado, cita_notas, cita_motivo) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO citas (pedido_id, cita_fecha_hora, cita_estado, cita_notas, cita_motivo, cita_direccion_entrega) VALUES (?, ?, ?, ?, ?, 'Calle 9nb 2occ 04 - Barrio Bavaria 2')";
         try (Connection con = ConectionDB.getConexion();
                 PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, cita.getPedidoId());
             ps.setTimestamp(2, Timestamp.valueOf(cita.getCitaFechaHora()));
             ps.setString(3, cita.getCitaEstado());
-            
-            // Construcción modular de notas
-            String notasCompletas = "Dirección: " + cita.getDireccionEntrega();
-            if (cita.getCitaNotas() != null && !cita.getCitaNotas().trim().isEmpty()) {
-                notasCompletas += " | Notas: " + cita.getCitaNotas();
-            }
-            ps.setString(4, notasCompletas);
+            ps.setString(4, cita.getCitaNotas()); // Solo las notas, sin dirección
             ps.setString(5, cita.getCitaMotivo());
+            // La dirección es fija: "Calle 9nb 2occ 04 - Barrio Bavaria 2"
             
             int filas = ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -245,12 +241,12 @@ public class CitaDAO {
             throw new Exception("Error al crear cita: " + e.getMessage());
         }
     }
-
+    
     /**
      * Consulta el listado de citas vinculadas a un cliente específico.
      */
     public List<Cita> obtenerCitasPorUsuario(int userId) throws Exception {
-        String sql = "SELECT c.* FROM citas c " +
+        String sql = "SELECT c.*, c.cita_direccion_entrega FROM citas c " +
                 "JOIN pedidos p ON c.pedido_id = p.pedido_id " +
                 "WHERE p.usuario_id = ? ORDER BY c.cita_fecha_hora DESC";
         List<Cita> citas = new ArrayList<>();
@@ -267,6 +263,8 @@ public class CitaDAO {
                     }
                     c.setCitaEstado(rs.getString("cita_estado"));
                     c.setCitaNotas(rs.getString("cita_notas"));
+                    c.setDireccionEntrega(rs.getString("cita_direccion_entrega")); // Mapear dirección
+                    c.setCitaMotivo(rs.getString("cita_motivo"));
                     citas.add(c);
                 }
             }

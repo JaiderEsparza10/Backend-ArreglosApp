@@ -5,32 +5,52 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 
 <%
+    // DEPURACIÓN: Imprimir parámetros recibidos
+    System.out.println("DEBUG JSP: pedidoIdStr = " + request.getParameter("pedidoId"));
+    
     Usuario admin = (Usuario) session.getAttribute("usuario");
+    System.out.println("DEBUG JSP: admin = " + (admin != null ? "encontrado" : "null"));
+    System.out.println("DEBUG JSP: rolId = " + (admin != null ? admin.getRolId() : "null"));
+    
     if (admin == null || admin.getRolId() != 1) {
-        response.sendRedirect("/Proyecto_Arreglosapp/index.jsp");
+        System.out.println("DEBUG JSP: Redirigiendo - no autorizado");
+        response.sendRedirect(request.getContextPath() + "/index.jsp");
         return;
     }
 
     String pedidoIdStr = request.getParameter("pedidoId");
+    System.out.println("DEBUG JSP: pedidoIdStr después de getParameter = " + pedidoIdStr);
+    
     if (pedidoIdStr == null) {
-        response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp");
+        System.out.println("DEBUG JSP: Redirigiendo - pedidoIdStr es null");
+        response.sendRedirect(request.getContextPath() + "/Public/admin/administrador-dashboard.jsp");
         return;
     }
 
     int pedidoId = Integer.parseInt(pedidoIdStr);
+    System.out.println("DEBUG JSP: pedidoId parseado = " + pedidoId);
+    
     AdminDAO adminDAO = new AdminDAO();
     Map<String, Object> detalle = null;
 
     try {
         detalle = adminDAO.obtenerDetallePedido(pedidoId);
+        System.out.println("DEBUG JSP: detalle obtenido = " + (detalle != null ? "no es null" : "es null"));
     } catch (Exception e) {
+        System.out.println("DEBUG JSP: Error en AdminDAO - " + e.getMessage());
         e.printStackTrace();
     }
 
     if (detalle == null) {
-        response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp");
+        System.out.println("DEBUG JSP: Redirigiendo - detalle es null");
+        response.sendRedirect(request.getContextPath() + "/Public/admin/administrador-dashboard.jsp");
         return;
     }
+    
+    System.out.println("DEBUG JSP: Continuando a renderizar la página");
+
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    SimpleDateFormat sdfHora = new SimpleDateFormat("hh:mm a");
 
     String estado = (String) detalle.get("estado");
     String citaEstado = (String) detalle.get("citaEstado");
@@ -42,9 +62,9 @@
     double total = detalle.get("total") instanceof Number ? ((Number) detalle.get("total")).doubleValue() : 0.0;
     java.sql.Timestamp citaFecha = (java.sql.Timestamp) detalle.get("citaFecha");
 
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     String citaStr = citaFecha != null ? sdf.format(citaFecha) : "Sin cita agendada";
 
+    // Variables para estado del pedido
     String estadoClass = "estado-badge--pendiente";
     String estadoLabel = "Pendiente de Revision";
     if ("confirmado".equals(estado)) {
@@ -61,10 +81,11 @@
         estadoLabel = "Cancelado";
     }
 
+    // Variables para estado de la cita
     String citaEstadoClass = "estado-badge--pendiente";
     String citaEstadoLabel = "Programada";
     if ("confirmada".equals(citaEstado)) {
-        citaEstadoClass = "pedido__estado--confirmado";
+        citaEstadoClass = "estado-badge--confirmado";
         citaEstadoLabel = "Confirmada";
     } else if ("completada".equals(citaEstado)) {
         citaEstadoClass = "estado-badge--entregado";
@@ -74,18 +95,17 @@
         citaEstadoLabel = "Cancelada";
     }
 
+    // Variables para motivo de la cita
     String motivoLabel = "Consulta";
     if ("entrega_prenda".equals(citaMotivo)) {
-        motivoLabel = "Entrega de prenda";
+        motivoLabel = "Entrega";
     } else if ("recogida_prenda".equals(citaMotivo)) {
-        motivoLabel = "Recogida de prenda";
+        motivoLabel = "Recogida";
     } else if ("toma_medidas".equals(citaMotivo)) {
-        motivoLabel = "Toma de medidas";
+        motivoLabel = "Medidas";
     }
 
-    boolean esFinal = "terminado".equals(estado) || "cancelado".equals(estado);
-
-    // Obtener datos de personalización
+    // Variables de personalización (pueden ser null)
     String personalizacionDescripcion = (String) detalle.get("personalizacionDescripcion");
     String personalizacionCategoria = (String) detalle.get("personalizacionCategoria");
     String personalizacionMaterial = (String) detalle.get("personalizacionMaterial");

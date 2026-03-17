@@ -82,6 +82,7 @@ public class AdminDAO {
                 "FROM pedidos p " +
                 "JOIN usuarios u ON p.usuario_id = u.user_id " +
                 "LEFT JOIN citas c ON c.pedido_id = p.pedido_id " +
+                "WHERE p.pedido_estado != 'cancelado' " +
                 "ORDER BY p.pedido_fecha_creacion DESC " +
                 "LIMIT 20";
 
@@ -154,7 +155,7 @@ public class AdminDAO {
      * Obtiene las citas agendadas para el día de hoy.
      */
     public List<Map<String, Object>> obtenerCitasHoy() throws Exception {
-        String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, " +
+        String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, c.cita_direccion_entrega, " +
                 "u.user_nombre, p.pedido_id " +
                 "FROM citas c " +
                 "JOIN pedidos p ON p.pedido_id = c.pedido_id " +
@@ -172,6 +173,7 @@ public class AdminDAO {
                 cita.put("pedidoId", rs.getInt("pedido_id"));
                 cita.put("fechaHora", rs.getTimestamp("cita_fecha_hora"));
                 cita.put("estado", rs.getString("cita_estado"));
+                cita.put("direccion", rs.getString("cita_direccion_entrega"));
                 cita.put("notas", rs.getString("cita_notas"));
                 cita.put("motivo", rs.getString("cita_motivo"));
                 cita.put("cliente", rs.getString("user_nombre"));
@@ -187,7 +189,7 @@ public class AdminDAO {
      * Recupera el listado completo de citas agendadas en el sistema.
      */
     public List<Map<String, Object>> obtenerTodasLasCitas() throws Exception {
-        String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, " +
+        String sql = "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, c.cita_direccion_entrega, " +
                 "u.user_nombre, p.pedido_id " +
                 "FROM citas c " +
                 "JOIN pedidos p ON p.pedido_id = c.pedido_id " +
@@ -204,6 +206,7 @@ public class AdminDAO {
                 cita.put("pedidoId", rs.getInt("pedido_id"));
                 cita.put("fechaHora", rs.getTimestamp("cita_fecha_hora"));
                 cita.put("estado", rs.getString("cita_estado"));
+                cita.put("direccion", rs.getString("cita_direccion_entrega"));
                 cita.put("notas", rs.getString("cita_notas"));
                 cita.put("motivo", rs.getString("cita_motivo"));
                 cita.put("cliente", rs.getString("user_nombre"));
@@ -220,7 +223,7 @@ public class AdminDAO {
      */
     public List<Map<String, Object>> obtenerCitasFiltradas(String fecha, String clienteNombre) throws Exception {
         StringBuilder sql = new StringBuilder(
-                "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, " +
+                "SELECT c.cita_id, c.cita_fecha_hora, c.cita_estado, c.cita_notas, c.cita_motivo, c.cita_direccion_entrega, " +
                         "u.user_nombre, p.pedido_id " +
                         "FROM citas c " +
                         "JOIN pedidos p ON p.pedido_id = c.pedido_id " +
@@ -247,6 +250,7 @@ public class AdminDAO {
                     c.put("fechaHora", rs.getTimestamp("cita_fecha_hora"));
                     c.put("cliente", rs.getString("user_nombre"));
                     c.put("estado", rs.getString("cita_estado"));
+                    c.put("direccion", rs.getString("cita_direccion_entrega"));
                     c.put("notas", rs.getString("cita_notas"));
                     c.put("motivo", rs.getString("cita_motivo"));
                     citas.add(c);
@@ -392,7 +396,7 @@ public class AdminDAO {
     public Map<String, Object> obtenerDetallePedido(int pedidoId) throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, p.pedido_total, " +
                 "u.user_nombre, u.user_email, u.user_ubicacion_direccion, " +
-                "c.cita_fecha_hora, c.cita_notas, c.cita_estado, c.cita_motivo, " +
+                "c.cita_fecha_hora, c.cita_notas, c.cita_estado, c.cita_motivo, c.cita_direccion_entrega, " +
                 "per.personalizacion_id, per.categoria AS per_categoria, " +
                 "per.descripcion AS per_descripcion, per.material_tela AS per_material, " +
                 "per.imagen_referencia AS per_imagen " +
@@ -419,6 +423,7 @@ public class AdminDAO {
                     detalle.put("citaNotas", rs.getString("cita_notas"));
                     detalle.put("citaEstado", rs.getString("cita_estado"));
                     detalle.put("citaMotivo", rs.getString("cita_motivo"));
+                    detalle.put("citaDireccion", rs.getString("cita_direccion_entrega"));
                     
                     // Agregar datos de personalización si existen
                     if (rs.getString("per_descripcion") != null) {

@@ -5,13 +5,16 @@ import java.time.LocalDateTime;
 /**
  * Modelo de Datos: Personalización.
  * Contiene las especificaciones técnicas y visuales de un arreglo a medida.
- * 
- * @author Antigravity - Senior Architect
  */
 public class Personalizacion {
     private int personalizacionId;
     private int userId;
-    private String categoria;
+    private Integer arregloId;
+    
+    // ✅ PASO 1: Declarar la variable que faltaba
+    private Integer categoriaId; 
+    
+    private String categoria; // Para el nombre descriptivo (ej: "Sastrería") del JOIN
     private String descripcion;
     private String materialTela;
     private String imagenReferencia;
@@ -23,24 +26,32 @@ public class Personalizacion {
     }
 
     /**
-     * Constructor para nuevas solicitudes de personalización.
+     * Constructor actualizado para incluir el categoriaId.
      */
-    public Personalizacion(int userId, String categoria, String descripcion, String materialTela,
+    public Personalizacion(int userId, Integer arregloId, Integer categoriaId, String descripcion, String materialTela,
             String imagenReferencia) {
         this.userId = userId;
-        this.categoria = categoria;
+        this.arregloId = arregloId;
+        this.categoriaId = categoriaId; // ✅ Asignar el ID
         this.descripcion = descripcion;
         this.materialTela = materialTela;
         this.imagenReferencia = imagenReferencia;
         this.estado = "pendiente";
     }
 
-    // Getters y Setters con encapsulamiento
+    // Getters y Setters
     public int getPersonalizacionId() { return personalizacionId; }
     public void setPersonalizacionId(int personalizacionId) { this.personalizacionId = personalizacionId; }
 
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
+
+    public Integer getArregloId() { return arregloId; }
+    public void setArregloId(Integer arregloId) { this.arregloId = arregloId; }
+
+    // ✅ PASO 2: Estos métodos ahora funcionarán porque la variable existe
+    public Integer getCategoriaId() { return categoriaId; }
+    public void setCategoriaId(Integer categoriaId) { this.categoriaId = categoriaId; }
 
     public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) { this.categoria = categoria; }

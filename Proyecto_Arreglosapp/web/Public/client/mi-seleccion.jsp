@@ -65,7 +65,7 @@
                           <%= fav.getCategoria() %>
                         </p>
                       </div>
-                      <div class="contenedor-informacion__pago-enlace"> <span class="pago-enlace__precio">$<%= String.format("%,.0f", fav.getPrecio()) %></span> <a class="pago-enlace__enlace" href="personalizar-arreglo.jsp">Personalizar</a> <a class="pago-enlace__enlace pago-enlace__enlace--eliminar" href="#"
+                      <div class="contenedor-informacion__pago-enlace"> <span class="pago-enlace__precio">$<%= String.format("%,.0f", fav.getPrecio()) %></span> <a class="pago-enlace__enlace" href="personalizar-arreglo.jsp?arregloId=<%= fav.getArregloId() %>">Personalizar</a> <a class="pago-enlace__enlace pago-enlace__enlace--eliminar" href="#"
                           onclick="prepararEliminar(<%= fav.getFavoritoId() %>, this); return false;">
                           Eliminar
                         </a>

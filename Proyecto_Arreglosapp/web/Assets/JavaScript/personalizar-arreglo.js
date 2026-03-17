@@ -45,7 +45,7 @@ function quitarImagen() {
 // VALIDACIÓN ANTES DE ENVIAR
 // =====================
 document.getElementById('formPersonalizar').addEventListener('submit', function (e) {
-    var categoria = document.querySelector('input[name="categoria"]:checked');
+    var categoria = document.querySelector('input[name="categoriaId"]:checked');
     if (!categoria) {
         e.preventDefault();
         mostrarToast('❌ Debes seleccionar una categoría', false);

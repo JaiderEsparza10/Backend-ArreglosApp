@@ -15,190 +15,228 @@ import model.Personalizacion;
 import model.Usuario;
 import java.io.IOException;
 
-/**
- * Controlador de Personalización de Arreglos.
- * RF-06: Personalización de Servicios.
- * Permite a los usuarios definir especificaciones técnicas para sus prendas (material, descripción) 
- * y adjuntar imágenes de referencia.
- * 
- * @author Antigravity - Senior Architect
- */
 @WebServlet("/PersonalizacionServlet")
-@MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024, // 1MB
+    maxFileSize = 1024 * 1024 * 5,    // 5MB
+    maxRequestSize = 1024 * 1024 * 25 // 25MB
+)
 public class PersonalizacionServlet extends HttpServlet {
 
     private PersonalizacionDAO personalizacionDAO;
 
     @Override
     public void init() throws ServletException {
-        // Inicialización de la capa de persistencia para personalizaciones
         personalizacionDAO = new PersonalizacionDAO();
     }
 
-    /**
-     * Procesa la creación y edición de especificaciones de arreglo.
-     * Gestiona el flujo de subida de archivos (imágenes) y datos de formulario.
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
+        // Aseguramos que el procesamiento de caracteres sea correcto antes de leer parámetros
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
 
-        // Regla de Seguridad: Verificación de sesión de cliente activa
         HttpSession session = request.getSession(false);
         Usuario usuario = (session != null) ? (Usuario) session.getAttribute("usuario") : null;
 
         if (usuario == null) {
-            response.sendRedirect("/Proyecto_Arreglosapp/index.jsp");
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
         }
 
         String accion = request.getParameter("accion");
 
-        // ─── CREAR NUEVA PERSONALIZACIÓN ──────────────────────────────
-        if ("crear".equals(accion)) {
+        if ("crear".equals(accion) || "editar".equals(accion)) {
             try {
-                // Extracción de metadatos descriptivos
-                String categoria = request.getParameter("categoria");
-                String descripcion = request.getParameter("descripcion");
-                String materialTela = request.getParameter("materialTela");
-
-                // Validación de integridad obligatoria
-                if (categoria == null || categoria.trim().isEmpty()) {
-                    session.setAttribute("errorPersonalizacion", "Debes seleccionar una categoría");
-                    response.sendRedirect("Public/client/personalizar-arreglo.jsp");
+                // 1. CAPTURA DE CATEGORÍA
+                Integer categoriaId = null;
+                String categoriaParam = request.getParameter("categoriaId");
+                String categoriaNombre = "";
+                
+                // Depuración: Imprimir el valor recibido
+                System.out.println("DEBUG: categoriaParam recibido = '" + categoriaParam + "'");
+                
+                if (categoriaParam != null && !categoriaParam.trim().isEmpty()) {
+                    try {
+                        categoriaId = Integer.parseInt(categoriaParam);
+                        // Convertir ID a nombre de categoría para BD actual
+                        switch (categoriaId) {
+                            case 1:
+                                categoriaNombre = "Sastreria";
+                                break;
+                            case 2:
+                                categoriaNombre = "Costuras";
+                                break;
+                            case 3:
+                                categoriaNombre = "Planchado";
+                                break;
+                            case 4:
+                                categoriaNombre = "Arreglos de Medidas";
+                                break;
+                            default:
+                                categoriaNombre = "Otro";
+                                break;
+                        }
+                        System.out.println("DEBUG: categoría convertida a = '" + categoriaNombre + "'");
+                    } catch (NumberFormatException e) {
+                        System.out.println("DEBUG: Error al convertir categoriaParam a número: " + categoriaParam);
+                        session.setAttribute("errorPersonalizacion", "El valor de categoría no es válido: " + categoriaParam);
+                        redireccionarError(request, response, accion);
+                        return;
+                    }
+                } else {
+                    System.out.println("DEBUG: categoriaParam es nulo o vacío");
+                    session.setAttribute("errorPersonalizacion", "Debes seleccionar una categoría obligatoriamente. (Valor recibido: " + categoriaParam + ")");
+                    redireccionarError(request, response, accion);
                     return;
                 }
 
-                // Procesamiento de archivo binario (Imagen de referencia)
-                String imagenReferencia = procesarImagen(request);
-
-                // Mapeo al modelo de datos
-                Personalizacion personalizacion = new Personalizacion(
-                        usuario.getId(), categoria, descripcion, materialTela, imagenReferencia);
-
-                boolean creada = personalizacionDAO.crearPersonalizacion(personalizacion);
-
-                if (creada) {
-                    response.sendRedirect("Public/client/mis-arreglos.jsp?creado=1");
-                } else {
-                    session.setAttribute("errorPersonalizacion", "No se pudo crear la personalización.");
-                    response.sendRedirect("Public/client/personalizar-arreglo.jsp");
-                }
-
-            } catch (Exception e) {
-                session.setAttribute("errorPersonalizacion", "Error: " + e.getMessage());
-                response.sendRedirect("Public/client/personalizar-arreglo.jsp");
-            }
-
-            // ─── EDITAR PERSONALIZACIÓN EXISTENTE ────────────────────────
-        } else if ("editar".equals(accion)) {
-            try {
-                int personalizacionId = Integer.parseInt(request.getParameter("personalizacionId"));
-                String categoria = request.getParameter("categoria");
+                // 2. CAPTURA DE METADATOS
                 String descripcion = request.getParameter("descripcion");
                 String materialTela = request.getParameter("materialTela");
-
-                if (categoria == null || categoria.trim().isEmpty()) {
-                    session.setAttribute("errorPersonalizacion", "Debes seleccionar una categoría");
-                    response.sendRedirect("Public/client/personalizar-arreglo.jsp?id=" + personalizacionId);
-                    return;
+                
+                Integer arregloId = null;
+                String arregloIdParam = request.getParameter("arregloId");
+                if (arregloIdParam != null && !arregloIdParam.trim().isEmpty()) {
+                    arregloId = Integer.parseInt(arregloIdParam);
                 }
 
-                // Actualización de imagen (opcional en edición)
+                // 3. PROCESAR IMAGEN
                 String imagenReferencia = procesarImagen(request);
 
+                // 4. MAPEO AL MODELO
+                System.out.println("DEBUG: Creando objeto Personalizacion...");
                 Personalizacion personalizacion = new Personalizacion(
-                        usuario.getId(), categoria, descripcion, materialTela, imagenReferencia);
-                personalizacion.setPersonalizacionId(personalizacionId);
+                        usuario.getId(), 
+                        arregloId, 
+                        categoriaId,  
+                        descripcion, 
+                        materialTela, 
+                        imagenReferencia
+                );
+                // Establecer el nombre de la categoría para la BD actual
+                personalizacion.setCategoria(categoriaNombre);
+                System.out.println("DEBUG: Objeto Personalizacion creado con categoría: " + categoriaNombre);
 
-                boolean actualizado = personalizacionDAO.actualizarPersonalizacion(personalizacion);
+                boolean resultado = false;
+                if ("crear".equals(accion)) {
+                    System.out.println("DEBUG: Intentando crear personalización en BD...");
+                    resultado = personalizacionDAO.crearPersonalizacion(personalizacion);
+                    System.out.println("DEBUG: Resultado de creación: " + resultado);
+                } else if ("editar".equals(accion)) {
+                    System.out.println("DEBUG: Modo edición - obteniendo ID...");
+                    String pIdParam = request.getParameter("personalizacionId");
+                    if (pIdParam != null && !pIdParam.trim().isEmpty()) {
+                        try {
+                            personalizacion.setPersonalizacionId(Integer.parseInt(pIdParam));
+                            System.out.println("DEBUG: Actualizando personalización ID: " + pIdParam);
+                            resultado = personalizacionDAO.actualizarPersonalizacion(personalizacion);
+                            System.out.println("DEBUG: Resultado de actualización: " + resultado);
+                        } catch (NumberFormatException e) {
+                            throw new Exception("ID de personalización inválido");
+                        }
+                    } else {
+                        throw new Exception("ID de personalización no proporcionado para edición");
+                    }
+                }
 
-                if (actualizado) {
-                    response.sendRedirect("Public/client/mis-arreglos.jsp?editado=1");
+                // 5. REDIRECCIÓN DE ÉXITO
+                if (resultado) {
+                    String msg = "crear".equals(accion) ? "creado=1" : "editado=1";
+                    String redirectUrl = request.getContextPath() + "/Public/client/mis-arreglos.jsp?" + msg;
+                    System.out.println("DEBUG: Redirigiendo a: " + redirectUrl);
+                    response.sendRedirect(redirectUrl);
                 } else {
-                    session.setAttribute("errorPersonalizacion", "No se pudo actualizar la personalización.");
-                    response.sendRedirect("Public/client/personalizar-arreglo.jsp?id=" + personalizacionId);
+                    System.out.println("DEBUG: La base de datos devolvió false");
+                    throw new Exception("La base de datos no pudo procesar la solicitud.");
                 }
 
             } catch (Exception e) {
-                session.setAttribute("errorPersonalizacion", "Error: " + e.getMessage());
-                response.sendRedirect("Public/client/personalizar-arreglo.jsp");
+                session.setAttribute("errorPersonalizacion", "Ocurrió un error: " + e.getMessage());
+                redireccionarError(request, response, accion);
             }
-
         } else {
+            // Acción no reconocida en POST
             session.setAttribute("errorPersonalizacion", "Acción no válida");
-            response.sendRedirect("Public/client/personalizar-arreglo.jsp");
+            response.sendRedirect(request.getContextPath() + "/Public/client/mis-arreglos.jsp");
         }
     }
 
-    /**
-     * Procesa solicitudes GET, principalmente para la eliminación de registros.
-     */
+    // Método auxiliar para manejar redirecciones de error de forma limpia
+    private void redireccionarError(HttpServletRequest request, HttpServletResponse response, String accion) throws IOException {
+        String idEdit = request.getParameter("personalizacionId");
+        String path = "/Public/client/personalizar-arreglo.jsp";
+        if ("editar".equals(accion) && idEdit != null) {
+            path += "?id=" + idEdit;
+        }
+        response.sendRedirect(request.getContextPath() + path);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
         HttpSession session = request.getSession(false);
         Usuario usuario = (session != null) ? (Usuario) session.getAttribute("usuario") : null;
 
+        // Validación de sesión
         if (usuario == null) {
-            response.sendRedirect("/Proyecto_Arreglosapp/index.jsp");
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
         }
 
         String accion = request.getParameter("accion");
 
-        // ─── ELIMINAR PERSONALIZACIÓN ─────────────────────────────────
+        // Manejo de acción eliminar
         if ("eliminar".equals(accion)) {
             try {
-                int personalizacionId = Integer.parseInt(request.getParameter("id"));
-
-                // Borrado físico (Cascade Delete no implementado o evitado por seguridad)
-                boolean eliminada = personalizacionDAO.eliminarPersonalizacion(
-                        personalizacionId, usuario.getId());
-
-                if (eliminada) {
-                    response.sendRedirect("Public/client/mis-arreglos.jsp?eliminado=1");
-                } else {
-                    session.setAttribute("errorPersonalizacion", "No se pudo eliminar.");
-                    response.sendRedirect("Public/client/mis-arreglos.jsp");
+                String idParam = request.getParameter("id");
+                if (idParam == null || idParam.trim().isEmpty()) {
+                    session.setAttribute("errorPersonalizacion", "ID de personalización no proporcionado");
+                    response.sendRedirect(request.getContextPath() + "/Public/client/mis-arreglos.jsp?error=1");
+                    return;
                 }
-
+                
+                int id = Integer.parseInt(idParam);
+                if (personalizacionDAO.eliminarPersonalizacion(id, usuario.getId())) {
+                    response.sendRedirect(request.getContextPath() + "/Public/client/mis-arreglos.jsp?eliminado=1");
+                } else {
+                    session.setAttribute("errorPersonalizacion", "No se pudo eliminar la personalización");
+                    response.sendRedirect(request.getContextPath() + "/Public/client/mis-arreglos.jsp?error=1");
+                }
             } catch (NumberFormatException e) {
                 session.setAttribute("errorPersonalizacion", "ID inválido");
-                response.sendRedirect("Public/client/mis-arreglos.jsp");
+                response.sendRedirect(request.getContextPath() + "/Public/client/mis-arreglos.jsp?error=1");
             } catch (Exception e) {
-                session.setAttribute("errorPersonalizacion", "Error: " + e.getMessage());
-                response.sendRedirect("Public/client/mis-arreglos.jsp");
+                session.setAttribute("errorPersonalizacion", "Error al eliminar: " + e.getMessage());
+                response.sendRedirect(request.getContextPath() + "/Public/client/mis-arreglos.jsp?error=1");
             }
-
         } else {
-            response.sendRedirect("Public/client/mis-arreglos.jsp");
+            // Acción no reconocida
+            response.sendRedirect(request.getContextPath() + "/Public/client/mis-arreglos.jsp");
         }
     }
 
-    /**
-     * Método Auxiliar: Gestiona el almacenamiento físico de imágenes en el servidor.
-     * RNF: Persistencia de Medios.
-     */
-    private String procesarImagen(HttpServletRequest request) throws Exception {
-        Part filePart = request.getPart("imagenReferencia");
-        if (filePart != null && filePart.getSize() > 0) {
-            // Generación de ruta absoluta en el sistema de archivos del servidor
-            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-            String uploadPath = getServletContext().getRealPath("")
-                    + File.separator + "Assets"
-                    + File.separator + "uploads";
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists())
-                uploadDir.mkdirs(); // Creación recursiva de directorios si no existen
-            
-            // Escritura del binario
-            filePart.write(uploadPath + File.separator + fileName);
-            return "Assets/uploads/" + fileName; // Retorno de ruta relativa para almacenamiento en DB
+    private String procesarImagen(HttpServletRequest request) {
+        try {
+            Part filePart = request.getPart("imagenReferencia");
+            if (filePart != null && filePart.getSize() > 0) {
+                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                // Generar nombre único para evitar sobrescritura (Opcional pero recomendado)
+                fileName = System.currentTimeMillis() + "_" + fileName;
+                
+                String uploadPath = getServletContext().getRealPath("") + File.separator + "Assets" + File.separator + "uploads";
+                
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) uploadDir.mkdirs();
+                
+                filePart.write(uploadPath + File.separator + fileName);
+                return "Assets/uploads/" + fileName;
+            }
+        } catch (Exception e) {
+            return null;
         }
         return null;
     }

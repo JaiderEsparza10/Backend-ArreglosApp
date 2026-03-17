@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%@ page import="dao.AdminDAO" %> <%@ page import="model.Usuario" %> <%@ page import="java.util.List" %> <%@ page import="java.util.Map" %> <%@ page import="java.util.ArrayList" %> <%@ page import="java.text.SimpleDateFormat" %> <% Usuario admin=(Usuario) session.getAttribute("usuario"); if (admin==null || admin.getRolId() !=1) { response.sendRedirect("/Proyecto_Arreglosapp/index.jsp");
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%@ page import="dao.AdminDAO" %> <%@ page import="model.Usuario" %> <%@ page import="java.util.List" %> <%@ page import="java.util.Map" %> <%@ page import="java.util.ArrayList" %> <%@ page import="java.text.SimpleDateFormat" %> <% Usuario admin=(Usuario) session.getAttribute("usuario"); if (admin==null || admin.getRolId() !=1) { response.sendRedirect(request.getContextPath() + "/index.jsp");
                                 return; } AdminDAO adminDAO=new AdminDAO(); int totalPedidosActivos=0; int
                                 totalCitasHoy=0; int totalTodasCitas=0; List<Map<String, Object>> pedidosRecientes = new
                                 ArrayList<>();
@@ -78,6 +78,9 @@
                                                                             <option value="terminado" <%="terminado"
                                                                                 .equals(fEstadoActual) ? "selected" : ""
                                                                                 %>>Terminado</option>
+                                                                            <option value="cancelado" <%="cancelado"
+                                                                                .equals(fEstadoActual) ? "selected" : ""
+                                                                                %>>Cancelados</option>
                                                                         </select>
                                                                         <button type="submit"
                                                                             class="pedidos__filtro-btn pedidos__filtro-btn--activo"
@@ -147,7 +150,7 @@
                                                                                             class="pedido__estado <%= estadoClass %>">
                                                                                             <%= estadoLabel %>
                                                                                         </span>
-                                                                                        <a href="detalle-pedido-admin.jsp?pedidoId=<%= pedidoId %>"
+                                                                                        <a href="<%= request.getContextPath() %>/Public/admin/detalle-pedido-admin-simple.jsp?pedidoId=<%= pedidoId %>"
                                                                                             class="pedido__enlace">Detalles</a>
                                                                                     </div>
                                                                                 </article>
