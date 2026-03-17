@@ -10,7 +10,10 @@ import jakarta.servlet.http.HttpSession;
 import model.Cita;
 import model.Usuario;
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -94,6 +97,44 @@ public class CitaServlet extends HttpServlet {
                 String fechaHoraStr = fechaStr + "T" + horaStr + ":00";
                 LocalDateTime fechaHora = LocalDateTime.parse(fechaHoraStr,
                         DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+
+                // =====================
+                // VALIDACIONES DE HORARIO (BACKEND)
+                // =====================
+                LocalDate fecha = LocalDate.parse(fechaStr);
+                LocalTime hora = LocalTime.parse(horaStr);
+                
+                // 1. Validar que no sea fin de semana (lunes a viernes solo)
+                DayOfWeek diaSemana = fecha.getDayOfWeek();
+                if (diaSemana == DayOfWeek.SATURDAY || diaSemana == DayOfWeek.SUNDAY) {
+                    session.setAttribute("errorCita", "Solo atendemos de lunes a viernes");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
+                    return;
+                }
+                
+                // 2. Validar rango horario: 14:00 a 22:00
+                LocalTime horaMinima = LocalTime.of(14, 0);
+                LocalTime horaMaxima = LocalTime.of(22, 0);
+                if (hora.isBefore(horaMinima) || hora.isAfter(horaMaxima)) {
+                    session.setAttribute("errorCita", "El horario debe estar entre las 2:00 PM y 10:00 PM");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
+                    return;
+                }
+                
+                // 3. Validar que no sea una fecha/hora pasada
+                LocalDateTime ahora = LocalDateTime.now();
+                if (fechaHora.isBefore(ahora)) {
+                    session.setAttribute("errorCita", "No puedes agendar citas en fechas u horarios pasados");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
+                    return;
+                }
+
+                // Validación de disponibilidad de horario
+                if (!citaDAO.isSlotAvailable(fecha, hora)) {
+                    session.setAttribute("errorCita", "Lo sentimos, este horario ya está reservado. Por favor, elige otra hora o fecha.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
+                    return;
+                }
 
                 // Paso 1: Crear el registro de pedido (Cabecera y Detalle)
                 int pedidoId = citaDAO.crearPedido(usuario.getId(), personalizacionId);

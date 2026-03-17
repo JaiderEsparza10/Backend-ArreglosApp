@@ -3,6 +3,9 @@ package dao;
 import config.ConectionDB;
 import model.Cita;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +16,57 @@ import java.util.List;
  * @author Antigravity - Senior Architect
  */
 public class CitaDAO {
+
+    /**
+     * Constante que define el número máximo de citas permitidas por slot de tiempo.
+     * Valor 1 = solo una cita por horario. Si se necesita permitir múltiples citas,
+     * solo se debe cambiar este valor.
+     */
+    public static final int MAX_APPOINTMENTS_PER_SLOT = 1;
+
+    /**
+     * Verifica si un slot de tiempo específico está disponible para agendar una cita.
+     * 
+     * @param date Fecha de la cita (LocalDate)
+     * @param time Hora de la cita (LocalTime)
+     * @return true si el horario está disponible, false si ya está ocupado
+     * @throws Exception Error de base de datos
+     */
+    public boolean isSlotAvailable(LocalDate date, LocalTime time) throws Exception {
+        String sql = "SELECT COUNT(*) FROM citas c " +
+                     "JOIN pedidos p ON c.pedido_id = p.pedido_id " +
+                     "WHERE DATE(c.cita_fecha_hora) = ? " +
+                     "AND TIME(c.cita_fecha_hora) = ? " +
+                     "AND c.cita_estado NOT IN ('cancelada')";
+        
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setDate(1, Date.valueOf(date));
+            ps.setTime(2, Time.valueOf(time));
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count < MAX_APPOINTMENTS_PER_SLOT;
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al verificar disponibilidad de horario: " + e.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * Sobrecarga del método para verificar disponibilidad con LocalDateTime.
+     * 
+     * @param fechaHora Fecha y hora de la cita (LocalDateTime)
+     * @return true si el horario está disponible, false si ya está ocupado
+     * @throws Exception Error de base de datos
+     */
+    public boolean isSlotAvailable(LocalDateTime fechaHora) throws Exception {
+        return isSlotAvailable(fechaHora.toLocalDate(), fechaHora.toLocalTime());
+    }
 
     /**
      * Crea un pedido transaccionalmente a partir de una personalización.

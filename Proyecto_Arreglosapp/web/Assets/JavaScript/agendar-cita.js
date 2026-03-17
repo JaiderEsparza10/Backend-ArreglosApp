@@ -89,6 +89,7 @@ function seleccionarFecha(fechaStr) {
     document.getElementById('textoFechaSeleccionada').classList.add('cita__fecha-seleccionada--activa');
 
     renderCalendario();
+    renderHoras(); // Actualizar los horarios disponibles para la fecha seleccionada
 }
 
 document.getElementById('btnMesAnterior').addEventListener('click', function () {
@@ -113,20 +114,59 @@ function renderHoras() {
     var grid = document.getElementById('horasGrid');
     grid.innerHTML = '';
 
+    // Verificar si hay fecha seleccionada
+    if (!fechaSeleccionada) {
+        grid.innerHTML = '<p style="color:#888;text-align:center;padding:20px;">Primero selecciona una fecha</p>';
+        return;
+    }
+
+    // Verificar si es fin de semana
+    var fecha = new Date(fechaSeleccionada + 'T00:00:00');
+    var diaSemana = fecha.getDay(); // 0=dom, 6=sab
+    if (diaSemana === 0 || diaSemana === 6) {
+        grid.innerHTML = '<p style="color:#dc3545;text-align:center;padding:20px;font-weight:500;"> Solo atendemos de lunes a viernes</p>';
+        return;
+    }
+
+    // Obtener hora actual para comparación
+    var ahora = new Date();
+    var esHoy = fecha.toDateString() === ahora.toDateString();
+
     horasDisponibles.forEach(function (hora) {
         var btn = document.createElement('button');
         btn.type = 'button';
         btn.textContent = formatHora(hora);
         btn.className = 'cita__hora-btn';
-        if (horaSeleccionada === hora) btn.classList.add('cita__hora-btn--seleccionado');
 
-        btn.addEventListener('click', function () {
-            horaSeleccionada = hora;
-            document.getElementById('horaCitaInput').value = hora;
-            document.getElementById('textoHoraSeleccionada').textContent = '🕐 ' + formatHora(hora);
-            document.getElementById('textoHoraSeleccionada').classList.add('cita__hora-seleccionada--activa');
-            renderHoras();
-        });
+        // Verificar si la hora ya pasó (solo si es hoy)
+        var horaPasada = false;
+        if (esHoy) {
+            var partesHora = hora.split(':');
+            var horaSlot = parseInt(partesHora[0]);
+            var minSlot = parseInt(partesHora[1]);
+            var horaActual = ahora.getHours();
+            var minActual = ahora.getMinutes();
+
+            // Considerar pasada si la hora actual es mayor o igual al slot
+            horaPasada = (horaActual > horaSlot) ||
+                        (horaActual === horaSlot && minActual >= minSlot);
+        }
+
+        if (horaPasada) {
+            btn.classList.add('cita__hora-btn--deshabilitado');
+            btn.disabled = true;
+            btn.title = 'Esta hora ya no está disponible';
+        } else {
+            if (horaSeleccionada === hora) btn.classList.add('cita__hora-btn--seleccionado');
+
+            btn.addEventListener('click', function () {
+                horaSeleccionada = hora;
+                document.getElementById('horaCitaInput').value = hora;
+                document.getElementById('textoHoraSeleccionada').textContent = ' ' + formatHora(hora);
+                document.getElementById('textoHoraSeleccionada').classList.add('cita__hora-seleccionada--activa');
+                renderHoras();
+            });
+        }
 
         grid.appendChild(btn);
     });

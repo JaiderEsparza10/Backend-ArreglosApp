@@ -1,0 +1,105 @@
+/* ========================================
+   TOAST NOTIFICATIONS - ESTILO UNIFORME
+   ========================================
+   
+   Este archivo define el estilo consistente para todos
+   los mensajes toast del proyecto ArreglosApp.
+   
+   Para usar en cualquier JSP:
+   1. Asegúrate de que el JSP importe estilos.css principal
+   2. Incluye el div: <div id="toastContainer" class="toast-container"></div>
+   3. Usa la función JavaScript: mostrarToast(mensaje, tipo)
+   
+   Colores:
+   - Éxito: Verde sólido (#28a745)
+   - Error: Rojo sólido (#dc3545)
+   - Info: Azul (#17a2b8) - opcional
+   - Advertencia: Amarillo (#ffc107) - opcional
+   ======================================== */
+
+/* Contenedor de toast (esquina superior derecha) */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Estilo base del toast */
+.toast {
+    padding: 15px 40px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transform: translateX(400px);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    max-width: 400px;
+    word-wrap: break-word;
+    text-align: center;
+    font-family: var(--tipo-fuente, 'Poppins', sans-serif);
+}
+
+/* Estado visible del toast */
+.toast--visible {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Variante: Éxito (verde) */
+.toast--success {
+    background: #28a745;
+}
+
+/* Variante: Error (rojo) */
+.toast--error {
+    background: #dc3545;
+}
+
+/* Variante: Información (azul) - opcional */
+.toast--info {
+    background: #17a2b8;
+}
+
+/* Variante: Advertencia (amarillo/dorado) - opcional */
+.toast--warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+/* ========================================
+   ANIMACIONES ADICIONALES (opcional)
+   ======================================== */
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.toast--animate-in {
+    animation: slideInRight 0.3s ease;
+}
+
+.toast--animate-out {
+    animation: fadeOut 0.3s ease forwards;
+}
