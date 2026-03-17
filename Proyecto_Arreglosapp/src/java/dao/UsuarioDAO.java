@@ -574,4 +574,267 @@ public class UsuarioDAO {
             throw new Exception("Error al insertar notificación: " + e.getMessage());
         }
     }
+
+    /**
+     * Verifica si un usuario puede ser eliminado según sus dependencias.
+     * Un usuario es eliminable solo si:
+     * - No tiene favoritos activos
+     * - No tiene pedidos (órdenes) vinculados
+     * - No tiene citas activas (solo permite citas canceladas)
+     * 
+     * @param userId ID del usuario a validar.
+     * @return Map con 'canDelete' (boolean) y 'reason' (String) si no se puede eliminar.
+     * @throws Exception Error SQL.
+     */
+    public Map<String, Object> canDeleteUser(int userId) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        result.put("canDelete", true);
+        result.put("reason", "");
+        
+        try (Connection con = ConectionDB.getConexion()) {
+            
+            // 1. Verificar favoritos
+            String sqlFavoritos = "SELECT COUNT(*) FROM FAVORITOS WHERE user_id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlFavoritos)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        result.put("canDelete", false);
+                        result.put("reason", "El usuario tiene " + rs.getInt(1) + " favoritos registrados");
+                        return result;
+                    }
+                }
+            }
+            
+            // 2. Verificar pedidos (órdenes) - solo los que impiden eliminación
+            String sqlPedidos = "SELECT COUNT(*) FROM PEDIDOS WHERE usuario_id = ? AND pedido_estado NOT IN ('terminado', 'cancelado', 'entregado')";
+            try (PreparedStatement ps = con.prepareStatement(sqlPedidos)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        result.put("canDelete", false);
+                        result.put("reason", "El usuario tiene " + rs.getInt(1) + " pedidos activos registrados");
+                        return result;
+                    }
+                }
+            }
+            
+            // 3. Verificar citas activas (excluyendo canceladas)
+            String sqlCitas = "SELECT COUNT(*) FROM CITAS c " +
+                            "JOIN PEDIDOS p ON c.pedido_id = p.pedido_id " +
+                            "WHERE p.usuario_id = ? AND c.cita_estado NOT IN ('cancelada')";
+            try (PreparedStatement ps = con.prepareStatement(sqlCitas)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        result.put("canDelete", false);
+                        result.put("reason", "El usuario tiene " + rs.getInt(1) + " citas activas (no canceladas)");
+                        return result;
+                    }
+                }
+            }
+            
+            // 4. Verificar personalizaciones (importante!)
+            String sqlPersonalizaciones = "SELECT COUNT(*) FROM PERSONALIZACIONES WHERE user_id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlPersonalizaciones)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        result.put("canDelete", false);
+                        result.put("reason", "El usuario tiene " + rs.getInt(1) + " personalizaciones registradas");
+                        return result;
+                    }
+                }
+            }
+            
+            // 5. Opcional: Contar citas canceladas para informe
+            String sqlCitasCanceladas = "SELECT COUNT(*) FROM CITAS c " +
+                                      "JOIN PEDIDOS p ON c.pedido_id = p.pedido_id " +
+                                      "WHERE p.usuario_id = ? AND c.cita_estado = 'cancelada'";
+            try (PreparedStatement ps = con.prepareStatement(sqlCitasCanceladas)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        result.put("canceledAppointments", rs.getInt(1));
+                    }
+                }
+            }
+            
+        } catch (SQLException e) {
+            throw new Exception("Error al validar eliminación de usuario: " + e.getMessage());
+        }
+        
+        return result;
+    }
+
+    /**
+     * Identifica todas las dependencias de un usuario para diagnóstico
+     */
+    public Map<String, Integer> diagnosticarDependencias(int userId) throws Exception {
+        Map<String, Integer> dependencias = new HashMap<>();
+        
+        try (Connection con = ConectionDB.getConexion()) {
+            // Contar cada tipo de dependencia
+            String[] tablas = {"FAVORITOS", "PEDIDOS", "PERSONALIZACIONES", "TELEFONOS", "NOTIFICACIONES"};
+            String[] columnas = {"user_id", "usuario_id", "user_id", "user_id", "user_id"};
+            
+            for (int i = 0; i < tablas.length; i++) {
+                String sql = "SELECT COUNT(*) FROM " + tablas[i] + " WHERE " + columnas[i] + " = ?";
+                try (PreparedStatement ps = con.prepareStatement(sql)) {
+                    ps.setInt(1, userId);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            dependencias.put(tablas[i], rs.getInt(1));
+                        }
+                    }
+                }
+            }
+            
+            // Citas (requiere JOIN)
+            String sqlCitas = "SELECT COUNT(*) FROM CITAS c " +
+                            "JOIN PEDIDOS p ON c.pedido_id = p.pedido_id " +
+                            "WHERE p.usuario_id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlCitas)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        dependencias.put("CITAS", rs.getInt(1));
+                    }
+                }
+            }
+            
+        } catch (SQLException e) {
+            throw new Exception("Error al diagnosticar dependencias: " + e.getMessage());
+        }
+        
+        return dependencias;
+    }
+
+    /**
+     * Elimina un usuario de forma segura después de validar dependencias.
+     * Realiza eliminación en cascada de datos seguros como teléfonos, notificaciones, etc.
+     * NO elimina datos importantes como pedidos, personalizaciones o citas.
+     * 
+     * @param userId ID del usuario a eliminar.
+     * @return true si la eliminación fue exitosa.
+     * @throws Exception Si el usuario tiene dependencias importantes o error SQL.
+     */
+    public boolean eliminarUsuarioSeguro(int userId) throws Exception {
+        System.out.println("DEBUG: Iniciando eliminación segura del usuario " + userId);
+        
+        // Primero validar si se puede eliminar
+        Map<String, Object> validation = canDeleteUser(userId);
+        System.out.println("DEBUG: Validación - canDelete: " + validation.get("canDelete") + ", reason: " + validation.get("reason"));
+        
+        if (!(Boolean) validation.get("canDelete")) {
+            System.out.println("DEBUG: Bloqueado por validación: " + validation.get("reason"));
+            throw new Exception("NO_SE_PUEDE_ELIMINAR: " + validation.get("reason"));
+        }
+        
+        Connection con = null;
+        try {
+            con = ConectionDB.getConexion();
+            con.setAutoCommit(false);
+            System.out.println("DEBUG: Conexión obtenida y autoCommit=false");
+            
+            // 1. Eliminar dependencias seguras
+            // Teléfonos
+            System.out.println("DEBUG: Eliminando teléfonos del usuario " + userId);
+            try (PreparedStatement ps = con.prepareStatement("DELETE FROM TELEFONOS WHERE user_id = ?")) {
+                ps.setInt(1, userId);
+                int telefonosEliminados = ps.executeUpdate();
+                System.out.println("DEBUG: Teléfonos eliminados: " + telefonosEliminados);
+            }
+            
+            // Notificaciones
+            System.out.println("DEBUG: Eliminando notificaciones del usuario " + userId);
+            try (PreparedStatement ps = con.prepareStatement("DELETE FROM NOTIFICACIONES WHERE user_id = ?")) {
+                ps.setInt(1, userId);
+                int notificacionesEliminadas = ps.executeUpdate();
+                System.out.println("DEBUG: Notificaciones eliminadas: " + notificacionesEliminadas);
+            }
+            
+            // 2. Eliminar dependencias con foreign keys (orden crucial)
+            
+            // Primero: Eliminar detalle_pedido (referencia a pedidos)
+            System.out.println("DEBUG: Eliminando detalle_pedido del usuario " + userId);
+            try (PreparedStatement ps = con.prepareStatement(
+                "DELETE FROM detalle_pedido WHERE pedido_id IN (SELECT pedido_id FROM pedidos WHERE usuario_id = ?)")) {
+                ps.setInt(1, userId);
+                int detallesEliminados = ps.executeUpdate();
+                System.out.println("DEBUG: Detalles de pedido eliminados: " + detallesEliminados);
+            } catch (SQLException e) {
+                System.out.println("ERROR en DELETE de detalle_pedido: " + e.getMessage());
+                throw e;
+            }
+            
+            // Segundo: Eliminar citas (referencia a pedidos)
+            System.out.println("DEBUG: Eliminando citas del usuario " + userId);
+            try (PreparedStatement ps = con.prepareStatement(
+                "DELETE c FROM citas c JOIN pedidos p ON c.pedido_id = p.pedido_id WHERE p.usuario_id = ?")) {
+                ps.setInt(1, userId);
+                int citasEliminadas = ps.executeUpdate();
+                System.out.println("DEBUG: Citas eliminadas: " + citasEliminadas);
+            } catch (SQLException e) {
+                System.out.println("ERROR en DELETE de citas: " + e.getMessage());
+                throw e;
+            }
+            
+            // Tercero: Eliminar pedidos (ya no tienen dependencias)
+            System.out.println("DEBUG: Eliminando pedidos del usuario " + userId);
+            try (PreparedStatement ps = con.prepareStatement(
+                "DELETE FROM pedidos WHERE usuario_id = ?")) {
+                ps.setInt(1, userId);
+                int pedidosEliminados = ps.executeUpdate();
+                System.out.println("DEBUG: Pedidos eliminados: " + pedidosEliminados);
+            } catch (SQLException e) {
+                System.out.println("ERROR en DELETE de pedidos: " + e.getMessage());
+                throw e;
+            }
+            
+            // 3. Eliminar el usuario
+            System.out.println("DEBUG: Eliminando usuario principal " + userId);
+            try (PreparedStatement ps = con.prepareStatement("DELETE FROM USUARIOS WHERE user_id = ? AND rol_id = 2")) {
+                ps.setInt(1, userId);
+                int filas = ps.executeUpdate();
+                System.out.println("DEBUG: Filas de usuario eliminadas: " + filas);
+                
+                if (filas > 0) {
+                    con.commit();
+                    System.out.println("DEBUG: Commit exitoso - usuario eliminado");
+                    return true;
+                } else {
+                    con.rollback();
+                    System.out.println("DEBUG: Rollback - usuario no encontrado o no es cliente");
+                    throw new Exception("Usuario no encontrado o no es cliente");
+                }
+            } catch (SQLException e) {
+                System.out.println("ERROR en DELETE de usuario: " + e.getMessage());
+                throw e;
+            }
+            
+        } catch (SQLException e) {
+            if (con != null) {
+                con.rollback();
+                System.out.println("DEBUG: Rollback por SQLException: " + e.getMessage());
+                System.out.println("DEBUG: SQL State: " + e.getSQLState());
+                System.out.println("DEBUG: Error Code: " + e.getErrorCode());
+            }
+            
+            if (e.getErrorCode() == 1451 || e.getErrorCode() == 1217 || e.getErrorCode() == 1216) {
+                throw new Exception("NO_SE_PUEDE_ELIMINAR_TIENE_DEPENDENCIAS");
+            }
+            throw new Exception("Error al eliminar usuario: " + e.getMessage());
+        } finally {
+            if (con != null) {
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                    System.out.println("DEBUG: Conexión cerrada");
+                } catch (SQLException e) {
+                    System.out.println("DEBUG: Error cerrando conexión: " + e.getMessage());
+                }
+            }
+        }
+    }
 }

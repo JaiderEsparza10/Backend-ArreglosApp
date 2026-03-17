@@ -18,6 +18,79 @@ import jakarta.servlet.http.*;
 public class ControllerUser extends HttpServlet {
 
     /**
+     * Maneja solicitudes GET para operaciones de eliminación de usuarios.
+     * Valida dependencias antes de proceder con la eliminación.
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        String accion = request.getParameter("accion");
+        
+        if ("eliminar".equals(accion)) {
+            // Verificar que sea un administrador
+            HttpSession session = request.getSession(false);
+            Usuario usuario = (session != null) ? (Usuario) session.getAttribute("usuario") : null;
+            
+            if (usuario == null || usuario.getRolId() != 1) {
+                response.sendRedirect(request.getContextPath() + "/index.jsp");
+                return;
+            }
+            
+            String userIdStr = request.getParameter("userId");
+            if (userIdStr == null || userIdStr.trim().isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/Public/admin/administrador-usuarios.jsp?error=usuarioNoValido");
+                return;
+            }
+            
+            try {
+                int userId = Integer.parseInt(userIdStr.trim());
+                UsuarioDAO dao = new UsuarioDAO();
+                
+                // DIAGNÓSTICO: Identificar todas las dependencias
+                System.out.println("DIAGNÓSTICO: Analizando dependencias del usuario " + userId);
+                var dependencias = dao.diagnosticarDependencias(userId);
+                System.out.println("DIAGNÓSTICO: Dependencias encontradas: " + dependencias);
+                
+                // Validar si se puede eliminar
+                var validacion = dao.canDeleteUser(userId);
+                System.out.println("DIAGNÓSTICO: Resultado validación - canDelete: " + validacion.get("canDelete") + ", reason: " + validacion.get("reason"));
+                
+                if (!(Boolean) validacion.get("canDelete")) {
+                    response.sendRedirect(request.getContextPath() + "/Public/admin/administrador-usuarios.jsp?error=" + 
+                        java.net.URLEncoder.encode("No se puede eliminar: " + validacion.get("reason"), "UTF-8"));
+                    return;
+                }
+                
+                // Proceder con la eliminación
+                if (dao.eliminarUsuarioSeguro(userId)) {
+                    response.sendRedirect(request.getContextPath() + "/Public/admin/administrador-usuarios.jsp?exito=usuarioEliminado");
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/Public/admin/administrador-usuarios.jsp?error=noEncontrado");
+                }
+                
+            } catch (NumberFormatException e) {
+                System.err.println("Error NumberFormatException al eliminar usuario " + userIdStr + ": " + e.getMessage());
+                e.printStackTrace();
+                response.sendRedirect(request.getContextPath() + "/Public/admin/administrador-usuarios.jsp?error=idInvalido");
+            } catch (Exception e) {
+                System.err.println("Error general al eliminar usuario " + userIdStr + ": " + e.getMessage());
+                e.printStackTrace();
+                
+                if (e.getMessage().startsWith("NO_SE_PUEDE_ELIMINAR:")) {
+                    response.sendRedirect(request.getContextPath() + "/Public/admin/administrador-usuarios.jsp?error=" + 
+                        java.net.URLEncoder.encode(e.getMessage().substring(22), "UTF-8"));
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/Public/admin/administrador-usuarios.jsp?error=" + 
+                        java.net.URLEncoder.encode("Error específico: " + e.getMessage(), "UTF-8"));
+                }
+            }
+        } else {
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
+        }
+    }
+
+    /**
      * Procesa la creación de un nuevo usuario mediante método POST.
      * Incluye validaciones estrictas de integridad y seguridad de datos.
      * Este método maneja la lógica de negocio para el registro de usuarios,

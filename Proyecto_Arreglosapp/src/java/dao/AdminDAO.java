@@ -224,7 +224,7 @@ public class AdminDAO {
                         "u.user_nombre, p.pedido_id " +
                         "FROM citas c " +
                         "JOIN pedidos p ON p.pedido_id = c.pedido_id " +
-                        "JOIN usuarios u ON u.usuario_id = p.usuario_id WHERE 1=1 ");
+                        "JOIN usuarios u ON u.user_id = p.usuario_id WHERE 1=1 ");
 
         if (fecha != null && !fecha.isEmpty())
             sql.append(" AND DATE(c.cita_fecha_hora) = ? ");
