@@ -540,17 +540,56 @@ public class AdminDAO {
      * @throws Exception Si ocurre un error de conexión o SQL.
      */
     public void cambiarEstadoCita(int citaId, String nuevoEstado) throws Exception {
-        String sql = "UPDATE citas SET cita_estado = ? WHERE cita_id = ?";
+        Connection con = null;
+        try {
+            con = ConectionDB.getConexion();
+            con.setAutoCommit(false); // Iniciar transacción
 
-        try (Connection con = ConectionDB.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+            // 1. Actualizar el estado de la cita
+            String sqlCita = "UPDATE citas SET cita_estado = ? WHERE cita_id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlCita)) {
+                ps.setString(1, nuevoEstado);
+                ps.setInt(2, citaId);
+                ps.executeUpdate();
+            }
 
-            ps.setString(1, nuevoEstado);
-            ps.setInt(2, citaId);
-            ps.executeUpdate();
+            // 2. Determinar el mapeo de estados
+            String estadoPedido = null;
+            if ("pendiente".equalsIgnoreCase(nuevoEstado) || "programada".equalsIgnoreCase(nuevoEstado)) {
+                estadoPedido = "pendiente"; // 'Pendiente de Revisión' visualmente
+            } else if ("confirmada".equalsIgnoreCase(nuevoEstado)) {
+                estadoPedido = "confirmado"; // 'Pendiente de Inicio' visualmente
+            } else if ("completada".equalsIgnoreCase(nuevoEstado)) {
+                estadoPedido = "terminado"; // 'Terminado' visualmente
+            } else if ("cancelada".equalsIgnoreCase(nuevoEstado)) {
+                estadoPedido = "cancelado"; 
+            }
+
+            // 3. Sincronizar el pedido asociado si hay mapeo correspondiente
+            if (estadoPedido != null) {
+                String sqlPedido = "UPDATE pedidos p JOIN citas c ON p.pedido_id = c.pedido_id "
+                        + "SET p.pedido_estado = ? WHERE c.cita_id = ?";
+                try (PreparedStatement ps = con.prepareStatement(sqlPedido)) {
+                    ps.setString(1, estadoPedido);
+                    ps.setInt(2, citaId);
+                    ps.executeUpdate();
+                }
+            }
+
+            con.commit(); // Operaciones exitosas
 
         } catch (SQLException e) {
-            throw new Exception("Error al cambiar estado de cita: " + e.getMessage());
+            if (con != null) {
+                try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            throw new Exception("Error al sincronizar estado de cita y pedido: " + e.getMessage());
+        } finally {
+            if (con != null) {
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException ex) { ex.printStackTrace(); }
+            }
         }
     }
 
@@ -624,5 +663,52 @@ public class AdminDAO {
         } catch (SQLException e) {
             throw new Exception("Error al eliminar servicio: " + e.getMessage());
         }
+    }
+
+    /**
+     * Obtiene la lista de usuarios clientes, opcionalmente filtrada por búsqueda.
+     * RF-10: Gestión de Usuarios por Administrador.
+     *
+     * @param busqueda Texto a buscar por nombre o correo (puede ser null).
+     * @return Lista de mapas con los datos de cada usuario.
+     * @throws Exception Si ocurre un error de conexión o SQL.
+     */
+    public List<Map<String, Object>> obtenerUsuarios(String busqueda) throws Exception {
+        StringBuilder sql = new StringBuilder(
+                "SELECT u.user_id, u.user_nombre, u.user_email, t.telefono_numero "
+                        + "FROM usuarios u "
+                        + "LEFT JOIN telefonos t ON u.user_id = t.user_id AND t.telefono_es_principal = true "
+                        + "WHERE u.rol_id = 2 ");
+
+        if (busqueda != null && !busqueda.trim().isEmpty()) {
+            sql.append("AND (u.user_nombre LIKE ? OR u.user_email LIKE ?) ");
+        }
+        sql.append("ORDER BY u.user_nombre ASC");
+
+        List<Map<String, Object>> lista = new ArrayList<>();
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            if (busqueda != null && !busqueda.trim().isEmpty()) {
+                String filtro = "%" + busqueda.trim() + "%";
+                ps.setString(1, filtro);
+                ps.setString(2, filtro);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> u = new HashMap<>();
+                    u.put("userId", rs.getInt("user_id"));
+                    u.put("nombre", rs.getString("user_nombre"));
+                    u.put("email", rs.getString("user_email"));
+                    u.put("telefono", rs.getString("telefono_numero"));
+                    lista.add(u);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener usuarios: " + e.getMessage());
+        }
+        return lista;
     }
 }
