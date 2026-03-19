@@ -14,18 +14,17 @@ public class FavoritoDAO {
      */
     public boolean agregarFavorito(Favorito favorito) throws Exception {
         // SQL simplificado: solo columnas existentes en la tabla normalizada
-        String sql = "INSERT INTO FAVORITOS (user_id, arreglo_id, cantidad) VALUES (?, ?, ?)";
-
+        String sql = "INSERT INTO FAVORITOS (user_id, servicio_id) VALUES (?, ?)";
+        
         try (Connection con = ConectionDB.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
-
+            
             ps.setInt(1, favorito.getUserId());
-            ps.setInt(2, favorito.getArregloId());
-            ps.setInt(3, favorito.getCantidad() > 0 ? favorito.getCantidad() : 1);
-
+            ps.setInt(2, favorito.getServicioId());
+            
             int filasInsertadas = ps.executeUpdate();
             return filasInsertadas > 0;
-
+            
         } catch (SQLException e) {
             throw new Exception("Error al agregar favorito: " + e.getMessage());
         }
@@ -37,9 +36,9 @@ public class FavoritoDAO {
      */
     public List<Favorito> obtenerFavoritosPorUsuario(int userId) throws Exception {
     // 1. Agregamos a.arreglo_descripcion a la consulta SELECT
-    String sql = "SELECT f.*, a.arreglo_nombre, a.arreglo_precio_base, a.arreglo_imagen_url, a.arreglo_descripcion " +
+    String sql = "SELECT f.*, s.servicio_nombre, s.servicio_precio_base, '' as servicio_imagen_url, s.servicio_descripcion " +
                  "FROM FAVORITOS f " +
-                 "INNER JOIN ARREGLOS a ON f.arreglo_id = a.arreglo_id " +
+                 "LEFT JOIN SERVICIOS s ON f.servicio_id = s.servicio_id " +
                  "WHERE f.user_id = ? ORDER BY f.fecha_agregado DESC";
                  
     List<Favorito> favoritos = new ArrayList<>();
@@ -53,20 +52,19 @@ public class FavoritoDAO {
             while (rs.next()) {
                 Favorito favorito = new Favorito();
                 favorito.setFavoritoId(rs.getInt("favorito_id"));
-                favorito.setArregloId(rs.getInt("arreglo_id"));
+                favorito.setServicioId(rs.getInt("servicio_id"));
                 
                 // Mapeo de datos del JOIN:
-                // Usamos setCategoria o setNombreCategoria para el título
-                favorito.setNombreCategoria(rs.getString("arreglo_nombre")); 
+                // Usamos setServicio o setNombreServicio para el título
+                favorito.setNombreServicio(rs.getString("servicio_nombre")); 
                 
                 // IMPORTANTE: Aquí llenamos la descripción que antes estaba null
-                // Si tu modelo Favorito tiene setCategoria, úsalo para la descripción 
+                // Si tu modelo Favorito tiene setServicio, úsalo para la descripción 
                 // o el campo que estés imprimiendo en esa línea del JSP
-                favorito.setCategoria(rs.getString("arreglo_descripcion")); 
+                favorito.setServicio(rs.getString("servicio_descripcion")); 
                 
-                favorito.setPrecio(rs.getDouble("arreglo_precio_base"));
-                favorito.setImagenUrl(rs.getString("arreglo_imagen_url"));
-                favorito.setCantidad(rs.getInt("cantidad"));
+                favorito.setPrecio(rs.getDouble("servicio_precio_base"));
+                favorito.setImagenUrl(rs.getString("servicio_imagen_url"));
 
                 if (rs.getTimestamp("fecha_agregado") != null) {
                     favorito.setFechaAgregado(rs.getTimestamp("fecha_agregado").toLocalDateTime());
@@ -93,13 +91,13 @@ public class FavoritoDAO {
         }
     }
 
-    // Verificar si existe por ID de arreglo (Se mantiene igual)
-    public boolean existeFavoritoPorArreglo(int userId, int arregloId) throws Exception {
-        String sql = "SELECT COUNT(*) FROM FAVORITOS WHERE user_id = ? AND arreglo_id = ?";
+    // Verificar si existe por ID de servicio
+    public boolean existeFavoritoPorServicio(int userId, int servicioId) throws Exception {
+        String sql = "SELECT COUNT(*) FROM FAVORITOS WHERE user_id = ? AND servicio_id = ?";
         try (Connection con = ConectionDB.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            ps.setInt(2, arregloId);
+            ps.setInt(2, servicioId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return rs.getInt(1) > 0;
             }

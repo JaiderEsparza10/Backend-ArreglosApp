@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%@ page import="model.Usuario" %>
         <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) { usuario=(Usuario)
-            sesion.getAttribute("usuario"); } if (usuario==null) { response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } String errorMsg=(String) sesion.getAttribute("errorCita"); if (errorMsg !=null) { sesion.removeAttribute("errorCita"); } String personalizacionId=request.getParameter("personalizacionId"); if (personalizacionId==null) { personalizacionId="" ; } %>
+            sesion.getAttribute("usuario"); } if (usuario==null) { response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } String errorMsg=(String) sesion.getAttribute("errorCita"); if (errorMsg !=null) { sesion.removeAttribute("errorCita"); } String personalizacionId=request.getParameter("personalizacionId"); if (personalizacionId==null || personalizacionId.trim().isEmpty()) { response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-arreglos.jsp"); return; } %>
             <!DOCTYPE html>
             <html lang="es">
 

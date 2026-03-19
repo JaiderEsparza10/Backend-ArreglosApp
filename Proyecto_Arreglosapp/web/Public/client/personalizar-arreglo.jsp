@@ -46,23 +46,23 @@
     String tituloBtn = esEdicion ? "Guardar Cambios" : "Confirmar Arreglo";
     String tituloPag = esEdicion ? "Editar Arreglo" : "Personalizar Arreglo";
 
-    // Obtener el ID de la categoría para marcar el radio button correcto
-    int catIdActual = 0; // Valor por defecto
-    if (esEdicion && editando.getCategoriaId() != null) {
-        catIdActual = editando.getCategoriaId();
+    // Obtener el ID del servicio para marcar el radio button correcto
+    int servicioIdActual = 1; // Valor por defecto: Sastrería
+    if (esEdicion && editando.getServicioId() != null) {
+        servicioIdActual = editando.getServicioId();
     }
 
     // Clases CSS dinámicas para mantener el estilo visual activo
-    String claseSastreria = (catIdActual == 1) ? "formulario__seleccion formulario__seleccion--activo" : "formulario__seleccion";
-    String claseCosturas = (catIdActual == 2) ? "formulario__seleccion formulario__seleccion--activo" : "formulario__seleccion";
-    String clasePlanchado = (catIdActual == 3) ? "formulario__seleccion formulario__seleccion--activo" : "formulario__seleccion";
-    String claseArreglosMedidas = (catIdActual == 4) ? "formulario__seleccion formulario__seleccion--activo" : "formulario__seleccion";
+    String claseSastreria = (servicioIdActual == 1) ? "formulario__seleccion formulario__seleccion--activo" : "formulario__seleccion";
+    String claseCosturas = (servicioIdActual == 2) ? "formulario__seleccion formulario__seleccion--activo" : "formulario__seleccion";
+    String clasePlanchado = (servicioIdActual == 3) ? "formulario__seleccion formulario__seleccion--activo" : "formulario__seleccion";
+    String claseArreglosMedidas = (servicioIdActual == 4) ? "formulario__seleccion formulario__seleccion--activo" : "formulario__seleccion";
 
     // Atributos checked para los radio buttons
-    String checkedSastreria = (catIdActual == 1) ? "checked" : "";
-    String checkedCosturas = (catIdActual == 2) ? "checked" : "";
-    String checkedPlanchado = (catIdActual == 3) ? "checked" : "";
-    String checkedArreglosMedidas = (catIdActual == 4) ? "checked" : "";
+    String checkedSastreria = (servicioIdActual == 1) ? "checked" : "";
+    String checkedCosturas = (servicioIdActual == 2) ? "checked" : "";
+    String checkedPlanchado = (servicioIdActual == 3) ? "checked" : "";
+    String checkedArreglosMedidas = (servicioIdActual == 4) ? "checked" : "";
 
     String descActual = (esEdicion && editando.getDescripcion() != null) ? editando.getDescripcion() : "";
     String materialActual = (esEdicion && editando.getMaterialTela() != null) ? editando.getMaterialTela() : "";
@@ -114,29 +114,29 @@
                 <% } %>
                 <input type="hidden" name="arregloId" value="<%= arregloIdValue %>">
 
-                <h2 class="contenedor__titulo-seccion">Categoría del Arreglo</h2>
+                <h2 class="contenedor__titulo-seccion">Servicio del Arreglo</h2>
                 <p class="contenedor__subtitulo">Selecciona el tipo de arreglo que necesitas</p>
 
                 <div class="<%= claseSastreria %>">
-                    <input type="radio" id="sastreria" name="categoriaId" value="1" 
+                    <input type="radio" id="sastreria" name="idServicio" value="1" 
                            class="seleccion__circulo" <%= checkedSastreria %> required>
                     <label for="sastreria" class="seleccion__texto">Sastrería</label>
                 </div>
 
                 <div class="<%= claseCosturas %>">
-                    <input type="radio" id="costuras" name="categoriaId" value="2" 
+                    <input type="radio" id="costuras" name="idServicio" value="2" 
                            class="seleccion__circulo" <%= checkedCosturas %>>
                     <label class="seleccion__texto" for="costuras">Costuras</label>
                 </div>
 
                 <div class="<%= clasePlanchado %>">
-                    <input type="radio" id="planchado" name="categoriaId" value="3" 
+                    <input type="radio" id="planchado" name="idServicio" value="3" 
                            class="seleccion__circulo" <%= checkedPlanchado %>>
                     <label for="planchado" class="seleccion__texto">Planchado</label>
                 </div>
 
                 <div class="<%= claseArreglosMedidas %>">
-                    <input type="radio" id="arreglosMedidas" name="categoriaId" value="4" 
+                    <input type="radio" id="arreglosMedidas" name="idServicio" value="4" 
                            class="seleccion__circulo" <%= checkedArreglosMedidas %>>
                     <label for="arreglosMedidas" class="seleccion__texto">Arreglos de Medidas</label>
                 </div>

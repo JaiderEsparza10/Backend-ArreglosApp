@@ -501,13 +501,13 @@ public class UsuarioDAO {
      * @throws Exception Error SQL.
      */
     public List<Map<String, Object>> obtenerMisPedidos(int userId) throws Exception {
-        String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha_creacion, " +
-                "p.pedido_total, p.pedido_monto_abonado, p.pedido_pago_estado, " +
+        String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha, " +
+                "p.pedido_total, " +
                 "a.arreglo_nombre " +
                 "FROM pedidos p " +
-                "LEFT JOIN personalizaciones per ON per.personalizacion_id = p.pedido_id " +
-                "LEFT JOIN arreglos a ON a.arreglo_id = per.arreglo_id " +
-                "WHERE p.usuario_id = ? ORDER BY p.pedido_fecha_creacion DESC";
+                "LEFT JOIN detalle_pedido dp ON p.pedido_id = dp.pedido_id " +
+                "LEFT JOIN arreglos a ON a.arreglo_id = dp.arreglo_id " +
+                "WHERE p.usuario_id = ? ORDER BY p.pedido_fecha DESC";
         List<Map<String, Object>> lista = new ArrayList<>();
         try (Connection con = ConectionDB.getConexion();
                 PreparedStatement ps = con.prepareStatement(sql)) {
@@ -517,10 +517,8 @@ public class UsuarioDAO {
                     Map<String, Object> p = new HashMap<>();
                     p.put("pedidoId", rs.getInt("pedido_id"));
                     p.put("estado", rs.getString("pedido_estado"));
-                    p.put("fecha", rs.getTimestamp("pedido_fecha_creacion"));
+                    p.put("fecha", rs.getTimestamp("pedido_fecha"));
                     p.put("total", rs.getDouble("pedido_total"));
-                    p.put("abonado", rs.getDouble("pedido_monto_abonado"));
-                    p.put("pagoEstado", rs.getString("pedido_pago_estado"));
                     p.put("servicio", rs.getString("arreglo_nombre"));
                     lista.add(p);
                 }
@@ -675,8 +673,8 @@ public class UsuarioDAO {
         
         try (Connection con = ConectionDB.getConexion()) {
             // Contar cada tipo de dependencia
-            String[] tablas = {"FAVORITOS", "PEDIDOS", "PERSONALIZACIONES", "TELEFONOS", "NOTIFICACIONES"};
-            String[] columnas = {"user_id", "usuario_id", "user_id", "user_id", "user_id"};
+            String[] tablas = {"FAVORITOS", "PEDIDOS", "PERSONALIZACIONES", "TELEFONOS"/*, "NOTIFICACIONES"*/};
+            String[] columnas = {"user_id", "usuario_id", "user_id", "user_id"/*, "user_id"*/};
             
             for (int i = 0; i < tablas.length; i++) {
                 String sql = "SELECT COUNT(*) FROM " + tablas[i] + " WHERE " + columnas[i] + " = ?";
@@ -746,13 +744,15 @@ public class UsuarioDAO {
                 System.out.println("DEBUG: Teléfonos eliminados: " + telefonosEliminados);
             }
             
-            // Notificaciones
+            // Notificaciones - Temporalmente desactivado hasta crear la tabla
+            /*
             System.out.println("DEBUG: Eliminando notificaciones del usuario " + userId);
             try (PreparedStatement ps = con.prepareStatement("DELETE FROM NOTIFICACIONES WHERE user_id = ?")) {
                 ps.setInt(1, userId);
                 int notificacionesEliminadas = ps.executeUpdate();
                 System.out.println("DEBUG: Notificaciones eliminadas: " + notificacionesEliminadas);
             }
+            */
             
             // 2. Eliminar dependencias con foreign keys (orden crucial)
             

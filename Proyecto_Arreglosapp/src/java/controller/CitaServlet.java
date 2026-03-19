@@ -136,6 +136,13 @@ public class CitaServlet extends HttpServlet {
                     return;
                 }
 
+                // Validar que se tenga una personalización válida
+                if (personalizacionId == -1) {
+                    session.setAttribute("errorCita", "Debes tener una personalización válida para agendar una cita");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
+                    return;
+                }
+
                 // Paso 1: Crear el registro de pedido (Cabecera y Detalle)
                 int pedidoId = citaDAO.crearPedido(usuario.getId(), personalizacionId);
                 if (pedidoId == -1) {
@@ -163,6 +170,52 @@ public class CitaServlet extends HttpServlet {
                 response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
             }
 
+        } else if ("cambiarEstado".equals(accion)) {
+            try {
+                // Capturar ID de la cita y nuevo estado
+                String idCitaStr = request.getParameter("idCita");
+                String nuevoEstado = request.getParameter("nuevoEstado");
+                
+                if (idCitaStr != null && !idCitaStr.isEmpty() && nuevoEstado != null && !nuevoEstado.isEmpty()) {
+                    int idCita = Integer.parseInt(idCitaStr);
+                    
+                    // Validar que el estado sea válido
+                    if (nuevoEstado == null || nuevoEstado.trim().isEmpty()) {
+                        session.setAttribute("errorCita", "El estado es obligatorio");
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-pedidos.jsp");
+                        return;
+                    }
+                    
+                    // Validar estados permitidos
+                    if (!nuevoEstado.equals("pendiente") && !nuevoEstado.equals("confirmada") && 
+                        !nuevoEstado.equals("en_progreso") && !nuevoEstado.equals("completada") && 
+                        !nuevoEstado.equals("cancelada")) {
+                        session.setAttribute("errorCita", "Estado no válido");
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-pedidos.jsp");
+                        return;
+                    }
+                    
+                    // Actualizar el estado de la cita
+                    boolean actualizado = citaDAO.actualizarEstadoCita(idCita, nuevoEstado);
+                    
+                    if (actualizado) {
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-pedidos.jsp?estadoActualizado=1");
+                    } else {
+                        session.setAttribute("errorCita", "No se pudo actualizar el estado de la cita");
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-pedidos.jsp");
+                    }
+                } else {
+                    session.setAttribute("errorCita", "Parámetros inválidos");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-pedidos.jsp");
+                }
+                
+            } catch (NumberFormatException e) {
+                session.setAttribute("errorCita", "ID de cita inválido");
+                response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-pedidos.jsp");
+            } catch (Exception e) {
+                session.setAttribute("errorCita", "Error: " + e.getMessage());
+                response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-pedidos.jsp");
+            }
         } else {
             session.setAttribute("errorCita", "Acción no válida");
             response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");

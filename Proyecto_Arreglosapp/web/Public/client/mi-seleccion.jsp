@@ -59,10 +59,10 @@
                       }
                     } %>
                   <section class="contenido-seleccion__contenedor"> <img class="contenedor__imagen" src="<%= imgSrc %>" alt="Imagen del arreglo"> <div class="contenido-seleccion__contenedor-informacion"> <div class="contenedor-informacion__informacion"> <h2 class="informacion__titulo-arreglo">
-                          <%= fav.getNombreCategoria() %>
+                          <%= fav.getNombreServicio() %>
                         </h2>
                         <p class="informacion__descripcion">
-                          <%= fav.getCategoria() %>
+                          <%= fav.getServicio() %>
                         </p>
                       </div>
                       <div class="contenedor-informacion__pago-enlace"> <span class="pago-enlace__precio">$<%= String.format("%,.0f", fav.getPrecio()) %></span> <a class="pago-enlace__enlace" href="personalizar-arreglo.jsp?arregloId=<%= fav.getArregloId() %>">Personalizar</a> <a class="pago-enlace__enlace pago-enlace__enlace--eliminar" href="#"

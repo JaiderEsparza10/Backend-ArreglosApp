@@ -6,7 +6,7 @@
                     (servicio==null) {
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/pagina-principal.jsp"); return; } String
                     ctx=request.getContextPath(); String imgUrl=servicio.getImagenUrl(); String imgSrc=ctx
-                    + "/Assets/image/logo-app.png" ; if (imgUrl !=null && !imgUrl.trim().isEmpty()) { if (imgUrl.startsWith("../../")) { imgSrc=ctx + "/" + imgUrl.replace("../../", "" ); } else if (imgUrl.startsWith("Assets/")) { imgSrc=ctx + "/" + imgUrl; } else if (imgUrl.startsWith("http")) { imgSrc=imgUrl; } else { imgSrc=ctx + "/" + imgUrl; } } String nombre=servicio.getNombre() !=null ? servicio.getNombre() : "" ; String descripcion=servicio.getDescripcion() !=null ? servicio.getDescripcion() : "Sin descripcion" ; String tiempo=servicio.getTiempoEstimado() !=null ? servicio.getTiempoEstimado() : "No definido" ; String precio=String.format("%,.0f",
+                    + "/Assets/image/logo-app.png" ; if (imgUrl !=null && !imgUrl.trim().isEmpty()) { if (imgUrl.startsWith("../../")) { imgSrc=ctx + "/" + imgUrl.replace("../../", "" ); } else if (imgUrl.startsWith("Assets/")) { imgSrc=ctx + "/" + imgUrl; } else if (imgUrl.startsWith("http")) { imgSrc=imgUrl; } else { imgSrc=ctx + "/" + imgUrl; } } String nombre=servicio.getNombre() !=null ? servicio.getNombre() : "" ; String descripcion=servicio.getDescripcion() !=null ? servicio.getDescripcion() : "Sin descripcion" ; String tiempo=servicio.getTiempoEstimado() > 0 ? servicio.getTiempoEstimado() + " min" : "No definido" ; String precio=String.format("%,.0f",
                     servicio.getPrecioBase()); int servicioId=servicio.getArregloId(); double
                     precioDouble=servicio.getPrecioBase(); String imgUrlEncoded=imgUrl !=null ? imgUrl : "" ; %>
                     <!DOCTYPE html>
@@ -71,10 +71,10 @@
                         </footer>
 
                         <script>
-                            var servicioId = <%= servicioId %>;
-                            var nombre = "<%= nombre.replace("\"", "\\\"") %> ";
-                            var precioVal = <%= precioDouble %>;
-                            var imagenUrl = "<%= imgUrlEncoded.replace("\"", "\\\"") %> ";
+                            var servicioId = <%= servicioId > 0 ? servicioId : 0 %>;
+                            var nombre = '<%= nombre != null ? nombre : "" %>';
+                            var precioVal = <%= precioDouble > 0 ? precioDouble : 0 %>;
+                            var imagenUrl = '<%= imgUrlEncoded != null ? imgUrlEncoded : "" %>';
 
                             function agregarASeleccion() {
                                 var btn = document.getElementById('btnAgregar');
@@ -83,9 +83,9 @@
 
                                 var params = new URLSearchParams();
                                 params.append('accion', 'agregar');
-                                params.append('arregloId', servicioId);
-                                params.append('categoria', nombre);
-                                params.append('nombreCategoria', nombre);
+                                params.append('servicioId', servicioId);
+                                params.append('servicio', nombre);
+                                params.append('nombreServicio', nombre);
                                 params.append('precio', precioVal);
                                 params.append('imagenUrl', imagenUrl);
 

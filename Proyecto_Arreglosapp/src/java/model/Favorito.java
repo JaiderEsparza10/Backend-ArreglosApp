@@ -12,8 +12,8 @@ public class Favorito {
     private int favoritoId;
     private int userId;
     private int arregloId;
-    private String categoria;
-    private String nombreCategoria;
+    private String servicio;
+    private String nombreServicio;
     private double precio;
     private String imagenUrl;
     private int cantidad;
@@ -25,12 +25,12 @@ public class Favorito {
     /**
      * Constructor para mapeo rápido de selecciones.
      */
-    public Favorito(int userId, int arregloId, String categoria, String nombreCategoria, double precio,
+    public Favorito(int userId, int arregloId, String servicio, String nombreServicio, double precio,
             String imagenUrl) {
         this.userId = userId;
         this.arregloId = arregloId;
-        this.categoria = categoria;
-        this.nombreCategoria = nombreCategoria;
+        this.servicio = servicio;
+        this.nombreServicio = nombreServicio;
         this.precio = precio;
         this.imagenUrl = imagenUrl;
     }
@@ -45,11 +45,15 @@ public class Favorito {
     public int getArregloId() { return arregloId; }
     public void setArregloId(int arregloId) { this.arregloId = arregloId; }
 
-    public String getCategoria() { return categoria; }
-    public void setCategoria(String categoria) { this.categoria = categoria; }
+    // Método de compatibilidad para la nueva arquitectura
+    public int getServicioId() { return arregloId; }
+    public void setServicioId(int servicioId) { this.arregloId = servicioId; }
 
-    public String getNombreCategoria() { return nombreCategoria; }
-    public void setNombreCategoria(String nombreCategoria) { this.nombreCategoria = nombreCategoria; }
+    public String getServicio() { return servicio; }
+    public void setServicio(String servicio) { this.servicio = servicio; }
+
+    public String getNombreServicio() { return nombreServicio; }
+    public void setNombreServicio(String nombreServicio) { this.nombreServicio = nombreServicio; }
 
     public double getPrecio() { return precio; }
     public void setPrecio(double precio) { this.precio = precio; }

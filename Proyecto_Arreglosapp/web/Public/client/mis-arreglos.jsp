@@ -58,7 +58,7 @@
                         String imgUrl = arreglo.getImagenReferencia();
                         String imgSrc = "";
                         if (imgUrl == null || imgUrl.trim().isEmpty()) {
-                          String cat = arreglo.getCategoria() != null ? arreglo.getCategoria().toLowerCase() : ""; 
+                          String cat = arreglo.getServicio() != null ? arreglo.getServicio().toLowerCase() : ""; 
                           if (cat.contains("dobladillo") || cat.contains("sastr")) { 
                             imgSrc = ctx + "/Assets/image/imagen-sastreria.jpg"; 
                           } else if (cat.contains("estrech") || cat.contains("ensanch")) { 
@@ -91,7 +91,7 @@
                         String desc = arreglo.getDescripcion() != null ? arreglo.getDescripcion() : ""; String descCorta = desc.length() > 60 ? desc.substring(0, 60) + "..." : desc; String urlEditar = "personalizar-arreglo.jsp?id=" + arreglo.getPersonalizacionId(); String urlCita = "agendar-cita.jsp?personalizacionId=" + arreglo.getPersonalizacionId();
                         %>
                         <section class="contenido-seleccion__contenedor arreglo-card"> <img class="contenedor__imagen" src="<%= imgSrc %>" alt="Imagen del arreglo"> <div class="contenido-seleccion__contenedor-informacion"> <div class="contenedor-informacion__informacion"> <div class="informacion__fila-titulo"> <h2 class="informacion__titulo-arreglo">
-                                  <%= arreglo.getCategoria() %>
+                                  <%= arreglo.getServicio() %>
                                 </h2>
                                 <span class="informacion__badge <%= badgeClase %>">
                                   <%= estadoTexto %>

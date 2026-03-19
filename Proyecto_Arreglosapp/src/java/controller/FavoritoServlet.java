@@ -56,20 +56,28 @@ public class FavoritoServlet extends HttpServlet {
         if ("agregar".equals(accion)) {
             try {
                 // Extracción y parseo de metadatos del servicio seleccionado
-                int arregloId = Integer.parseInt(request.getParameter("arregloId"));
-                String categoria = request.getParameter("categoria");
-                String nombreCategoria = request.getParameter("nombreCategoria");
-                double precio = Double.parseDouble(request.getParameter("precio"));
+                String servicioIdStr = request.getParameter("servicioId");
+                String servicio = request.getParameter("servicio");
+                String nombreServicio = request.getParameter("nombreServicio");
+                String precioStr = request.getParameter("precio");
+                int servicioId = 0;
+                double precio = 0;
+                if (servicioIdStr != null && !servicioIdStr.isEmpty()) {
+                    servicioId = Integer.parseInt(servicioIdStr);
+                }
+                if (precioStr != null && !precioStr.isEmpty()) {
+                    precio = Double.parseDouble(precioStr);
+                }
                 String imagenUrl = request.getParameter("imagenUrl");
 
                 // Regla de Negocio: Evitar duplicidad de un mismo servicio en la selección del cliente
-                if (favoritoDAO.existeFavoritoPorArreglo(usuario.getId(), arregloId)) {
+                if (favoritoDAO.existeFavoritoPorServicio(usuario.getId(), servicioId)) {
                     out.print(gson.toJson(new ResponseData(false, "Este servicio ya está en tu selección")));
                     return;
                 }
 
                 // Mapeo a objeto de transferencia para persistencia
-                Favorito favorito = new Favorito(usuario.getId(), arregloId, categoria, nombreCategoria, precio,
+                Favorito favorito = new Favorito(usuario.getId(), servicioId, servicio, nombreServicio, precio,
                         imagenUrl);
                 boolean agregado = favoritoDAO.agregarFavorito(favorito);
 
@@ -88,13 +96,18 @@ public class FavoritoServlet extends HttpServlet {
         } else if ("eliminar".equals(accion)) {
             try {
                 // Borrado físico del registro de favorito/selección
-                int favoritoId = Integer.parseInt(request.getParameter("favoritoId"));
-                boolean eliminado = favoritoDAO.eliminarFavorito(favoritoId, usuario.getId());
+                String favoritoIdStr = request.getParameter("favoritoId");
+                if (favoritoIdStr != null && !favoritoIdStr.isEmpty()) {
+                    int favoritoId = Integer.parseInt(favoritoIdStr);
+                    boolean eliminado = favoritoDAO.eliminarFavorito(favoritoId, usuario.getId());
 
-                if (eliminado) {
-                    out.print(gson.toJson(new ResponseData(true, "Eliminado de tu selección correctamente")));
+                    if (eliminado) {
+                        out.print(gson.toJson(new ResponseData(true, "Eliminado de tu selección correctamente")));
+                    } else {
+                        out.print(gson.toJson(new ResponseData(false, "No se pudo eliminar")));
+                    }
                 } else {
-                    out.print(gson.toJson(new ResponseData(false, "No se pudo eliminar")));
+                    out.print(gson.toJson(new ResponseData(false, "ID inválido")));
                 }
 
             } catch (NumberFormatException e) {

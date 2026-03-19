@@ -4,7 +4,7 @@
                     sid=Integer.parseInt(idParam); ServicioDAO dao=new ServicioDAO(); editando=dao.obtenerPorId(sid); }
                     catch (Exception e) { e.printStackTrace(); } } boolean esEdicion=editando !=null; String
                     accionForm=esEdicion ? "editar" : "crear" ; String tituloBtn=esEdicion ? "Guardar Cambios"
-                    : "Crear Servicio" ; String tituloPag=esEdicion ? "Editar Servicio" : "Nuevo Servicio" ; String valNombre=esEdicion ? editando.getNombre() : "" ; String valDesc=esEdicion ? (editando.getDescripcion() !=null ? editando.getDescripcion() : "" ) : "" ; String valPrecio=esEdicion ? String.valueOf(editando.getPrecioBase()) : "" ; String valTiempo=esEdicion ? (editando.getTiempoEstimado() !=null ? editando.getTiempoEstimado() : "" ) : "" ; int
+                    : "Crear Servicio" ; String tituloPag=esEdicion ? "Editar Servicio" : "Nuevo Servicio" ; String valNombre=esEdicion ? editando.getNombre() : "" ; String valDesc=esEdicion ? (editando.getDescripcion() !=null ? editando.getDescripcion() : "" ) : "" ; String valPrecio=esEdicion ? String.valueOf(editando.getPrecioBase()) : "" ; String valTiempo=esEdicion ? String.valueOf(editando.getTiempoEstimado()) : "" ; int
                     valId=esEdicion ? editando.getArregloId() : 0; String ctx=request.getContextPath(); %>
                     <!DOCTYPE html>
                     <html lang="es">
@@ -37,7 +37,7 @@
                                     <form class="form-servicio" action="/Proyecto_Arreglosapp/ServicioServlet"
                                         method="post" enctype="multipart/form-data" novalidate> <input type="hidden" name="accion" value="<%= accionForm %>">
                                         <% if (esEdicion) { %>
-                                            <input type="hidden" name="arregloId" value="<%= valId %>">
+                                            <input type="hidden" name="servicioId" value="<%= valId %>">
                                             <% } %>
 
                                                 <div class="form-servicio__campo"> <label class="form-servicio__label" for="nombreServicio"> Nombre del Servicio <span aria-hidden="true">*</span>

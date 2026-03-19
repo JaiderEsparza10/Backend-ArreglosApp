@@ -226,10 +226,9 @@ try {
                     <span class="usuario-card__email"><%= tel %></span>
                 </div>
                 <div class="usuario-card__acciones">
-                    <button class="usuario-card__btn-ver"
-                            onclick="verPerfil(<%= userId %>, '<%= nombre.replaceAll("'", "&#39;") %>', '<%= email.replaceAll("'", "&#39;") %>', '<%= tel.replaceAll("'", "&#39;") %>')">
+                    <a href="detalle-usuario.jsp?userId=<%= userId %>" class="usuario-card__btn-ver" style="text-decoration:none; display:inline-block; text-align:center;">
                         Ver Perfil
-                    </button>
+                    </a>
                 </div>
             </article>
             <% } %>

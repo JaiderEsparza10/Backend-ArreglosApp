@@ -90,6 +90,40 @@
                                                             <span class="pedido-card__fecha">Creado: <%= fechaStr %>
                                                             </span>
                                                         </div>
+                                                        <!-- Información del servicio -->
+                                                        <div style="display:flex;align-items:center;padding:10px;border-bottom:1px solid #eee;">
+                                                            <div style="width:60px;height:60px;border-radius:8px;overflow:hidden;margin-right:15px;background:#f5f5f5;">
+                                                                <%
+                                                                String imagenUrl = (String) pedido.get("arregloImagenUrl");
+                                                                String imgSrc = request.getContextPath() + "/Assets/img/imagen-sastreria.jpg";
+                                                                if (imagenUrl != null && !imagenUrl.trim().isEmpty()) {
+                                                                    if (imagenUrl.startsWith("../../")) {
+                                                                        imgSrc = request.getContextPath() + "/" + imagenUrl.replace("../../", "");
+                                                                    } else if (imagenUrl.startsWith("Assets/")) {
+                                                                        imgSrc = request.getContextPath() + "/" + imagenUrl;
+                                                                    } else if (imagenUrl.startsWith("http")) {
+                                                                        imgSrc = imagenUrl;
+                                                                    } else {
+                                                                        imgSrc = request.getContextPath() + "/" + imagenUrl;
+                                                                    }
+                                                                }
+                                                                %>
+                                                                <img src="<%= imgSrc %>" alt="Servicio" style="width:100%;height:100%;object-fit:cover;">
+                                                            </div>
+                                                            <div style="flex:1;">
+                                                                <h4 style="margin:0 0 5px 0;color:#333;font-size:16px;">
+                                                                    <%= pedido.get("servicioNombre") != null ? pedido.get("servicioNombre") : "Servicio" %>
+                                                                </h4>
+                                                                <p style="margin:0;color:#666;font-size:13px;">
+                                                                    <%= pedido.get("personalizacionDescripcion") != null ? pedido.get("personalizacionDescripcion") : "Sin descripción" %>
+                                                                </p>
+                                                                <% if (pedido.get("materialTela") != null) { %>
+                                                                    <p style="margin:0;color:#888;font-size:12px;">
+                                                                        Material: <%= pedido.get("materialTela") %>
+                                                                    </p>
+                                                                <% } %>
+                                                            </div>
+                                                        </div>
                                                         <div
                                                             style="background:#f9f9f9;padding:10px;border-radius:8px;margin:10px 0;border:1px solid #eee;">
                                                             <div
@@ -119,9 +153,9 @@
                                                                 <p class="pedido-card__sin-cita">Sin cita agendada</p>
                                                                 <% } %>
                                                                     <% if (puedeCancelar) { %>
-                                                                        <div class="pedido-card__acciones"> <button class="pedido-card__btn-cancelar"
-                                                                                onclick="prepararCancelacion(<%= pedidoId %>)">Cancelar
-                                                                                pedido</button>
+                                                                        <div class="pedido-card__acciones"> 
+                                                                            <button type="button" class="pedido-card__btn-cancelar"
+                                                                                    onclick="prepararCancelacion(<%= pedidoId %>)">Cancelar pedido</button>
                                                                         </div>
                                                                         <% } %>
                                                     </div>

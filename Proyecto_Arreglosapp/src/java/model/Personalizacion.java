@@ -12,9 +12,9 @@ public class Personalizacion {
     private Integer arregloId;
     
     // ✅ PASO 1: Declarar la variable que faltaba
-    private Integer categoriaId; 
+    private Integer servicioId; // Actualizado de categoriaId a servicioId 
     
-    private String categoria; // Para el nombre descriptivo (ej: "Sastrería") del JOIN
+    private String servicio; // Para el nombre descriptivo (ej: "Sastrería") del JOIN
     private String descripcion;
     private String materialTela;
     private String imagenReferencia;
@@ -26,13 +26,13 @@ public class Personalizacion {
     }
 
     /**
-     * Constructor actualizado para incluir el categoriaId.
+     * Constructor actualizado para incluir el servicioId.
      */
-    public Personalizacion(int userId, Integer arregloId, Integer categoriaId, String descripcion, String materialTela,
+    public Personalizacion(int userId, Integer arregloId, Integer servicioId, String descripcion, String materialTela,
             String imagenReferencia) {
         this.userId = userId;
         this.arregloId = arregloId;
-        this.categoriaId = categoriaId; // ✅ Asignar el ID
+        this.servicioId = servicioId; // ✅ Asignar el ID
         this.descripcion = descripcion;
         this.materialTela = materialTela;
         this.imagenReferencia = imagenReferencia;
@@ -50,11 +50,11 @@ public class Personalizacion {
     public void setArregloId(Integer arregloId) { this.arregloId = arregloId; }
 
     // ✅ PASO 2: Estos métodos ahora funcionarán porque la variable existe
-    public Integer getCategoriaId() { return categoriaId; }
-    public void setCategoriaId(Integer categoriaId) { this.categoriaId = categoriaId; }
+    public Integer getServicioId() { return servicioId; }
+    public void setServicioId(Integer servicioId) { this.servicioId = servicioId; }
 
-    public String getCategoria() { return categoria; }
-    public void setCategoria(String categoria) { this.categoria = categoria; }
+    public String getServicio() { return servicio; }
+    public void setServicio(String servicio) { this.servicio = servicio; }
 
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }

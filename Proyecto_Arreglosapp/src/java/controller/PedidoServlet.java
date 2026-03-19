@@ -60,16 +60,18 @@ public class PedidoServlet extends HttpServlet {
         if ("cancelar".equals(accion)) {
             try {
                 // Obtención del ID de pedido para procesar el borrado lógico/físico
-                int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
-                
-                // Ejecución de la lógica de negocio controlada: No se cancelan pedidos en fases avanzadas
-                boolean cancelado = pedidoDAO.cancelarPedido(pedidoId, usuario.getId());
+                String pedidoIdStr = request.getParameter("pedidoId");
+                if (pedidoIdStr != null && !pedidoIdStr.isEmpty()) {
+                    int pedidoId = Integer.parseInt(pedidoIdStr);
+                    // Ejecución de la lógica de negocio controlada: No se cancelan pedidos en fases avanzadas
+                    boolean cancelado = pedidoDAO.cancelarPedido(pedidoId, usuario.getId());
 
                 if (cancelado) {
                     out.print("{\"success\":true,\"message\":\"Pedido cancelado correctamente\"}");
                 } else {
                     out.print(
                             "{\"success\":false,\"message\":\"No se pudo cancelar. Solo se pueden cancelar pedidos pendientes o confirmados.\"}");
+                }
                 }
             } catch (NumberFormatException e) {
                 // Control de errores en el formato de entrada (seguridad de tipos)
@@ -82,4 +84,4 @@ public class PedidoServlet extends HttpServlet {
             out.print("{\"success\":false,\"message\":\"Accion no valida\"}");
         }
     }
-}
+}

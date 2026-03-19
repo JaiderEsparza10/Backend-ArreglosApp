@@ -1,31 +1,40 @@
 package controller;
 
 import dao.AdminDAO;
+import dao.UsuarioDAO;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import jakarta.servlet.http.HttpSession;
 
 /**
- * Servlet Maestro de Operaciones Administrativas.
- * Coordina las acciones críticas de gestión: usuarios, pedidos, servicios y citas.
- * Implementa el patrón Front Controller básico mediante dispatching de acciones.
- * 
- * @author Antigravity - Senior Architect
+ * Controlador principal de operaciones administrativas del sistema.
+ *
+ * Gestiona las siguientes funcionalidades:
+ * - Dashboard administrativo con estadísticas en tiempo real
+ * - Gestión completa de pedidos (ver detalles, actualizar estados, pagos, entregas, abonos)
+ * - Gestión de citas (agendar, filtrar, cambiar estados, registrar asistencia)
+ * - Gestión de usuarios (listar, buscar, eliminar)
+ * - Gestión de servicios (listar, crear, actualizar, eliminar)
+ *
+ * @author JAIDER - ESPAR
  */
 @WebServlet("/AdminServlet")
 public class AdminServlet extends HttpServlet {
 
     private AdminDAO adminDAO;
+    private UsuarioDAO usuarioDAO;
 
     @Override
     public void init() throws ServletException {
         // Inicialización de la capa de persistencia administrativa
         adminDAO = new AdminDAO();
+        usuarioDAO = new UsuarioDAO();
     }
 
     /**
@@ -57,85 +66,76 @@ public class AdminServlet extends HttpServlet {
 
                 case "eliminarUsuario": {
                     // Borrado físico de usuario (Admin)
-                    int userId = Integer.parseInt(request.getParameter("userId"));
-                    adminDAO.eliminarUsuario(userId);
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-usuarios.jsp?eliminado=1");
+                    String userIdStr = request.getParameter("userId");
+                    if (userIdStr != null && !userIdStr.isEmpty()) {
+                        int userId = Integer.parseInt(userIdStr);
+                        adminDAO.eliminarUsuario(userId);
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-usuarios.jsp?eliminado=1");
+                    }
                     break;
                 }
 
                 case "eliminarServicio": {
                     // Borrado lógico de servicio del catálogo
-                    int servicioId = Integer.parseInt(request.getParameter("servicioId"));
-                    adminDAO.eliminarServicio(servicioId);
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-servicios.jsp?eliminado=1");
+                    String servicioIdStr = request.getParameter("servicioId");
+                    if (servicioIdStr != null && !servicioIdStr.isEmpty()) {
+                        int servicioId = Integer.parseInt(servicioIdStr);
+                        adminDAO.eliminarServicio(servicioId);
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-servicios.jsp?eliminado=1");
+                    }
                     break;
                 }
 
                 case "actualizarEstado": {
                     // Cambio de fase en el ciclo de vida del pedido (pendiente -> en proceso -> terminado)
-                    int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
+                    String pedidoIdStr = request.getParameter("pedidoId");
                     String nuevoEstado = request.getParameter("nuevoEstado");
-                    adminDAO.actualizarEstadoPedido(pedidoId, nuevoEstado);
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/detalle-pedido-admin.jsp?pedidoId="
-                            + pedidoId + "&actualizado=1");
+                    if (pedidoIdStr != null && !pedidoIdStr.isEmpty() && nuevoEstado != null && !nuevoEstado.isEmpty()) {
+                        int pedidoId = Integer.parseInt(pedidoIdStr);
+                        int usuarioId = adminDAO.actualizarEstadoPedido(pedidoId, nuevoEstado);
+                        
+                        if (usuarioId != -1) {
+                            usuarioDAO.insertarNotificacion(usuarioId, "El estado de tu pedido #" + pedidoId + " ha cambiado a: " + nuevoEstado);
+                        }
+                        
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/detalle-pedido-admin.jsp?pedidoId=" + pedidoId + "&actualizado=1");
+                    }
                     break;
                 }
 
-                case "cambiarEstadoPago": {
-                    // Registro manual de pago total
-                    int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
-                    adminDAO.actualizarPagoPedido(pedidoId, "pagado");
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/detalle-pedido-admin.jsp?pedidoId="
-                            + pedidoId + "&actualizado=1");
-                    break;
-                }
-
-                case "cambiarEstadoEntrega": {
-                    // Registro manual de entrega física de la prenda
-                    int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
-                    adminDAO.actualizarEntregaPedido(pedidoId, "entregado");
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/detalle-pedido-admin.jsp?pedidoId="
-                            + pedidoId + "&actualizado=1");
-                    break;
-                }
-
-                case "confirmarPagoEntrega": {
-                    // Operación atómica de finalización de transacción
-                    int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
-                    adminDAO.actualizarPagoPedido(pedidoId, "pagado");
-                    adminDAO.actualizarEntregaPedido(pedidoId, "entregado");
-                    adminDAO.actualizarEstadoPedido(pedidoId, "terminado");
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/detalle-pedido-admin.jsp?pedidoId="
-                            + pedidoId + "&actualizado=1");
-                    break;
-                }
-
-                case "registrarAbono": {
-                    // RF-05: Gestión de Abonos. Permite pagos parciales.
-                    int pedidoId = Integer.parseInt(request.getParameter("pedidoId"));
-                    double monto = Double.parseDouble(request.getParameter("montoAbono"));
-                    adminDAO.registrarAbono(pedidoId, monto);
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/detalle-pedido-admin.jsp?pedidoId="
-                            + pedidoId + "&actualizado=1");
-                    break;
-                }
                 case "cambiarEstadoCita": {
                     // Gestión del flujo de citas (pendiente -> confirmada -> realizada)
-                    int citaId = Integer.parseInt(request.getParameter("citaId"));
+                    String citaIdStr = request.getParameter("citaId");
                     String nuevoEstado = request.getParameter("nuevoEstado");
-                    adminDAO.cambiarEstadoCita(citaId, nuevoEstado);
-                    response.sendRedirect(
-                            "/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp?vista=citas&actualizado=1");
+                    if (citaIdStr != null && !citaIdStr.isEmpty() && nuevoEstado != null && !nuevoEstado.isEmpty()) {
+                        int citaId = Integer.parseInt(citaIdStr);
+                        int usuarioId = adminDAO.cambiarEstadoCita(citaId, nuevoEstado);
+                        
+                        if (usuarioId != -1) {
+                            usuarioDAO.insertarNotificacion(usuarioId, "El estado de tu cita #" + citaId + " ha cambiado a: " + nuevoEstado);
+                            
+                            // Notificación adicional sobre el pedido si la cita se completa
+                            if ("completada".equalsIgnoreCase(nuevoEstado)) {
+                                usuarioDAO.insertarNotificacion(usuarioId, "Tu cita ha sido completada. El pedido asociado está ahora en estado: EN TALLER.");
+                            } else if ("confirmada".equalsIgnoreCase(nuevoEstado)) {
+                                usuarioDAO.insertarNotificacion(usuarioId, "Tu cita ha sido confirmada. El pedido asociado está ahora en estado: CONFIRMADO.");
+                            }
+                        }
+                        
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp?vista=citas&actualizado=1");
+                    }
                     break;
                 }
 
                 case "registrarAsistencia": {
                     // Registro técnico de si el cliente asistió o no a la cita agendada
-                    int citaId = Integer.parseInt(request.getParameter("citaId"));
+                    String citaIdStr = request.getParameter("citaId");
                     String asistencia = request.getParameter("asistencia");
-                    adminDAO.actualizarAsistenciaCita(citaId, asistencia);
-                    response.sendRedirect(
-                            "/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp?vista=citas&actualizado=1");
+                    if (citaIdStr != null && !citaIdStr.isEmpty() && asistencia != null && !asistencia.isEmpty()) {
+                        int citaId = Integer.parseInt(citaIdStr);
+                        adminDAO.actualizarAsistenciaCita(citaId, asistencia);
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp?vista=citas&actualizado=1");
+                    }
                     break;
                 }
 

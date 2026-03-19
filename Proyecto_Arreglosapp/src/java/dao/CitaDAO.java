@@ -82,69 +82,81 @@ public class CitaDAO {
             con = ConectionDB.getConexion();
             con.setAutoCommit(false); // Iniciar flujo transaccional
 
-            // 1. Obtener categoría desde personalizaciones y mapear a arreglo_id
-            int arregloId = -1;
+            // 1. Obtener datos de la personalización
+            int servicioId = -1;
             double precio = 0;
+            String descripcion = "";
+            String material = "";
 
-            String sqlPer = "SELECT p.categoria_id, a.arreglo_id, a.arreglo_precio_base " +
-                    "FROM personalizaciones p " +
-                    "JOIN arreglos a ON a.categoria_id = p.categoria_id " +
-                    "WHERE p.personalizacion_id = ? LIMIT 1";
-
+            String sqlPer = "SELECT servicio_id, descripcion, material_tela FROM personalizaciones WHERE personalizacion_id = ?";
             try (PreparedStatement ps = con.prepareStatement(sqlPer)) {
                 ps.setInt(1, personalizacionId);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        arregloId = rs.getInt("arreglo_id");
-                        precio = rs.getDouble("arreglo_precio_base");
+                        servicioId = rs.getInt("servicio_id");
+                        descripcion = rs.getString("descripcion");
+                        material = rs.getString("material_tela");
+                    } else {
+                        con.rollback();
+                        throw new Exception("Personalización no encontrada: " + personalizacionId);
                     }
                 }
             }
 
-            // Si no encuentra por JOIN, buscar por mapeo directo (Lógica de contingencia)
-            if (arregloId == -1 && personalizacionId != -1) {
-                String sqlCat = "SELECT categoria_id FROM personalizaciones WHERE personalizacion_id = ?";
-                int categoriaId = 0;
-                try (PreparedStatement ps = con.prepareStatement(sqlCat)) {
-                    ps.setInt(1, personalizacionId);
-                    try (ResultSet rs = ps.executeQuery()) {
-                        if (rs.next())
-                            categoriaId = rs.getInt("categoria_id");
+            // 2. Obtener precio base del servicio
+            String sqlServ = "SELECT servicio_precio_base FROM servicios WHERE servicio_id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlServ)) {
+                ps.setInt(1, servicioId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        precio = rs.getDouble("servicio_precio_base");
+                    } else {
+                        con.rollback();
+                        throw new Exception("Servicio no encontrado: " + servicioId);
                     }
                 }
+            }
 
-                // Mapeo directo por categoria_id
-                String sqlArreglo = "";
-                switch (categoriaId) {
-                    case 1: // Sastreria
-                        sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE categoria_id = 1";
-                        break;
-                    case 2: // Costuras
-                        sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE categoria_id = 2";
-                        break;
-                    case 3: // Planchado
-                        sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE categoria_id = 3";
-                        break;
-                    case 4: // Arreglos de Medidas
-                        sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE categoria_id = 4";
-                        break;
-                    default:
-                        sqlArreglo = "SELECT arreglo_id, arreglo_precio_base FROM arreglos WHERE categoria_id = 1";
-                        break;
+            // 3. Verificar si ya existe un ARREGLO para esta personalización
+            int arregloId = -1;
+            String sqlCheckArreglo = "SELECT arreglo_id FROM arreglos WHERE personalizacion_id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlCheckArreglo)) {
+                ps.setInt(1, personalizacionId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        // Ya existe un arreglo, usar el ID existente
+                        arregloId = rs.getInt("arreglo_id");
+                    }
                 }
+            }
 
-                if (!sqlArreglo.isEmpty()) {
-                    try (PreparedStatement ps = con.prepareStatement(sqlArreglo);
-                            ResultSet rs = ps.executeQuery()) {
-                        if (rs.next()) {
-                            arregloId = rs.getInt("arreglo_id");
-                            precio = rs.getDouble("arreglo_precio_base");
+            // 4. Si no existe, crear nuevo ARREGLO
+            if (arregloId == -1) {
+                String sqlArreglo = "INSERT INTO arreglos (personalizacion_id, arreglo_nombre, arreglo_descripcion, arreglo_precio_base) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement ps = con.prepareStatement(sqlArreglo, Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setInt(1, personalizacionId);
+                    String nombreArreglo = "Arreglo Personalizado - " + servicioId;
+                    ps.setString(2, nombreArreglo);
+                    ps.setString(3, descripcion);
+                    ps.setDouble(4, precio);
+                    
+                    int filas = ps.executeUpdate();
+                    if (filas > 0) {
+                        try (ResultSet rs = ps.getGeneratedKeys()) {
+                            if (rs.next()) {
+                                arregloId = rs.getInt(1);
+                            }
                         }
                     }
+                    
+                    if (arregloId == -1) {
+                        con.rollback();
+                        throw new Exception("No se pudo generar el ID del arreglo");
+                    }
                 }
             }
 
-            // 2. Insertar cabecera del pedido
+            // 4. Insertar cabecera del pedido
             int pedidoId = -1;
             String sqlPedido = "INSERT INTO pedidos (usuario_id, pedido_estado, pedido_total) VALUES (?, 'pendiente', ?)";
             try (PreparedStatement ps = con.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS)) {
@@ -162,39 +174,18 @@ public class CitaDAO {
                 return -1;
             }
 
-            // 3. Insertar detalle del pedido si se identificó un arreglo
-            if (arregloId != -1) {
-                String sqlDetalle = "INSERT INTO detalle_pedido (pedido_id, arreglo_id, detalle_cantidad, " +
-                        "detalle_precio_unitario, detalle_subtotal) VALUES (?, ?, 1, ?, ?)";
-                try (PreparedStatement ps = con.prepareStatement(sqlDetalle)) {
-                    ps.setInt(1, pedidoId);
-                    ps.setInt(2, arregloId);
-                    ps.setDouble(3, precio);
-                    ps.setDouble(4, precio);
-                    ps.executeUpdate();
-                }
+            // 5. Insertar DETALLE_PEDIDO para vincular pedido con arreglo
+            String sqlDetalle = "INSERT INTO detalle_pedido (pedido_id, arreglo_id, detalle_cantidad, detalle_precio_unitario, detalle_subtotal) VALUES (?, ?, 1, ?, ?)";
+            try (PreparedStatement ps = con.prepareStatement(sqlDetalle)) {
+                ps.setInt(1, pedidoId);
+                ps.setInt(2, arregloId);
+                ps.setDouble(3, precio);
+                ps.setDouble(4, precio);
+                ps.executeUpdate();
             }
 
-            // 4. Vincular la personalización con el arreglo definitivo Y con el pedido creado
-            if (personalizacionId != -1) {
-                String sqlUpdate;
-                if (arregloId != -1) {
-                    sqlUpdate = "UPDATE personalizaciones SET arreglo_id = ?, pedido_id = ? WHERE personalizacion_id = ?";
-                    try (PreparedStatement ps = con.prepareStatement(sqlUpdate)) {
-                        ps.setInt(1, arregloId);
-                        ps.setInt(2, pedidoId);
-                        ps.setInt(3, personalizacionId);
-                        ps.executeUpdate();
-                    }
-                } else {
-                    sqlUpdate = "UPDATE personalizaciones SET pedido_id = ? WHERE personalizacion_id = ?";
-                    try (PreparedStatement ps = con.prepareStatement(sqlUpdate)) {
-                        ps.setInt(1, pedidoId);
-                        ps.setInt(2, personalizacionId);
-                        ps.executeUpdate();
-                    }
-                }
-            }
+            // 5. No se actualiza personalizaciones con pedido_id (columna no existe en la BD real)
+            // La relación se mantiene a través de la secuencia: PERSONALIZACIÓN → ARREGLO → DETALLE_PEDIDO → PEDIDO
 
             con.commit(); // Confirmar éxito de toda la operación
             return pedidoId;
@@ -226,7 +217,7 @@ public class CitaDAO {
                 PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, cita.getPedidoId());
             ps.setTimestamp(2, Timestamp.valueOf(cita.getCitaFechaHora()));
-            ps.setString(3, cita.getCitaEstado());
+            ps.setString(3, "pendiente"); // Usar valor válido del ENUM
             ps.setString(4, cita.getCitaNotas()); // Solo las notas, sin dirección
             ps.setString(5, cita.getCitaMotivo());
             // La dirección es fija: "Calle 9nb 2occ 04 - Barrio Bavaria 2"
@@ -243,7 +234,86 @@ public class CitaDAO {
     }
     
     /**
-     * Consulta el listado de citas vinculadas a un cliente específico.
+     * Actualiza el estado de una cita específica
+     * @param citaId ID de la cita a actualizar
+     * @param nuevoEstado Nuevo estado de la cita
+     * @return true si se actualizó exitosamente
+     */
+    public boolean actualizarEstadoCita(int citaId, String nuevoEstado) throws Exception {
+        String sql = "UPDATE citas SET cita_estado = ? WHERE cita_id = ?";
+        
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, citaId);
+            
+            int filasActualizadas = ps.executeUpdate();
+            return filasActualizadas > 0;
+        } catch (SQLException e) {
+            throw new Exception("Error al actualizar estado de cita: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Obtiene citas filtradas por nombre de servicio usando LIKE
+     * @param userId ID del usuario
+     * @param filtroServicio Nombre del servicio a filtrar
+     * @return Lista de citas que coinciden con el filtro
+     */
+    public List<Cita> obtenerCitasFiltradas(int userId, String filtroServicio) throws Exception {
+        StringBuilder sql = new StringBuilder(
+            "SELECT c.*, p.usuario_id, s.servicio_nombre " +
+            "FROM citas c " +
+            "JOIN pedidos p ON c.pedido_id = p.pedido_id " +
+            "JOIN detalle_pedido dp ON p.pedido_id = dp.pedido_id " +
+            "JOIN arreglos a ON dp.arreglo_id = a.arreglo_id " +
+            "JOIN personalizaciones per ON a.personalizacion_id = per.personalizacion_id " +
+            "JOIN servicios s ON per.servicio_id = s.servicio_id " +
+            "WHERE p.usuario_id = ? "
+        );
+
+        if (filtroServicio != null && !filtroServicio.trim().isEmpty()) {
+            sql.append("AND s.servicio_nombre LIKE ? ");
+        }
+
+        sql.append("ORDER BY c.cita_fecha_hora DESC");
+
+        List<Cita> citas = new ArrayList<>();
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            ps.setInt(1, userId);
+            
+            if (filtroServicio != null && !filtroServicio.trim().isEmpty()) {
+                ps.setString(2, "%" + filtroServicio.trim() + "%");
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Cita c = new Cita();
+                    c.setCitaId(rs.getInt("cita_id"));
+                    c.setPedidoId(rs.getInt("pedido_id"));
+                    if (rs.getTimestamp("cita_fecha_hora") != null) {
+                        c.setCitaFechaHora(rs.getTimestamp("cita_fecha_hora").toLocalDateTime());
+                    }
+                    c.setCitaEstado(rs.getString("cita_estado"));
+                    c.setCitaNotas(rs.getString("cita_notas"));
+                    c.setCitaMotivo(rs.getString("cita_motivo"));
+                    c.setDireccionEntrega(rs.getString("cita_direccion_entrega"));
+                    // Agregar nombre del servicio para mostrar en filtros
+                    // c.setServicioNombre(rs.getString("servicio_nombre")); // Comentado - método no existe
+                    citas.add(c);
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener citas filtradas: " + e.getMessage());
+        }
+        return citas;
+    }
+
+    /**
+     * Consulta el listado de citas vinculadas a un cliente específico
      */
     public List<Cita> obtenerCitasPorUsuario(int userId) throws Exception {
         String sql = "SELECT c.*, c.cita_direccion_entrega FROM citas c " +

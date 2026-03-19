@@ -6,7 +6,7 @@
     <title>Ajuste Fino de Vestidos y Ropa</title>
 </head>
 
-<body class="contenedor-encabezado-detalles"> <header class="contenedor-encabezado-detalles__encabezado"> <a class="encabezado__enlace" href="pagina-principal.jsp"> <img class="enlace__imagen" src="../../Assets/icons/flecha-izquierda__blanca.png" alt="flecha atras">
+<body class="contenedor-encabezado-detalles"> <header class="contenedor-encabezado-detalles__encabezado"> <a class="encabezado__enlace" href="pagina-principal.jsp"> <img class="enlace__imagen" src="${pageContext.request.contextPath}/Assets/icons/flecha-izquierda__blanca.png" alt="flecha atras">
         </a>
         <h1 class="encabezado__titulo">Detalles</h1>
     </header>

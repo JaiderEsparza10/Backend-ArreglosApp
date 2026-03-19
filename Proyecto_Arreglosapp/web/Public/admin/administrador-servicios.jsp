@@ -51,7 +51,11 @@ Servicio s = servicios.get(i);
 String imgUrl = s.getImagenUrl();
 String imgSrc = ctx + "/Assets/image/logo-app.png";
 if (imgUrl != null && !imgUrl.trim().isEmpty()) {
-    if (imgUrl.startsWith("../../")) { imgSrc = ctx + "/" + imgUrl.replace("../../", ""); } else if (imgUrl.startsWith("Assets/")) { imgSrc = ctx + "/" + imgUrl; } else if (imgUrl.startsWith("http")) {
+    if (imgUrl.startsWith("../../")) { 
+        imgSrc = ctx + "/" + imgUrl.replace("../../", ""); 
+    } else if (imgUrl.startsWith("Assets/")) { 
+        imgSrc = ctx + "/" + imgUrl; 
+    } else if (imgUrl.startsWith("http")) {
         imgSrc = imgUrl;
     } else {
         imgSrc = ctx + "/" + imgUrl;
@@ -59,7 +63,7 @@ if (imgUrl != null && !imgUrl.trim().isEmpty()) {
 }
 String desc = s.getDescripcion() != null ? s.getDescripcion() : "";
 String descCorta = desc.length() > 60 ? desc.substring(0, 60) + "..." : desc;
-String tiempo = s.getTiempoEstimado() != null ? s.getTiempoEstimado() : "No definido";
+String tiempo = s.getTiempoEstimado() > 0 ? s.getTiempoEstimado() + " min" : "No definido";
 %>
 <article class="servicio-card">
 <img src="<%= imgSrc %>" alt="<%= s.getNombre() %>" class="servicio-card__imagen">
@@ -98,15 +102,14 @@ String tiempo = s.getTiempoEstimado() != null ? s.getTiempoEstimado() : "No defi
 <img src="../../Assets/icons/diagrama-dashboard.png" class="navbar-inferior__icono" alt="">
 <span class="navbar-inferior__texto">Dashboard</span>
 </a>
-<a href="administrador-servicios.jsp" class="navbar-inferior__item navbar-inferior__item--activo" aria-current="page" aria-label="Servicios">
-<img src="../../Assets/icons/catalogo-de-productos.png" class="navbar-inferior__icono" alt="">
-<span class="navbar-inferior__texto">Servicios</span>
-</a>
-<a href="administrador-usuarios.jsp" class="navbar-inferior__item" aria-label="Usuarios">
-<img src="../../Assets/icons/anadir-grupo.png" class="navbar-inferior__icono" alt="">
-<span class="navbar-inferior__texto">Usuarios</span>
-</a>
-
+            <a href="administrador-servicios.jsp" class="navbar-inferior__item navbar-inferior__item--activo">
+                <img src="../../Assets/icons/catalogo-de-productos.png" class="navbar-inferior__icono">
+                <span class="navbar-inferior__texto">Servicios</span>
+            </a>
+            <a href="administrador-usuarios.jsp" class="navbar-inferior__item">
+                <img src="../../Assets/icons/anadir-grupo.png" class="navbar-inferior__icono">
+                <span class="navbar-inferior__texto">Usuarios</span>
+            </a>
 <a href="/Proyecto_Arreglosapp/LogoutServlet" class="navbar-inferior__item" aria-label="Cerrar sesión">
 <img src="../../Assets/icons/salir-aplicacion.png" class="navbar-inferior__icono" alt="">
 <span class="navbar-inferior__texto">Salir</span>

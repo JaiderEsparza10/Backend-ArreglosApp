@@ -50,45 +50,51 @@ public class PersonalizacionServlet extends HttpServlet {
 
         if ("crear".equals(accion) || "editar".equals(accion)) {
             try {
-                // 1. CAPTURA DE CATEGORÍA
-                Integer categoriaId = null;
-                String categoriaParam = request.getParameter("categoriaId");
-                String categoriaNombre = "";
+                // 1. CAPTURA DE SERVICIO
+                Integer servicioId = null;
+                String servicioParam = request.getParameter("idServicio");
+                String servicioNombre = "";
                 
                 // Depuración: Imprimir el valor recibido
-                System.out.println("DEBUG: categoriaParam recibido = '" + categoriaParam + "'");
+                System.out.println("DEBUG: servicioParam recibido = '" + servicioParam + "'");
                 
-                if (categoriaParam != null && !categoriaParam.trim().isEmpty()) {
+                if (servicioParam == null || servicioParam.trim().isEmpty()) {
+                    session.setAttribute("errorPersonalizacion", "Debe seleccionar un tipo de servicio");
+                    response.sendRedirect(request.getContextPath() + "/Public/client/personalizar-arreglo.jsp");
+                    return;
+                }
+                
+                if (servicioParam != null && !servicioParam.trim().isEmpty()) {
                     try {
-                        categoriaId = Integer.parseInt(categoriaParam);
-                        // Convertir ID a nombre de categoría para BD actual
-                        switch (categoriaId) {
+                        servicioId = Integer.parseInt(servicioParam);
+                        // Convertir ID a nombre de servicio para BD actual
+                        switch (servicioId) {
                             case 1:
-                                categoriaNombre = "Sastreria";
+                                servicioNombre = "Sastreria";
                                 break;
                             case 2:
-                                categoriaNombre = "Costuras";
+                                servicioNombre = "Costuras";
                                 break;
                             case 3:
-                                categoriaNombre = "Planchado";
+                                servicioNombre = "Planchado";
                                 break;
                             case 4:
-                                categoriaNombre = "Arreglos de Medidas";
+                                servicioNombre = "Arreglos de Medidas";
                                 break;
                             default:
-                                categoriaNombre = "Otro";
+                                servicioNombre = "Otro";
                                 break;
                         }
-                        System.out.println("DEBUG: categoría convertida a = '" + categoriaNombre + "'");
+                        System.out.println("DEBUG: servicio convertido a = '" + servicioNombre + "'");
                     } catch (NumberFormatException e) {
-                        System.out.println("DEBUG: Error al convertir categoriaParam a número: " + categoriaParam);
-                        session.setAttribute("errorPersonalizacion", "El valor de categoría no es válido: " + categoriaParam);
+                        System.out.println("DEBUG: Error al convertir servicioParam a número: " + servicioParam);
+                        session.setAttribute("errorPersonalizacion", "El valor de servicio no es válido: " + servicioParam);
                         redireccionarError(request, response, accion);
                         return;
                     }
                 } else {
-                    System.out.println("DEBUG: categoriaParam es nulo o vacío");
-                    session.setAttribute("errorPersonalizacion", "Debes seleccionar una categoría obligatoriamente. (Valor recibido: " + categoriaParam + ")");
+                    System.out.println("DEBUG: servicioParam es nulo o vacío");
+                    session.setAttribute("errorPersonalizacion", "Debes seleccionar un servicio obligatoriamente. (Valor recibido: " + servicioParam + ")");
                     redireccionarError(request, response, accion);
                     return;
                 }
@@ -111,14 +117,14 @@ public class PersonalizacionServlet extends HttpServlet {
                 Personalizacion personalizacion = new Personalizacion(
                         usuario.getId(), 
                         arregloId, 
-                        categoriaId,  
+                        servicioId,  
                         descripcion, 
                         materialTela, 
                         imagenReferencia
                 );
-                // Establecer el nombre de la categoría para la BD actual
-                personalizacion.setCategoria(categoriaNombre);
-                System.out.println("DEBUG: Objeto Personalizacion creado con categoría: " + categoriaNombre);
+                // Establecer el nombre del servicio para la BD actual
+                personalizacion.setServicio(servicioNombre);
+                System.out.println("DEBUG: Objeto Personalizacion creado con servicio: " + servicioNombre);
 
                 boolean resultado = false;
                 if ("crear".equals(accion)) {

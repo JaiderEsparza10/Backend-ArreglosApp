@@ -6,7 +6,7 @@
                         if (detalle == null) {
                         out.println("<div style='background:orange;padding:20px;border-radius:8px;'><h3>DEBUG INFO</h3><p>El pedidoId solicitado es: " + pedidoId + "</p><p>El metodo adminDAO.obtenerDetallePedido() retorno <strong>null</strong> sin lanzar excepciones.</p><p>Esto significa que la consulta SQL en la clase compilada evaluo rs.next() como falso (es decir, devolvio 0 filas).</p></div>"); return;
                         }
-                        String estado = (String) detalle.get("estado"); String citaEstado = (String) detalle.get("citaEstado"); String citaMotivo = (String) detalle.get("citaMotivo"); String cliente = (String) detalle.get("cliente"); String email = (String) detalle.get("email"); String direccion = (String) detalle.get("direccion"); String citaNotas = (String) detalle.get("citaNotas"); String personalizacionDescripcion = (String) detalle.get("personalizacionDescripcion"); String personalizacionMaterial = (String) detalle.get("personalizacionMaterial"); String personalizacionCategoria = (String) detalle.get("personalizacionCategoria"); double total = detalle.get("total") instanceof Number ? ((Number) detalle.get("total")).doubleValue() : 0.0; java.sql.Timestamp citaFecha = (java.sql.Timestamp) detalle.get("citaFecha"); SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm"); String citaStr = citaFecha != null ? sdf.format(citaFecha) : "Sin cita agendada"; String estadoClass = "estado-badge--pendiente"; String estadoLabel = "Pendiente de Revision"; if ("confirmado".equals(estado)) { estadoClass = "pedido__estado--confirmado"; estadoLabel = "Pendiente de Inicio"; } else if ("en_proceso".equals(estado)) { estadoClass = "estado-badge--en-taller"; estadoLabel = "En Taller"; } else if ("terminado".equals(estado)) { estadoClass = "estado-badge--entregado"; estadoLabel = "Terminado"; } else if ("cancelado".equals(estado)) { estadoClass = "estado-badge--cancelado"; estadoLabel = "Cancelado"; } String citaEstadoClass = "estado-badge--pendiente"; String citaEstadoLabel = "Programada"; if ("confirmada".equals(citaEstado)) { citaEstadoClass = "pedido__estado--confirmado"; citaEstadoLabel = "Confirmada"; } else if ("completada".equals(citaEstado)) { citaEstadoClass = "estado-badge--entregado"; citaEstadoLabel = "Completada"; } else if ("cancelada".equals(citaEstado)) { citaEstadoClass = "estado-badge--cancelado"; citaEstadoLabel = "Cancelada"; } String motivoLabel = "Consulta"; if ("entrega_prenda".equals(citaMotivo)) motivoLabel = "Entrega de prenda"; else if ("recogida_prenda".equals(citaMotivo)) motivoLabel = "Recogida de prenda"; else if ("toma_medidas".equals(citaMotivo)) motivoLabel = "Toma de medidas"; boolean esFinal = "terminado".equals(estado) || "cancelado".equals(estado);
+                        String estado = (String) detalle.get("estado"); String citaEstado = (String) detalle.get("citaEstado"); String citaMotivo = (String) detalle.get("citaMotivo"); String cliente = (String) detalle.get("cliente"); String email = (String) detalle.get("email"); String direccion = (String) detalle.get("direccion"); String citaNotas = (String) detalle.get("citaNotas"); String personalizacionDescripcion = (String) detalle.get("personalizacionDescripcion"); String personalizacionMaterial = (String) detalle.get("personalizacionMaterial"); String personalizacionCategoria = (String) detalle.get("personalizacionCategoria"); String personalizacionServicio = (String) detalle.get("personalizacionServicio"); String personalizacionImagen = (String) detalle.get("personalizacionImagen"); double total = detalle.get("total") instanceof Number ? ((Number) detalle.get("total")).doubleValue() : 0.0; java.sql.Timestamp citaFecha = (java.sql.Timestamp) detalle.get("citaFecha"); SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm"); String citaStr = citaFecha != null ? sdf.format(citaFecha) : "Sin cita agendada"; String estadoClass = "estado-badge--pendiente"; String estadoLabel = "Pendiente de Revision"; if ("confirmado".equals(estado)) { estadoClass = "pedido__estado--confirmado"; estadoLabel = "Pendiente de Inicio"; } else if ("en_proceso".equals(estado)) { estadoClass = "estado-badge--en-taller"; estadoLabel = "En Taller"; } else if ("terminado".equals(estado)) { estadoClass = "estado-badge--entregado"; estadoLabel = "Terminado"; } else if ("cancelado".equals(estado)) { estadoClass = "estado-badge--cancelado"; estadoLabel = "Cancelado"; } String citaEstadoClass = "estado-badge--pendiente"; String citaEstadoLabel = "Programada"; if ("confirmada".equals(citaEstado)) { citaEstadoClass = "pedido__estado--confirmado"; citaEstadoLabel = "Confirmada"; } else if ("completada".equals(citaEstado)) { citaEstadoClass = "estado-badge--entregado"; citaEstadoLabel = "Completada"; } else if ("cancelada".equals(citaEstado)) { citaEstadoClass = "estado-badge--cancelado"; citaEstadoLabel = "Cancelada"; } String motivoLabel = "Consulta"; if ("entrega_prenda".equals(citaMotivo)) motivoLabel = "Entrega de prenda"; else if ("recogida_prenda".equals(citaMotivo)) motivoLabel = "Recogida de prenda"; else if ("toma_medidas".equals(citaMotivo)) motivoLabel = "Toma de medidas"; boolean esFinal = "terminado".equals(estado) || "cancelado".equals(estado);
                         %>
                         <!DOCTYPE html>
                         <html lang="es">
@@ -53,8 +53,24 @@
                                 <!-- INFO PERSONALIZACIÓN -->
                                 <% if (personalizacionDescripcion != null && !personalizacionDescripcion.isEmpty()) { %>
                                 <div class="info-seccion"> <h3 class="info-seccion__titulo">Detalles de la Personalización</h3> 
-                                    <div class="info-seccion__campo info-seccion__campo--inline"><span class="info-seccion__label">Categoría:</span><span class="info-seccion__valor">
-                                                <%= personalizacionCategoria != null ? personalizacionCategoria : "No especificada" %>
+                                    <% if (personalizacionImagen != null && !personalizacionImagen.trim().isEmpty()) { %>
+                                        <div style="margin-bottom:15px;">
+                                            <p style="margin:0 0 5px 0;font-size:12px;color:#666;">Imagen de referencia:</p>
+                                            <%
+                                            String imgSrc = request.getContextPath() + "/Assets/img/personalizaciones/" + personalizacionImagen;
+                                            if (personalizacionImagen.startsWith("Assets/")) {
+                                                imgSrc = request.getContextPath() + "/" + personalizacionImagen;
+                                            } else if (personalizacionImagen.startsWith("http")) {
+                                                imgSrc = personalizacionImagen;
+                                            } else {
+                                                imgSrc = request.getContextPath() + "/Assets/img/personalizaciones/" + personalizacionImagen;
+                                            }
+                                            %>
+                                            <img src="<%= imgSrc %>" alt="Imagen de personalización" style="max-width:200px;max-height:150px;border-radius:8px;border:1px solid #ddd;object-fit:cover;">
+                                        </div>
+                                    <% } %>
+                                    <div class="info-seccion__campo info-seccion__campo--inline"><span class="info-seccion__label">Servicio:</span><span class="info-seccion__valor">
+                                                <%= personalizacionServicio != null ? personalizacionServicio : "No especificado" %>
                                             </span></div>
                                     <% if (personalizacionMaterial != null && !personalizacionMaterial.isEmpty()) { %>
                                         <div class="info-seccion__campo info-seccion__campo--inline"><span class="info-seccion__label">Material:</span><span class="info-seccion__valor">
@@ -81,16 +97,32 @@
                                     <p style="font-size:12px;color:#888;margin-top:8px;">El estado del pedido se
                                         actualiza automaticamente al gestionar la cita desde el Dashboard.</p>
 
-
+                                    <% if (!esFinal) { %>
+                                    <div class="pedido__gestion-estados" style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
+                                        <p style="font-size:13px; font-weight:600; margin-bottom:10px; color:#555;">Acciones de Gestión:</p>
+                                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                            <% if ("en_proceso".equals(estado)) { %>
+                                                <button onclick="cambiarEstado('terminado')" class="pedido__enlace" style="background:#4caf50; color:white; border:none; padding:8px 15px; border-radius:15px; cursor:pointer; font-size:12px;">Marcar como Terminado</button>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <form id="formEstado" method="post" action="/Proyecto_Arreglosapp/AdminServlet" style="display:none;">
+                                        <input type="hidden" name="accion" value="actualizarEstado">
+                                        <input type="hidden" name="pedidoId" value="<%= pedidoId %>">
+                                        <input type="hidden" name="nuevoEstado" id="inputNuevoEstado">
+                                    </form>
+                                    <% } %>
                                 </div>
                             </main>
 
                             <footer class="navbar"> <nav class="navbar-inferior" role="navigation" aria-label="Navegacion principal"> <a href="administrador-dashboard.jsp"
                                         class="navbar-inferior__item navbar-inferior__item--activo" aria-current="page"
                                         aria-label="Dashboard"><img src="../../Assets/icons/diagrama-dashboard.png"
-                                            class="navbar-inferior__icono" alt=""><span class="navbar-inferior__texto">Dashboard</span></a> <a href="administrador-servicios.jsp" class="navbar-inferior__item"
-                                        aria-label="Servicios"><img src="../../Assets/icons/catalogo-de-productos.png"
-                                            class="navbar-inferior__icono" alt=""><span class="navbar-inferior__texto">Servicios</span></a> <a href="administrador-usuarios.jsp" class="navbar-inferior__item"
+                                            class="navbar-inferior__icono" alt=""><span class="navbar-inferior__texto">Dashboard</span></a>            <a href="administrador-servicios.jsp" class="navbar-inferior__item">
+                <img src="../../Assets/icons/catalogo-de-productos.png" class="navbar-inferior__icono">
+                <span class="navbar-inferior__texto">Servicios</span>
+            </a>
+            <a href="administrador-usuarios.jsp" class="navbar-inferior__item"
                                         aria-label="Usuarios"><img src="../../Assets/icons/anadir-grupo.png"
                                             class="navbar-inferior__icono" alt=""><span class="navbar-inferior__texto">Usuarios</span></a> <a href="/Proyecto_Arreglosapp/LogoutServlet" class="navbar-inferior__item"
                                         aria-label="Cerrar sesion"><img src="../../Assets/icons/salir-aplicacion.png"
@@ -106,9 +138,20 @@
                                     var toast = document.getElementById('toast');
                                     toast.textContent = msg;
                                     toast.className = 'toast toast--' + tipo + ' toast--visible';
-                                    setTimeout(function () { toast.classList.remove('toast--visible'); }, 3000);
-                                }
-                            </script>
+                                     setTimeout(function () { toast.classList.remove('toast--visible'); }, 3000);
+                                 }
+                                 function cambiarEstado(estado) {
+                                     const labels = {
+                                         'en_proceso': 'EN TALLER',
+                                         'terminado': 'TERMINADO',
+                                         'cancelado': 'CANCELADO'
+                                     };
+                                     if (confirm('¿Estás seguro de cambiar el estado del pedido a ' + (labels[estado] || estado) + '?')) {
+                                         document.getElementById('inputNuevoEstado').value = estado;
+                                         document.getElementById('formEstado').submit();
+                                     }
+                                 }
+                             </script>
                         </body>
 
                         </html>

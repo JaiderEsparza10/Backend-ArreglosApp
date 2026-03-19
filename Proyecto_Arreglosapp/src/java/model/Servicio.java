@@ -2,41 +2,90 @@ package model;
 
 /**
  * Modelo de Datos: Servicio.
- * Define la estructura de los arreglos predefinidos ofertados en el catálogo.
+ * Define la estructura de los servicios base del sistema.
+ * Jerarquía: Servicios → Personalizaciones → Arreglos
  * 
- * @author Antigravity - Senior Architect
+ * @author Arquitecto de Software - DBA
  */
 public class Servicio {
-    private int arregloId;
-    private String nombre;
-    private String descripcion;
-    private double precioBase;
+    private int servicioId;
+    private String servicioNombre;
+    private String servicioDescripcion;
+    private double servicioPrecioBase;
+    private int servicioTiempoEstimado;
+    private boolean servicioActivo;
+    
+    // Campos de auditoría
+    private String fechaCreacion;
+    
+    // Campo para imagen (compatibilidad)
     private String imagenUrl;
-    private String tiempoEstimado;
-    private boolean disponible;
+    // ================================================================
+    
+    public int getServicioId() { return servicioId; }
+    public void setServicioId(int servicioId) { this.servicioId = servicioId; }
 
-    public Servicio() {
-    }
+    public String getServicioNombre() { return servicioNombre; }
+    public void setServicioNombre(String servicioNombre) { this.servicioNombre = servicioNombre; }
 
-    // Estructura POJO con acceso mediante Getters y Setters con encapsulamiento
-    public int getArregloId() { return arregloId; }
-    public void setArregloId(int arregloId) { this.arregloId = arregloId; }
+    public String getServicioDescripcion() { return servicioDescripcion; }
+    public void setServicioDescripcion(String servicioDescripcion) { this.servicioDescripcion = servicioDescripcion; }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public double getServicioPrecioBase() { return servicioPrecioBase; }
+    public void setServicioPrecioBase(double servicioPrecioBase) { this.servicioPrecioBase = servicioPrecioBase; }
 
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public int getServicioTiempoEstimado() { return servicioTiempoEstimado; }
+    public void setServicioTiempoEstimado(int servicioTiempoEstimado) { this.servicioTiempoEstimado = servicioTiempoEstimado; }
 
-    public double getPrecioBase() { return precioBase; }
-    public void setPrecioBase(double precioBase) { this.precioBase = precioBase; }
+    public boolean isServicioActivo() { return servicioActivo; }
+    public void setServicioActivo(boolean servicioActivo) { this.servicioActivo = servicioActivo; }
 
-    public String getImagenUrl() { return imagenUrl; }
+    public String getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(String fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+
+    // ================================================================
+    // Métodos de conveniencia para compatibilidad
+    // ================================================================
+    
+    /**
+     * Método de compatibilidad para código existente
+     */
+    public String getNombre() { return servicioNombre; }
+    public void setNombre(String nombre) { this.servicioNombre = nombre; }
+    
+    /**
+     * Método de compatibilidad para código existente
+     */
+    public String getDescripcion() { return servicioDescripcion; }
+    public void setDescripcion(String descripcion) { this.servicioDescripcion = descripcion; }
+    
+    /**
+     * Método de compatibilidad para código existente
+     */
+    public double getPrecioBase() { return servicioPrecioBase; }
+    public void setPrecioBase(double precioBase) { this.servicioPrecioBase = precioBase; }
+    
+    /**
+     * Método de compatibilidad para código existente
+     */
+    public int getTiempoEstimado() { return servicioTiempoEstimado; }
+    public void setTiempoEstimado(int tiempoEstimado) { this.servicioTiempoEstimado = tiempoEstimado; }
+    
+    /**
+     * Método de compatibilidad para código existente
+     */
+    public boolean isDisponible() { return servicioActivo; }
+    public void setDisponible(boolean disponible) { this.servicioActivo = disponible; }
+    
+    /**
+     * Método de compatibilidad para código existente (mapeo de IDs)
+     */
+    public int getArregloId() { return servicioId; }
+    public void setArregloId(int arregloId) { this.servicioId = arregloId; }
+    
+    /**
+     * Método de compatibilidad para imagenUrl (para código existente)
+     */
+    public String getImagenUrl() { return imagenUrl != null ? imagenUrl : "Assets/image/imagen-sastreria.jpg"; }
     public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
-
-    public String getTiempoEstimado() { return tiempoEstimado; }
-    public void setTiempoEstimado(String tiempoEstimado) { this.tiempoEstimado = tiempoEstimado; }
-
-    public boolean isDisponible() { return disponible; }
-    public void setDisponible(boolean disponible) { this.disponible = disponible; }
 }

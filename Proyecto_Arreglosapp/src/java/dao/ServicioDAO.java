@@ -7,36 +7,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Gestiona el catálogo de arreglos (servicios) disponibles en el sistema.
- * RF-06: Catálogo de Servicios.
+ * DAO de Servicios - Gestión del catálogo base
+ * Jerarquía: Servicios → Personalizaciones → Arreglos
  * 
- * @author Antigravity - Senior Architect
+ * @author Arquitecto de Software - DBA
  */
 public class ServicioDAO {
 
     /**
-     * Obtiene la lista de todos los arreglos marcados como disponibles.
-     * @return Lista de objetos Servicio.
+     * Obtiene todos los servicios activos
+     * @return Lista de servicios disponibles
      */
-    public List<Servicio> obtenerServicios() throws Exception {
-        String sql = "SELECT arreglo_id, arreglo_nombre, arreglo_descripcion, arreglo_precio_base, " +
-                "arreglo_imagen_url, arreglo_tiempo_estimado, arreglo_disponible FROM arreglos " +
-                "WHERE arreglo_disponible = 1 ORDER BY arreglo_id ASC";
+    public List<Servicio> obtenerTodosServicios() throws Exception {
+        String sql = "SELECT servicio_id, servicio_nombre, servicio_descripcion, " +
+                "servicio_precio_base, servicio_tiempo_estimado, servicio_activo, " +
+                "fecha_creacion FROM SERVICIOS WHERE servicio_activo = 1 " +
+                "ORDER BY servicio_nombre ASC";
+        
         List<Servicio> lista = new ArrayList<>();
 
         try (Connection con = ConectionDB.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Servicio s = new Servicio();
-                s.setArregloId(rs.getInt("arreglo_id"));
-                s.setNombre(rs.getString("arreglo_nombre"));
-                s.setDescripcion(rs.getString("arreglo_descripcion"));
-                s.setPrecioBase(rs.getDouble("arreglo_precio_base"));
-                s.setImagenUrl(rs.getString("arreglo_imagen_url"));
-                s.setTiempoEstimado(rs.getString("arreglo_tiempo_estimado"));
-                s.setDisponible(rs.getInt("arreglo_disponible") == 1);
+                s.setServicioId(rs.getInt("servicio_id"));
+                s.setServicioNombre(rs.getString("servicio_nombre"));
+                s.setServicioDescripcion(rs.getString("servicio_descripcion"));
+                s.setServicioPrecioBase(rs.getDouble("servicio_precio_base"));
+                s.setServicioTiempoEstimado(rs.getInt("servicio_tiempo_estimado"));
+                s.setServicioActivo(rs.getBoolean("servicio_activo"));
+                
+                s.setImagenUrl(null);
+                
+                // Formatear fecha
+                Timestamp fecha = rs.getTimestamp("fecha_creacion");
+                s.setFechaCreacion(fecha != null ? fecha.toString() : "");
+                
                 lista.add(s);
             }
         } catch (SQLException e) {
@@ -46,28 +54,36 @@ public class ServicioDAO {
     }
 
     /**
-     * Busca un arreglo específico por su identificador único.
-     * @param arregloId ID del arreglo.
-     * @return Objeto Servicio o null si no se encuentra.
+     * Obtiene un servicio específico por ID
+     * @param servicioId ID del servicio
+     * @return Objeto Servicio o null si no existe
      */
-    public Servicio obtenerPorId(int arregloId) throws Exception {
-        String sql = "SELECT arreglo_id, arreglo_nombre, arreglo_descripcion, arreglo_precio_base, " +
-                "arreglo_imagen_url, arreglo_tiempo_estimado, arreglo_disponible FROM arreglos WHERE arreglo_id = ?";
+    public Servicio obtenerServicioPorId(int servicioId) throws Exception {
+        String sql = "SELECT s.servicio_id, s.servicio_nombre, s.servicio_descripcion, " +
+                "s.servicio_precio_base, s.servicio_tiempo_estimado, s.servicio_activo, " +
+                "s.fecha_creacion " +
+                "FROM SERVICIOS s " +
+                "WHERE s.servicio_id = ?";
 
         try (Connection con = ConectionDB.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, arregloId);
+            ps.setInt(1, servicioId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Servicio s = new Servicio();
-                    s.setArregloId(rs.getInt("arreglo_id"));
-                    s.setNombre(rs.getString("arreglo_nombre"));
-                    s.setDescripcion(rs.getString("arreglo_descripcion"));
-                    s.setPrecioBase(rs.getDouble("arreglo_precio_base"));
-                    s.setImagenUrl(rs.getString("arreglo_imagen_url"));
-                    s.setTiempoEstimado(rs.getString("arreglo_tiempo_estimado"));
-                    s.setDisponible(rs.getInt("arreglo_disponible") == 1);
+                    s.setServicioId(rs.getInt("servicio_id"));
+                    s.setServicioNombre(rs.getString("servicio_nombre"));
+                    s.setServicioDescripcion(rs.getString("servicio_descripcion"));
+                    s.setServicioPrecioBase(rs.getDouble("servicio_precio_base"));
+                    s.setServicioTiempoEstimado(rs.getInt("servicio_tiempo_estimado"));
+                    s.setServicioActivo(rs.getBoolean("servicio_activo"));
+                    
+                    s.setImagenUrl(null);
+                    
+                    Timestamp fecha = rs.getTimestamp("fecha_creacion");
+                    s.setFechaCreacion(fecha != null ? fecha.toString() : "");
+                    
                     return s;
                 }
             }
@@ -78,67 +94,163 @@ public class ServicioDAO {
     }
 
     /**
-     * Inserta un nuevo arreglo en el catálogo.
-     * RF-10: Gestión de Servicios (Admin).
+     * Verifica si un nombre de servicio ya existe
+     * @param nombre Nombre del servicio a verificar
+     * @return true si ya existe, false si está disponible
      */
-    public boolean crearServicio(Servicio s) throws Exception {
-        String sql = "INSERT INTO arreglos (categoria_id, arreglo_nombre, arreglo_descripcion, " +
-                "arreglo_precio_base, arreglo_imagen_url, arreglo_tiempo_estimado, arreglo_disponible) " +
-                "VALUES (1, ?, ?, ?, ?, ?, 1)";
+    public boolean existeNombreServicio(String nombre) throws Exception {
+        String sql = "SELECT COUNT(*) FROM SERVICIOS WHERE servicio_nombre = ? AND servicio_activo = 1";
+        
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, nombre.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al verificar nombre de servicio: " + e.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * Verifica si un nombre de servicio ya existe (excluyendo un ID específico)
+     * @param nombre Nombre del servicio a verificar
+     * @param excluirId ID del servicio a excluir de la verificación
+     * @return true si ya existe, false si está disponible
+     */
+    public boolean existeNombreServicioExcluyendo(String nombre, int excluirId) throws Exception {
+        String sql = "SELECT COUNT(*) FROM SERVICIOS WHERE servicio_nombre = ? AND servicio_id != ? AND servicio_activo = 1";
+        
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, nombre.trim());
+            ps.setInt(2, excluirId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al verificar nombre de servicio: " + e.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * Crea un nuevo servicio en el catálogo base
+     * @param servicio Objeto Servicio con todos los datos
+     * @return true si se creó exitosamente
+     */
+    public boolean crearServicio(Servicio servicio) throws Exception {
+        String sql = "INSERT INTO SERVICIOS (servicio_nombre, servicio_descripcion, " +
+                "servicio_precio_base, servicio_tiempo_estimado, servicio_activo) " +
+                "VALUES (?, ?, ?, ?, 1)";
 
         try (Connection con = ConectionDB.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, s.getNombre());
-            ps.setString(2, s.getDescripcion());
-            ps.setDouble(3, s.getPrecioBase());
-            ps.setString(4, s.getImagenUrl());
-            ps.setString(5, s.getTiempoEstimado());
+            ps.setString(1, servicio.getServicioNombre());
+            ps.setString(2, servicio.getServicioDescripcion());
+            ps.setDouble(3, servicio.getServicioPrecioBase());
+            ps.setInt(4, servicio.getServicioTiempoEstimado());
 
-            return ps.executeUpdate() > 0;
+            int filasInsertadas = ps.executeUpdate();
+            return filasInsertadas > 0;
         } catch (SQLException e) {
             throw new Exception("Error al crear servicio: " + e.getMessage());
         }
     }
 
     /**
-     * Actualiza la información técnica o visual de un arreglo existente.
+     * Actualiza un servicio existente
+     * @param servicio Objeto Servicio con datos actualizados
+     * @return true si se actualizó exitosamente
      */
-    public boolean actualizarServicio(Servicio s) throws Exception {
-        String sql = "UPDATE arreglos SET arreglo_nombre = ?, arreglo_descripcion = ?, " +
-                "arreglo_precio_base = ?, arreglo_tiempo_estimado = ?, " +
-                "arreglo_imagen_url = COALESCE(?, arreglo_imagen_url) " +
-                "WHERE arreglo_id = ?";
+    public boolean actualizarServicio(Servicio servicio) throws Exception {
+        String sql = "UPDATE SERVICIOS SET servicio_nombre = ?, servicio_descripcion = ?, " +
+                "servicio_precio_base = ?, servicio_tiempo_estimado = ?, " +
+                "servicio_activo = COALESCE(?, servicio_activo) " +
+                "WHERE servicio_id = ?";
 
         try (Connection con = ConectionDB.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, s.getNombre());
-            ps.setString(2, s.getDescripcion());
-            ps.setDouble(3, s.getPrecioBase());
-            ps.setString(4, s.getTiempoEstimado());
-            ps.setString(5, s.getImagenUrl());
-            ps.setInt(6, s.getArregloId());
+            ps.setString(1, servicio.getServicioNombre());
+            ps.setString(2, servicio.getServicioDescripcion());
+            ps.setDouble(3, servicio.getServicioPrecioBase());
+            ps.setInt(4, servicio.getServicioTiempoEstimado());
+            ps.setObject(5, null, java.sql.Types.BOOLEAN); // Usar null para que COALESCE mantenga el valor actual
+            ps.setInt(6, servicio.getServicioId());
 
-            return ps.executeUpdate() > 0;
+            int filasActualizadas = ps.executeUpdate();
+            return filasActualizadas > 0;
         } catch (SQLException e) {
             throw new Exception("Error al actualizar servicio: " + e.getMessage());
         }
     }
 
     /**
-     * Realiza un borrado lógico del servicio marcándolo como no disponible.
+     * Eliminación lógica de un servicio (desactivar)
+     * @param servicioId ID del servicio a desactivar
+     * @return true si se desactivó exitosamente
      */
-    public boolean eliminarServicio(int arregloId) throws Exception {
-        String sql = "UPDATE arreglos SET arreglo_disponible = 0 WHERE arreglo_id = ?";
+    public boolean desactivarServicio(int servicioId) throws Exception {
+        String sql = "UPDATE SERVICIOS SET servicio_activo = 0 WHERE servicio_id = ?";
 
         try (Connection con = ConectionDB.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, arregloId);
-            return ps.executeUpdate() > 0;
+            ps.setInt(1, servicioId);
+            int filasActualizadas = ps.executeUpdate();
+            return filasActualizadas > 0;
         } catch (SQLException e) {
-            throw new Exception("Error al eliminar servicio: " + e.getMessage());
+            throw new Exception("Error al desactivar servicio: " + e.getMessage());
         }
+    }
+
+    /**
+     * Reactiva un servicio previamente desactivado
+     * @param servicioId ID del servicio a reactivar
+     * @return true si se reactivó exitosamente
+     */
+    public boolean reactivarServicio(int servicioId) throws Exception {
+        String sql = "UPDATE SERVICIOS SET servicio_activo = 1 WHERE servicio_id = ?";
+
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, servicioId);
+            int filasActualizadas = ps.executeUpdate();
+            return filasActualizadas > 0;
+        } catch (SQLException e) {
+            throw new Exception("Error al reactivar servicio: " + e.getMessage());
+        }
+    }
+
+    // ================================================================
+    // Métodos de compatibilidad para código existente
+    // ================================================================
+
+    /**
+     * Método de compatibilidad - obtenerServicios()
+     * @deprecated Usar obtenerTodosServicios()
+     */
+    @Deprecated
+    public List<Servicio> obtenerServicios() throws Exception {
+        return obtenerTodosServicios();
+    }
+
+    /**
+     * Método de compatibilidad - obtenerPorId()
+     * @deprecated Usar obtenerServicioPorId()
+     */
+    @Deprecated
+    public Servicio obtenerPorId(int servicioId) throws Exception {
+        return obtenerServicioPorId(servicioId);
     }
 }

@@ -22,15 +22,16 @@
     List<Map<String, Object>> citasHoy         = new ArrayList<>();
     List<Map<String, Object>> todasLasCitas    = new ArrayList<>();
 
+    String fFecha   = request.getParameter("fFecha");
+    String fCliente = request.getParameter("fCliente");
+    String fEstado  = request.getParameter("fEstado");
+    String fSearch  = request.getParameter("fSearch");
+    String fEstadoActual = fEstado;
+
     try {
         totalPedidosActivos = adminDAO.contarPedidosActivos();
         totalCitasHoy       = adminDAO.contarCitasHoy();
         totalTodasCitas     = adminDAO.contarTodasLasCitas();
-
-        /* Parámetros de filtro enviados por GET */
-        String fFecha   = request.getParameter("fFecha");
-        String fCliente = request.getParameter("fCliente");
-        String fEstado  = request.getParameter("fEstado");
 
         /* Filtro de citas: por fecha o nombre de cliente */
         if (fFecha != null || fCliente != null) {
@@ -39,9 +40,9 @@
             todasLasCitas = adminDAO.obtenerTodasLasCitas();
         }
 
-        /* Filtro de pedidos: por estado */
-        if (fEstado != null && !fEstado.isEmpty()) {
-            pedidosRecientes = adminDAO.obtenerPedidosFiltrados(null, fEstado);
+        /* Filtro de pedidos: */
+        if ((fEstado != null && !fEstado.isEmpty()) || (fSearch != null && !fSearch.trim().isEmpty())) {
+            pedidosRecientes = adminDAO.obtenerPedidosFiltrados(fSearch, fEstado);
         } else {
             pedidosRecientes = adminDAO.obtenerPedidosRecientes();
         }
@@ -62,7 +63,6 @@
     if ("citas".equals(vistaParam))       vistaInicial = "citas";
     else if ("todasCitas".equals(vistaParam)) vistaInicial = "todasCitas";
 
-    String fEstadoActual = request.getParameter("fEstado");
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -123,8 +123,14 @@
                 <form action="administrador-dashboard.jsp" method="get" class="pedidos__filtros"
                     style="display:flex;flex-wrap:wrap;gap:12px;width:100%;">
                     <input type="hidden" name="vista" value="pedidos">
-                    <select name="fEstado" class="pedidos__filtro-btn"
-                        style="padding:8px 15px;border-radius:25px;border:1px solid #e0e0e0;background:white;font-size:14px;color:#555;cursor:pointer;outline:none;">
+                    
+                    <div class="filtro-busqueda" style="flex:1; min-width:200px;">
+                        <input type="text" name="fSearch" placeholder="Nombre cliente o ID pedido..." 
+                               value="<%= fSearch != null ? fSearch : "" %>"
+                               style="width:100%; padding:8px; border-radius:4px; border:1px solid #ddd;">
+                    </div>
+
+                    <select name="fEstado" class="pedidos__select" onchange="this.form.submit()" style="padding:8px; border-radius:4px;">
                         <option value="" <%= (fEstadoActual == null || fEstadoActual.isEmpty()) ? "selected" : "" %>>Todos los activos</option>
                         <option value="pendiente"  <%= "pendiente".equals(fEstadoActual)  ? "selected" : "" %>>Pendiente de Revision</option>
                         <option value="confirmado" <%= "confirmado".equals(fEstadoActual) ? "selected" : "" %>>Pendiente de Inicio</option>
@@ -235,7 +241,7 @@
                         <span class="pedido__estado <%= estadoCitaClass %>"><%= estadoCitaLabel %></span>
                         <% if (!citaFinalizada) { %>
                         <button class="pedido__enlace pedido__enlace--btn"
-                            onclick="abrirModalCita(<%= citaId %>, '<%= estadoCita %>')">Gestionar</button>
+                            onclick="abrirModalCita(<%= citaId %>, '<%= (estadoCita != null ? estadoCita.replace("'", "\\'") : "") %>')">Gestionar</button>
                         <% } %>
                     </div>
                 </article>
@@ -309,7 +315,7 @@
                         <span class="pedido__estado <%= estadoCitaClass2 %>"><%= estadoCitaLabel2 %></span>
                         <% if (!citaFinalizada2) { %>
                         <button class="pedido__enlace pedido__enlace--btn"
-                            onclick="abrirModalCita(<%= citaId2 %>, '<%= estadoCita2 %>')">Gestionar</button>
+                            onclick="abrirModalCita(<%= citaId2 %>, '<%= estadoCita2.replace("'", "\\'") %>')">Gestionar</button>
                         <% } %>
                     </div>
                 </article>
@@ -391,7 +397,8 @@
             var descripcion = document.getElementById('modalCitaDescripcion');
             botones.innerHTML = '';
 
-            if (estadoActual === 'programada') {
+            // Manejar diferentes estados posibles
+            if (estadoActual === 'programada' || estadoActual === 'pendiente') {
                 descripcion.textContent = 'Cita programada - que deseas hacer?';
                 botones.innerHTML =
                     '<button class="modal-cita__btn modal-cita__btn--confirmar" onclick="cambiarEstado(\'confirmada\')">Confirmar</button>' +
@@ -399,6 +406,13 @@
             } else if (estadoActual === 'confirmada') {
                 descripcion.textContent = 'Cita confirmada - que deseas hacer?';
                 botones.innerHTML =
+                    '<button class="modal-cita__btn modal-cita__btn--completar" onclick="cambiarEstado(\'completada\')">Completar</button>' +
+                    '<button class="modal-cita__btn modal-cita__btn--cancelar"  onclick="cambiarEstado(\'cancelada\')">Cancelar</button>';
+            } else {
+                // Estado no reconocido - mostrar opciones básicas
+                descripcion.textContent = 'Gestionar cita - que deseas hacer?';
+                botones.innerHTML =
+                    '<button class="modal-cita__btn modal-cita__btn--confirmar" onclick="cambiarEstado(\'confirmada\')">Confirmar</button>' +
                     '<button class="modal-cita__btn modal-cita__btn--completar" onclick="cambiarEstado(\'completada\')">Completar</button>' +
                     '<button class="modal-cita__btn modal-cita__btn--cancelar"  onclick="cambiarEstado(\'cancelada\')">Cancelar</button>';
             }

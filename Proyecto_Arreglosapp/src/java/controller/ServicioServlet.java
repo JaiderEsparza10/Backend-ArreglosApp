@@ -62,7 +62,7 @@ public class ServicioServlet extends HttpServlet {
                 String nombre = request.getParameter("nombre");
                 String descripcion = request.getParameter("descripcion");
                 String precioStr = request.getParameter("precio");
-                String tiempoEst = request.getParameter("tiempoEstimado");
+                int tiempoEst = Integer.parseInt(request.getParameter("tiempoEstimado"));
 
                 // Validaciones de Integridad de Negocio (Backend Validation)
                 if (nombre == null || nombre.trim().isEmpty()) {
@@ -111,18 +111,26 @@ public class ServicioServlet extends HttpServlet {
                     return;
                 }
 
+                // VALIDACIÓN DE DUPLICADOS - Evitar error 500
+                if (servicioDAO.existeNombreServicio(nombre.trim())) {
+                    session.setAttribute("errorServicio", "El nombre del servicio '" + nombre.trim() + "' ya existe. Por favor, elige otro nombre.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
+                    return;
+                }
+
                 // Procesamiento de la iconografía/fotografía del servicio
                 String imagenUrl = procesarImagen(request);
 
-                // Mapeo al modelo de persistencia
-                Servicio s = new Servicio();
-                s.setNombre(nombre.trim());
-                s.setDescripcion(descripcion);
-                s.setPrecioBase(precio);
-                s.setTiempoEstimado(tiempoEst);
-                s.setImagenUrl(imagenUrl);
-
-                boolean creado = servicioDAO.crearServicio(s);
+                // Crear objeto Servicio con los datos del formulario
+                Servicio servicio = new Servicio();
+                servicio.setServicioNombre(nombre.trim());
+                servicio.setServicioDescripcion(descripcion);
+                servicio.setServicioPrecioBase(precio);
+                servicio.setServicioTiempoEstimado(tiempoEst);
+                
+                // Usar el nuevo ServicioDAO para insertar en tabla SERVICIOS
+                ServicioDAO servicioDAO = new ServicioDAO();
+                boolean creado = servicioDAO.crearServicio(servicio);
 
                 if (creado) {
                     // Éxito: Notificación mediante flag URL
@@ -141,30 +149,57 @@ public class ServicioServlet extends HttpServlet {
         } else if ("editar".equals(accion)) {
             try {
                 // Extracción de clave primaria para actualización
-                int arregloId = Integer.parseInt(request.getParameter("arregloId"));
+                String servicioIdStr = request.getParameter("servicioId");
                 String nombre = request.getParameter("nombre");
                 String descripcion = request.getParameter("descripcion");
                 String precioStr = request.getParameter("precio");
-                String tiempoEst = request.getParameter("tiempoEstimado");
+                String tiempoStr = request.getParameter("tiempoEstimado");
+                int servicioId = 0;
+                int tiempoEst = 0;
+                if (servicioIdStr != null && !servicioIdStr.isEmpty()) {
+                    servicioId = Integer.parseInt(servicioIdStr);
+                }
+                if (tiempoStr != null && !tiempoStr.isEmpty()) {
+                    tiempoEst = Integer.parseInt(tiempoStr);
+                }
 
                 // Validaciones redundantes (Safety First)
                 if (nombre == null || nombre.trim().isEmpty()) {
                     session.setAttribute("errorServicio", "El nombre del servicio es obligatorio.");
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + arregloId);
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
                     return;
                 }
 
-                // ... (Otras validaciones similares al flujo de creación) ...
+                // VALIDACIÓN DE DUPLICADOS (excluyendo el servicio actual)
+                if (servicioDAO.existeNombreServicioExcluyendo(nombre.trim(), servicioId)) {
+                    session.setAttribute("errorServicio", "El nombre del servicio '" + nombre.trim() + "' ya existe. Por favor, elige otro nombre.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
+                    return;
+                }
 
-                double precio = Double.parseDouble(precioStr.replace(",", ".").trim());
+                // Validación de precio
+                double precio = 0.0;
+                if (precioStr != null && !precioStr.trim().isEmpty()) {
+                    try {
+                        precio = Double.parseDouble(precioStr.replace(",", ".").trim());
+                    } catch (NumberFormatException e) {
+                        session.setAttribute("errorServicio", "El precio debe ser un número válido.");
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
+                        return;
+                    }
+                } else {
+                    session.setAttribute("errorServicio", "El precio del servicio es obligatorio.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
+                    return;
+                }
                 String imagenUrl = procesarImagen(request);
 
                 Servicio s = new Servicio();
-                s.setArregloId(arregloId);
-                s.setNombre(nombre.trim());
-                s.setDescripcion(descripcion);
-                s.setPrecioBase(precio);
-                s.setTiempoEstimado(tiempoEst);
+                s.setServicioId(servicioId);
+                s.setServicioNombre(nombre.trim());
+                s.setServicioDescripcion(descripcion);
+                s.setServicioPrecioBase(precio);
+                s.setServicioTiempoEstimado(tiempoEst);
                 s.setImagenUrl(imagenUrl);
 
                 boolean actualizado = servicioDAO.actualizarServicio(s);
@@ -173,7 +208,7 @@ public class ServicioServlet extends HttpServlet {
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-servicios.jsp?editado=1");
                 } else {
                     session.setAttribute("errorServicio", "No se pudo actualizar el servicio");
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + arregloId);
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
                 }
 
             } catch (Exception e) {
@@ -184,10 +219,13 @@ public class ServicioServlet extends HttpServlet {
         // ─── ELIMINACIÓN DE SERVICIO ──────────────────────────────────
         } else if ("eliminar".equals(accion)) {
             try {
-                int arregloId = Integer.parseInt(request.getParameter("arregloId"));
-                // Ejecución del borrado físico en el catálogo
-                servicioDAO.eliminarServicio(arregloId);
-                response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-servicios.jsp?eliminado=1");
+                String servicioIdStr = request.getParameter("arregloId");
+                if (servicioIdStr != null && !servicioIdStr.isEmpty()) {
+                    int servicioId = Integer.parseInt(servicioIdStr);
+                    // Ejecución del borrado lógico en el catálogo
+                    servicioDAO.desactivarServicio(servicioId);
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-servicios.jsp?eliminado=1");
+                }
             } catch (Exception e) {
                 session.setAttribute("errorServicio", "Error al eliminar: " + e.getMessage());
                 response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-servicios.jsp");
@@ -203,16 +241,30 @@ public class ServicioServlet extends HttpServlet {
         Part filePart = request.getPart("imagen");
         if (filePart != null && filePart.getSize() > 0) {
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+            
+            // Validar que sea una imagen
+            String contentType = filePart.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new Exception("El archivo debe ser una imagen válida");
+            }
+            
+            // Generar nombre único para evitar sobrescribir
+            String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+            String uniqueFileName = System.currentTimeMillis() + "_" + fileName.hashCode() + fileExtension;
+            
             // Construcción dinámica de la ruta de almacenamiento local
-            String uploadPath = getServletContext().getRealPath("") + File.separator + "Assets" + File.separator
-                    + "uploads";
+            String uploadPath = getServletContext().getRealPath("") + File.separator + "Assets" + File.separator + "uploads";
             File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists())
+            if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
+            }
             
             // Escritura física en disco del servidor
-            filePart.write(uploadPath + File.separator + fileName);
-            return "Assets/uploads/" + fileName;
+            String filePath = uploadPath + File.separator + uniqueFileName;
+            filePart.write(filePath);
+            
+            // Retornar ruta relativa para guardar en BD
+            return "Assets/uploads/" + uniqueFileName;
         }
         return null;
     }

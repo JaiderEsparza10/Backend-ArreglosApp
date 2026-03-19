@@ -15,22 +15,17 @@ public class PersonalizacionDAO {
      * @return true si la inserción fue exitosa, false en caso contrario.
      */
     public boolean crearPersonalizacion(Personalizacion personalizacion) throws Exception {
-        String sql = "INSERT INTO PERSONALIZACIONES (user_id, arreglo_id, categoria_id, descripcion, material_tela, imagen_referencia, estado) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO PERSONALIZACIONES (user_id, servicio_id, descripcion, material_tela, imagen_referencia, estado) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection con = ConectionDB.getConexion();
                 PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setInt(1, personalizacion.getUserId());
-            if (personalizacion.getArregloId() != null) {
-                ps.setInt(2, personalizacion.getArregloId());
-            } else {
-                ps.setNull(2, Types.INTEGER);
-            }
-            ps.setInt(3, personalizacion.getCategoriaId());
-            ps.setString(4, personalizacion.getDescripcion());
-            ps.setString(5, personalizacion.getMaterialTela());
-            ps.setString(6, personalizacion.getImagenReferencia());
-            ps.setString(7, personalizacion.getEstado());
+            ps.setInt(2, personalizacion.getServicioId());
+            ps.setString(3, personalizacion.getDescripcion());
+            ps.setString(4, personalizacion.getMaterialTela());
+            ps.setString(5, personalizacion.getImagenReferencia());
+            ps.setString(6, personalizacion.getEstado());
 
             int filasInsertadas = ps.executeUpdate();
 
@@ -47,12 +42,12 @@ public class PersonalizacionDAO {
     }
 
     /**
-     * Obtiene personalizaciones de un usuario con nombres de categorías.
+     * Obtiene personalizaciones de un usuario con nombres de servicios.
      */
     public List<Personalizacion> obtenerPersonalizacionesPorUsuario(int userId) throws Exception {
-        String sql = "SELECT p.*, c.categoria_nombre " +
+        String sql = "SELECT p.*, s.servicio_nombre " +
                      "FROM PERSONALIZACIONES p " +
-                     "LEFT JOIN CATEGORIAS c ON p.categoria_id = c.categoria_id " +
+                     "LEFT JOIN SERVICIOS s ON p.servicio_id = s.servicio_id " +
                      "WHERE p.user_id = ? ORDER BY p.fecha_creacion DESC";
         List<Personalizacion> personalizaciones = new ArrayList<>();
 
@@ -66,9 +61,8 @@ public class PersonalizacionDAO {
                     Personalizacion p = new Personalizacion();
                     p.setPersonalizacionId(rs.getInt("personalizacion_id"));
                     p.setUserId(rs.getInt("user_id"));
-                    p.setArregloId(rs.getInt("arreglo_id"));
-                    p.setCategoriaId(rs.getInt("categoria_id"));
-                    p.setCategoria(rs.getString("categoria_nombre")); // Nombre de la categoría
+                                        p.setServicioId(rs.getInt("servicio_id"));
+                    p.setServicio(rs.getString("servicio_nombre")); // Nombre del servicio
                     p.setDescripcion(rs.getString("descripcion"));
                     p.setMaterialTela(rs.getString("material_tela"));
                     p.setImagenReferencia(rs.getString("imagen_referencia"));
@@ -91,7 +85,7 @@ public class PersonalizacionDAO {
      */
     public boolean actualizarPersonalizacion(Personalizacion p) throws Exception {
         String sql = "UPDATE PERSONALIZACIONES SET " +
-                     "categoria_id = ?, " + 
+                     "servicio_id = ?, " + 
                      "descripcion = ?, " +
                      "material_tela = ?, " +
                      "imagen_referencia = COALESCE(?, imagen_referencia), " +
@@ -101,7 +95,7 @@ public class PersonalizacionDAO {
         try (Connection con = ConectionDB.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, p.getCategoriaId());
+            ps.setInt(1, p.getServicioId());
             ps.setString(2, p.getDescripcion());
             ps.setString(3, p.getMaterialTela());
             ps.setString(4, p.getImagenReferencia());
@@ -116,9 +110,9 @@ public class PersonalizacionDAO {
 
     // Obtener una personalización por ID y userId
     public Personalizacion obtenerPorId(int personalizacionId, int userId) throws Exception {
-        String sql = "SELECT p.*, c.categoria_nombre " +
+        String sql = "SELECT p.*, s.servicio_nombre " +
                      "FROM PERSONALIZACIONES p " +
-                     "LEFT JOIN CATEGORIAS c ON p.categoria_id = c.categoria_id " +
+                     "LEFT JOIN SERVICIOS s ON p.servicio_id = s.servicio_id " +
                      "WHERE p.personalizacion_id = ? AND p.user_id = ?";
 
         try (Connection con = ConectionDB.getConexion();
@@ -132,9 +126,8 @@ public class PersonalizacionDAO {
                     Personalizacion p = new Personalizacion();
                     p.setPersonalizacionId(rs.getInt("personalizacion_id"));
                     p.setUserId(rs.getInt("user_id"));
-                    p.setArregloId(rs.getInt("arreglo_id"));
-                    p.setCategoriaId(rs.getInt("categoria_id"));
-                    p.setCategoria(rs.getString("categoria_nombre")); // Nombre de la categoría
+                                        p.setServicioId(rs.getInt("servicio_id"));
+                    p.setServicio(rs.getString("servicio_nombre")); // Nombre del servicio
                     p.setDescripcion(rs.getString("descripcion"));
                     p.setMaterialTela(rs.getString("material_tela"));
                     p.setImagenReferencia(rs.getString("imagen_referencia"));

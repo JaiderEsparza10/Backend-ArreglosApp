@@ -53,9 +53,9 @@
                     
                     if (data.success && data.data && data.data.length > 0) {
                         container.innerHTML = data.data.map(favorito => `
-                            <article class="tarjeta-arreglo"> <div class="tarjeta-arreglo__imagen-contenedor"> <img src="${favorito.imagenUrl}" alt="${favorito.nombreCategoria}" class="tarjeta-arreglo__imagen">
+                            <article class="tarjeta-arreglo"> <div class="tarjeta-arreglo__imagen-contenedor"> <img src="${favorito.imagenUrl}" alt="${favorito.nombreServicio}" class="tarjeta-arreglo__imagen">
                                 </div>
-                                <div class="tarjeta-arreglo__contenido"> <h3 class="tarjeta-arreglo__nombre">${favorito.nombreCategoria}</h3> <p class="tarjeta-arreglo__categoria">${favorito.categoria}</p> <div class="tarjeta-arreglo__footer"> <p class="tarjeta-arreglo__precio">$${favorito.precio.toLocaleString('es-CO')}</p> <button onclick="eliminarFavorito(${favorito.favoritoId})" class="tarjeta-arreglo__eliminar">
+                                <div class="tarjeta-arreglo__contenido"> <h3 class="tarjeta-arreglo__nombre">${favorito.nombreServicio}</h3> <p class="tarjeta-arreglo__categoria">${favorito.servicio}</p> <div class="tarjeta-arreglo__footer"> <p class="tarjeta-arreglo__precio">$${favorito.precio.toLocaleString('es-CO')}</p> <button onclick="eliminarFavorito(${favorito.favoritoId})" class="tarjeta-arreglo__eliminar">
                                             Eliminar
                                         </button>
                                     </div>

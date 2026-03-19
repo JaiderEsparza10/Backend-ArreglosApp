@@ -43,10 +43,10 @@
                                     <title>Página Principal</title>
                                 </head>
 
-                                <body class="grid-principal"> <a href="#contenido-principal" class="skip-link">Saltar al contenido</a> <header class="seccion-encabezado"> <img class="seccion-encabezado__logo" src="../../Assets/image/logo-app.png"
+                                <body class="grid-principal"> <a href="#contenido-principal" class="skip-link">Saltar al contenido</a> <header class="seccion-encabezado"> <img class="seccion-encabezado__logo" src="${pageContext.request.contextPath}/Assets/image/logo-app.png"
                                             alt="logo de la aplicación"> <h1 class="seccion-encabezado__nombre">Arreglos App</h1>
                                     </header>
-                                    <main class="contenido" id="contenido-principal" role="main"> <div class="contenido__barra-busqueda"> <img src="../../Assets/icons/lupa.png" alt="lupa"> <input type="text" name="buscador" id="buscador"
+                                    <main class="contenido" id="contenido-principal" role="main"> <div class="contenido__barra-busqueda"> <img src="${pageContext.request.contextPath}/Assets/icons/lupa.png" alt="lupa"> <input type="text" name="buscador" id="buscador"
                                                 placeholder="Buscar arreglos..." autocomplete="off"> <button class="buscador__limpiar" id="btnLimpiar"
                                                 style="display:none;">✕</button>
                                         </div>
@@ -54,7 +54,7 @@
                                         </div>
                                         <div class="busqueda__sin-resultados" id="sinResultados" style="display:none;"> <p>No se encontraron servicios para "<span id="textoBuscado"></span>"</p>
                                         </div>
-                                        <h2 class="contenido__titulo-seccion" id="tituloCategorias">Categorías</h2> <section class="contenido__categorias"> <div class="categorias__grid" id="gridServicios">
+                                        <h2 class="contenido__titulo-seccion" id="tituloServicios">Servicios</h2> <section class="contenido__categorias"> <div class="categorias__grid" id="gridServicios">
                                                 <% if (servicios.isEmpty()) { %>
                                                     <p
                                                         style="color:#888;font-size:13px;text-align:center;padding:20px;">
@@ -62,7 +62,7 @@
                                                     <% } %>
                                                         <% for (int i=0; i < servicios.size(); i++) { Servicio
                                                             s=servicios.get(i); String imgUrl=s.getImagenUrl(); String
-                                                            imgSrc=ctx + "/Assets/image/logo-app.png" ; if (imgUrl
+                                                            imgSrc = ctx + "/Assets/image/imagen-sastreria.jpg"; if (imgUrl
                                                             !=null && !imgUrl.trim().isEmpty()) { if
                                                             (imgUrl.startsWith("../../")) { imgSrc=ctx + "/" + imgUrl.replace("../../", "" ); } else if (imgUrl.startsWith("Assets/")) { imgSrc=ctx + "/" + imgUrl; } else if (imgUrl.startsWith("http")) { imgSrc=imgUrl; } else { imgSrc=ctx + "/" + imgUrl; } } String nombre=s.getNombre() !=null ? s.getNombre() : "" ; String
                                                             nombreLower=nombre.toLowerCase(); String
