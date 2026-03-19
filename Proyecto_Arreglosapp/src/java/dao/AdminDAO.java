@@ -300,17 +300,61 @@ public class AdminDAO {
      * @throws Exception Si ocurre un error de conexión o SQL.
      */
     public void actualizarEstadoPedido(int pedidoId, String nuevoEstado) throws Exception {
-        String sql = "UPDATE pedidos SET pedido_estado = ? WHERE pedido_id = ?";
+        Connection con = null;
+        try {
+            con = ConectionDB.getConexion();
+            con.setAutoCommit(false); // Transacción para Estado y Notificación
 
-        try (Connection con = ConectionDB.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+            // 1. Actualizar el estado del pedido
+            String sqlUpdate = "UPDATE pedidos SET pedido_estado = ? WHERE pedido_id = ?";
+            try (PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
+                psUpdate.setString(1, nuevoEstado);
+                psUpdate.setInt(2, pedidoId);
+                psUpdate.executeUpdate();
+            }
 
-            ps.setString(1, nuevoEstado);
-            ps.setInt(2, pedidoId);
-            ps.executeUpdate();
+            // 2. Obtener el usuario_id del pedido para notificar
+            int usuarioId = -1;
+            String sqlSelect = "SELECT usuario_id FROM pedidos WHERE pedido_id = ?";
+            try (PreparedStatement psSelect = con.prepareStatement(sqlSelect)) {
+                psSelect.setInt(1, pedidoId);
+                try (ResultSet rs = psSelect.executeQuery()) {
+                    if (rs.next()) {
+                        usuarioId = rs.getInt("usuario_id");
+                    }
+                }
+            }
 
+            // 3. Insertar notificación para el cliente
+            if (usuarioId != -1) {
+                String mensaje = "Tu pedido #" + pedidoId + " ha cambiado de estado a '" + nuevoEstado + "'.";
+                if ("terminado".equalsIgnoreCase(nuevoEstado)) {
+                    mensaje = "Tu pedido #" + pedidoId + " ha sido finalizado. ¡Ya puedes recoger tu prenda!";
+                } else if ("en_proceso".equalsIgnoreCase(nuevoEstado)) {
+                    mensaje = "Tu pedido #" + pedidoId + " ya está en el taller siendo confeccionado.";
+                }
+
+                String sqlNotif = "INSERT INTO notificaciones (user_id, mensaje) VALUES (?, ?)";
+                try (PreparedStatement psNotif = con.prepareStatement(sqlNotif)) {
+                    psNotif.setInt(1, usuarioId);
+                    psNotif.setString(2, mensaje);
+                    psNotif.executeUpdate();
+                }
+            }
+
+            con.commit();
         } catch (SQLException e) {
+            if (con != null) {
+                try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
             throw new Exception("Error al actualizar estado del pedido: " + e.getMessage());
+        } finally {
+            if (con != null) {
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException ex) { ex.printStackTrace(); }
+            }
         }
     }
 
@@ -573,6 +617,39 @@ public class AdminDAO {
                     ps.setString(1, estadoPedido);
                     ps.setInt(2, citaId);
                     ps.executeUpdate();
+                }
+            }
+
+            // 4. Obtener usuario_id y pedido_id para notificar
+            int usuarioId = -1;
+            int pedidoId = -1;
+            String sqlSelectUser = "SELECT p.usuario_id, p.pedido_id FROM citas c JOIN pedidos p ON c.pedido_id = p.pedido_id WHERE c.cita_id = ?";
+            try (PreparedStatement psSel = con.prepareStatement(sqlSelectUser)) {
+                psSel.setInt(1, citaId);
+                try (ResultSet rs = psSel.executeQuery()) {
+                    if (rs.next()) {
+                        usuarioId = rs.getInt("usuario_id");
+                        pedidoId = rs.getInt("pedido_id");
+                    }
+                }
+            }
+
+            // 5. Insertar notificación para el cliente
+            if (usuarioId != -1) {
+                String mensaje = "Tu cita para el pedido #" + pedidoId + " ahora está '" + nuevoEstado + "'.";
+                if ("confirmada".equalsIgnoreCase(nuevoEstado)) {
+                    mensaje = "¡Buenas noticias! Tu cita para el pedido #" + pedidoId + " ha sido confirmada.";
+                } else if ("completada".equalsIgnoreCase(nuevoEstado)) {
+                    mensaje = "Tu cita para el pedido #" + pedidoId + " se ha completado. El pedido ahora está finalizado.";
+                } else if ("cancelada".equalsIgnoreCase(nuevoEstado)) {
+                    mensaje = "Tu cita para el pedido #" + pedidoId + " ha sido lamentablemente cancelada.";
+                }
+
+                String sqlNotif = "INSERT INTO notificaciones (user_id, mensaje) VALUES (?, ?)";
+                try (PreparedStatement psNotif = con.prepareStatement(sqlNotif)) {
+                    psNotif.setInt(1, usuarioId);
+                    psNotif.setString(2, mensaje);
+                    psNotif.executeUpdate();
                 }
             }
 
