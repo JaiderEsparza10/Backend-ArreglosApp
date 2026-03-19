@@ -708,16 +708,90 @@ public class AdminDAO {
      * @throws Exception Si ocurre un error de conexión, SQL o restricción de FK.
      */
     public void eliminarUsuario(int userId) throws Exception {
-        String sql = "DELETE FROM usuarios WHERE user_id = ?";
+        Connection con = null;
+        try {
+            con = ConectionDB.getConexion();
+            con.setAutoCommit(false); // Transacción para validación y borrado
 
-        try (Connection con = ConectionDB.getConexion();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+            // 1. Validar PEDIDOS ACTIVOS (Que NO sean 'terminado' ni 'cancelado')
+            String sqlPedidos = "SELECT COUNT(*) FROM pedidos WHERE usuario_id = ? AND pedido_estado NOT IN ('terminado', 'cancelado')";
+            try (PreparedStatement ps = con.prepareStatement(sqlPedidos)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        throw new Exception("El usuario no puede ser eliminado porque tiene pedidos activos en curso.");
+                    }
+                }
+            }
 
-            ps.setInt(1, userId);
-            ps.executeUpdate();
+            // 2. Validar CITAS ACTIVAS (Vía JOIN con pedidos, que la cita NO sea 'completada' ni 'cancelada')
+            String sqlCitas = "SELECT COUNT(*) FROM citas c JOIN pedidos p ON c.pedido_id = p.pedido_id "
+                    + "WHERE p.usuario_id = ? AND c.cita_estado NOT IN ('completada', 'cancelada')";
+            try (PreparedStatement ps = con.prepareStatement(sqlCitas)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        throw new Exception("El usuario no puede ser eliminado porque tiene citas activas pendientes.");
+                    }
+                }
+            }
 
-        } catch (SQLException e) {
-            throw new Exception("Error al eliminar usuario: " + e.getMessage());
+            // 3. Validar PERSONALIZACIONES ACTIVAS (Que NO sean 'completado' ni 'cancelado')
+            String sqlPer = "SELECT COUNT(*) FROM personalizaciones WHERE user_id = ? AND estado NOT IN ('completado', 'cancelado')";
+            try (PreparedStatement ps = con.prepareStatement(sqlPer)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        throw new Exception("El usuario no puede ser eliminado porque tiene solicitudes de personalización activas.");
+                    }
+                }
+            }
+
+            // Si llegamos aquí, el usuario tiene 0 pendientes activos.
+            // 4. Comprobar si tiene registros en el Historial para decidir entre Borrado Físico o Lógico
+            boolean tieneHistorial = false;
+            String checkHistorial = "SELECT COUNT(*) FROM pedidos WHERE usuario_id = ?";
+            try (PreparedStatement psH = con.prepareStatement(checkHistorial)) {
+                psH.setInt(1, userId);
+                try (ResultSet rsH = psH.executeQuery()) {
+                    if (rsH.next() && rsH.getInt(1) > 0) {
+                        tieneHistorial = true;
+                    }
+                }
+            }
+
+            // 5. Proceder a la eliminación
+            if (tieneHistorial) {
+                // BORRADO LÓGICO: Anonimizar la cuenta para conservar la integridad referencial del historial
+                String sqlLogico = "UPDATE usuarios SET user_email = CONCAT('deleted_', user_id, '@arreglosapp.local'), "
+                        + "user_password_hash = 'ELIMINADO', user_nombre = 'Usuario Eliminado', "
+                        + "user_ubicacion_direccion = 'N/A' WHERE user_id = ?";
+                try (PreparedStatement psLog = con.prepareStatement(sqlLogico)) {
+                    psLog.setInt(1, userId);
+                    psLog.executeUpdate();
+                }
+            } else {
+                // BORRADO FÍSICO: Si no hay historial, se puede borrar de la BD con seguridad
+                String sqlFisico = "DELETE FROM usuarios WHERE user_id = ?";
+                try (PreparedStatement psFis = con.prepareStatement(sqlFisico)) {
+                    psFis.setInt(1, userId);
+                    psFis.executeUpdate();
+                }
+            }
+
+            con.commit();
+        } catch (Exception e) {
+            if (con != null) {
+                try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            throw e; // Propagar la excepción original (o la de validación)
+        } finally {
+            if (con != null) {
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException ex) { ex.printStackTrace(); }
+            }
         }
     }
 

@@ -619,16 +619,16 @@ public class UsuarioDAO {
                 }
             }
             
-            // 3. Verificar citas activas (excluyendo canceladas)
+            // 3. Verificar citas activas (excluyendo completadas y canceladas)
             String sqlCitas = "SELECT COUNT(*) FROM CITAS c " +
                             "JOIN PEDIDOS p ON c.pedido_id = p.pedido_id " +
-                            "WHERE p.usuario_id = ? AND c.cita_estado NOT IN ('cancelada')";
+                            "WHERE p.usuario_id = ? AND c.cita_estado NOT IN ('completada', 'cancelada')";
             try (PreparedStatement ps = con.prepareStatement(sqlCitas)) {
                 ps.setInt(1, userId);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next() && rs.getInt(1) > 0) {
                         result.put("canDelete", false);
-                        result.put("reason", "El usuario tiene " + rs.getInt(1) + " citas activas (no canceladas)");
+                        result.put("reason", "El usuario tiene " + rs.getInt(1) + " citas activas (no completadas ni canceladas)");
                         return result;
                     }
                 }

@@ -145,7 +145,21 @@ public class AdminServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp?error=1");
+            
+            // Para eliminación de usuario, pasar el mensaje específico de error
+            if ("eliminarUsuario".equals(accion)) {
+                String errorMsg = e.getMessage();
+                if (errorMsg != null && !errorMsg.isEmpty()) {
+                    // Codificar el mensaje para pasarlo como parámetro URL
+                    String encodedMsg = java.net.URLEncoder.encode(errorMsg, "UTF-8");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-usuarios.jsp?error=" + encodedMsg);
+                } else {
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-usuarios.jsp?error=general");
+                }
+            } else {
+                // Para otras acciones, mantener el error genérico
+                response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp?error=1");
+            }
         }
     }
 }
