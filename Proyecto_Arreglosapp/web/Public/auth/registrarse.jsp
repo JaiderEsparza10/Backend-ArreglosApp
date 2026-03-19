@@ -135,6 +135,20 @@
             });
             if (!valido) e.preventDefault();
           });
+
+          window.addEventListener('load', function() {
+            var params = new URLSearchParams(window.location.search);
+            var msg = params.get('msg');
+            if (msg === 'nombreInvalido') {
+              if (window.mostrarAlerta) {
+                mostrarAlerta('warning', 'El nombre solo debe contener letras.');
+              } else {
+                alert('El nombre solo debe contener letras.');
+              }
+            } else if (msg === 'exitoRegistro') {
+               // Ya se maneja en el login usualmente, pero por si acaso
+            }
+          });
         </script>
       </main>
     </body>

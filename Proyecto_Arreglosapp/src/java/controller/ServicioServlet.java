@@ -58,11 +58,26 @@ public class ServicioServlet extends HttpServlet {
         // ─── CREAR NUEVO SERVICIO ─────────────────────────────────────
         if ("crear".equals(accion)) {
             try {
-                // Extracción de metadatos básicos del servicio
+                // Extracción de metadatos con manejo seguro de tipos (Meta 1)
                 String nombre = request.getParameter("nombre");
                 String descripcion = request.getParameter("descripcion");
                 String precioStr = request.getParameter("precio");
-                int tiempoEst = Integer.parseInt(request.getParameter("tiempoEstimado"));
+                String tiempoStr = request.getParameter("tiempoEstimado");
+                
+                int tiempoEst = 0;
+                if (tiempoStr == null || tiempoStr.trim().isEmpty()) {
+                    session.setAttribute("errorServicio", "El tiempo estimado es obligatorio.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
+                    return;
+                }
+                
+                try {
+                    tiempoEst = Integer.parseInt(tiempoStr.trim());
+                } catch (NumberFormatException e) {
+                    session.setAttribute("errorServicio", "El tiempo estimado debe ser un número entero válido.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
+                    return;
+                }
 
                 // Validaciones de Integridad de Negocio (Backend Validation)
                 if (nombre == null || nombre.trim().isEmpty()) {
@@ -148,47 +163,80 @@ public class ServicioServlet extends HttpServlet {
         // ─── EDITAR SERVICIO EXISTENTE ────────────────────────────────
         } else if ("editar".equals(accion)) {
             try {
-                // Extracción de clave primaria para actualización
+                // Extracción de clave primaria y metadatos para actualización
                 String servicioIdStr = request.getParameter("servicioId");
                 String nombre = request.getParameter("nombre");
                 String descripcion = request.getParameter("descripcion");
                 String precioStr = request.getParameter("precio");
                 String tiempoStr = request.getParameter("tiempoEstimado");
+                
                 int servicioId = 0;
                 int tiempoEst = 0;
-                if (servicioIdStr != null && !servicioIdStr.isEmpty()) {
-                    servicioId = Integer.parseInt(servicioIdStr);
+
+                // VALIDACIÓN DE INTEGRIDAD ROBUSTA (Meta 1)
+                if (servicioIdStr == null || servicioIdStr.trim().isEmpty()) {
+                    session.setAttribute("errorServicio", "ID de servicio no proporcionado.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-servicios.jsp");
+                    return;
                 }
-                if (tiempoStr != null && !tiempoStr.isEmpty()) {
-                    tiempoEst = Integer.parseInt(tiempoStr);
+                
+                try {
+                    servicioId = Integer.parseInt(servicioIdStr.trim());
+                } catch (NumberFormatException e) {
+                    session.setAttribute("errorServicio", "ID de servicio inválido.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-servicios.jsp");
+                    return;
                 }
 
-                // Validaciones redundantes (Safety First)
                 if (nombre == null || nombre.trim().isEmpty()) {
-                    session.setAttribute("errorServicio", "El nombre del servicio es obligatorio.");
+                    session.setAttribute("errorServicio", "El nombre es obligatorio.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
+                    return;
+                }
+
+                if (descripcion == null) {
+                    descripcion = "";
+                }
+
+                // Validación de tiempo estimado (Meta 1)
+                if (tiempoStr == null || tiempoStr.trim().isEmpty()) {
+                    session.setAttribute("errorServicio", "El tiempo estimado es obligatorio.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
+                    return;
+                }
+                
+                try {
+                    tiempoEst = Integer.parseInt(tiempoStr.trim());
+                } catch (NumberFormatException e) {
+                    session.setAttribute("errorServicio", "El tiempo estimado debe ser un número entero.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
                     return;
                 }
 
                 // VALIDACIÓN DE DUPLICADOS (excluyendo el servicio actual)
                 if (servicioDAO.existeNombreServicioExcluyendo(nombre.trim(), servicioId)) {
-                    session.setAttribute("errorServicio", "El nombre del servicio '" + nombre.trim() + "' ya existe. Por favor, elige otro nombre.");
+                    session.setAttribute("errorServicio", "El nombre '" + nombre.trim() + "' ya existe.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
                     return;
                 }
 
-                // Validación de precio
+                // Validación de precio obligatoria
                 double precio = 0.0;
                 if (precioStr != null && !precioStr.trim().isEmpty()) {
                     try {
                         precio = Double.parseDouble(precioStr.replace(",", ".").trim());
+                        if (precio < 0) {
+                            session.setAttribute("errorServicio", "El precio no puede ser negativo.");
+                            response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
+                            return;
+                        }
                     } catch (NumberFormatException e) {
-                        session.setAttribute("errorServicio", "El precio debe ser un número válido.");
+                        session.setAttribute("errorServicio", "El formato del precio es inválido.");
                         response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
                         return;
                     }
                 } else {
-                    session.setAttribute("errorServicio", "El precio del servicio es obligatorio.");
+                    session.setAttribute("errorServicio", "El precio es obligatorio.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
                     return;
                 }

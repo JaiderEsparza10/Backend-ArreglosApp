@@ -157,8 +157,21 @@
                                                 List<Map<String, Object>> notifs = (List<Map<String, Object>>) request.getAttribute("notificaciones");
                                                 if (notifs != null && !notifs.isEmpty()) {
                                                     for (Map<String, Object> n : notifs) {
+                                                        String msgNotif = (String) n.get("mensaje");
+                                                        String lowerMsg = msgNotif.toLowerCase();
+                                                        String claseItem = "";
+                                                        
+                                                        if (lowerMsg.contains("completada") || lowerMsg.contains("confirmada") || lowerMsg.contains("éxito") || lowerMsg.contains("exito")) {
+                                                            claseItem = "notificacion-item--exito";
+                                                        } else if (lowerMsg.contains("cancelada") || lowerMsg.contains("error") || lowerMsg.contains("rechazada")) {
+                                                            claseItem = "notificacion-item--error";
+                                                        } else if (lowerMsg.contains("pendiente") || lowerMsg.contains("proceso")) {
+                                                            claseItem = "notificacion-item--alerta";
+                                                        }
                                                 %>
-                                                    <div class="notificacion-item" style="border-bottom: 1px solid #eee; padding: 10px 0;"> <p style="font-size: 14px; margin-bottom: 4px; color: #333;"><%= n.get("mensaje") %></p> <span style="font-size: 11px; color: #999;"><%= sdf.format(n.get("fecha")) %></span>
+                                                    <div class="notificacion-item <%= claseItem %>">
+                                                        <p class="notificacion-item__mensaje"><%= msgNotif %></p>
+                                                        <span class="notificacion-item__fecha"><%= sdf.format(n.get("fecha")) %></span>
                                                     </div>
                                                 <% 
                                                     }

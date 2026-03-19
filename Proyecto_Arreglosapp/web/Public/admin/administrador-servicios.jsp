@@ -13,6 +13,10 @@ if (admin == null || admin.getRolId() != 1) {
 String eliminado = request.getParameter("eliminado");
 String creado = request.getParameter("creado");
 String editado = request.getParameter("editado");
+String errorServicio = (String) session.getAttribute("errorServicio");
+if (errorServicio != null) {
+    session.removeAttribute("errorServicio");
+}
 ServicioDAO servicioDAO = new ServicioDAO();
 List<Servicio> servicios = new ArrayList<>();
 try {
@@ -128,6 +132,10 @@ function cerrarModal() {
     modal.style.display = 'none';
 }
 window.addEventListener('load', function () {
+    var errorMsg = '<%= (errorServicio != null) ? errorServicio.replace("'", "\\'") : "" %>';
+    if (errorMsg) {
+        mostrarToast('❌ ' + errorMsg, 'error');
+    }
     var params = new URLSearchParams(window.location.search);
     if (params.get('eliminado') === '1') {
         mostrarToast('✅ Servicio eliminado correctamente', 'exito');

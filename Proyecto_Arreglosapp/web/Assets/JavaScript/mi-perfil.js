@@ -36,29 +36,45 @@ function togglePass(inputId, ojoId) {
 }
 
 // =====================
-// TOAST
+// TOAST DINÁMICO (Meta 2)
 // =====================
-function mostrarToast(mensaje, exito) {
+function mostrarToast(mensaje, tipo) {
     var toast = document.getElementById('toast');
+    if (!toast) return;
+
+    if (!tipo) {
+        var msg = mensaje.toLowerCase();
+        if (msg.includes('✅') || msg.includes('éxito') || msg.includes('correctamente')) {
+            tipo = 'exito';
+        } else if (msg.includes('❌') || msg.includes('error')) {
+            tipo = 'error';
+        } else if (msg.includes('pendiente') || msg.includes('en proceso')) {
+            tipo = 'advertencia';
+        } else {
+            tipo = 'exito';
+        }
+    }
+
     toast.textContent = mensaje;
-    toast.className = 'toast ' + (exito ? 'toast--exito' : 'toast--error');
+    toast.className = 'toast toast--' + tipo;
     toast.classList.add('toast--visible');
+
     setTimeout(function () {
         toast.classList.remove('toast--visible');
     }, 3000);
 }
 
 // =====================
-// TOAST AL CARGAR
+// EVENTOS AL CARGAR
 // =====================
 window.addEventListener('load', function () {
     var params = new URLSearchParams(window.location.search);
     if (params.get('editado') === '1') {
-        mostrarToast('✅ Datos actualizados correctamente', true);
+        mostrarToast('✅ Datos actualizados correctamente', 'exito');
         history.replaceState({}, document.title, window.location.pathname);
     }
     if (params.get('passwordCambiada') === '1') {
-        mostrarToast('✅ Contraseña cambiada correctamente', true);
+        mostrarToast('✅ Contraseña cambiada correctamente', 'exito');
         history.replaceState({}, document.title, window.location.pathname);
     }
 
@@ -66,5 +82,20 @@ window.addEventListener('load', function () {
     var hash = window.location.hash;
     if (hash === '#cambiarPassword') {
         toggleSeccion('formPassword');
+    }
+
+    // VALIDACIÓN DE NOMBRE (Nuevo Requerimiento: No números)
+    var formEditar = document.querySelector('form[action*="PerfilServlet"]');
+    if (formEditar) {
+        formEditar.addEventListener('submit', function (e) {
+            var inputNombre = this.querySelector('input[name="nombre"]');
+            var nombre = inputNombre.value.trim();
+            // Regex: Mínimo 3 caracteres, letras, espacios y tildes solamente.
+            var regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,}$/;
+            if (!regexNombre.test(nombre)) {
+                e.preventDefault();
+                mostrarToast('❌ El nombre solo debe contener letras y tener al menos 3 caracteres.', 'error');
+            }
+        });
     }
 });

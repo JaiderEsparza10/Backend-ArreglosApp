@@ -99,14 +99,28 @@ public class PersonalizacionServlet extends HttpServlet {
                     return;
                 }
 
-                // 2. CAPTURA DE METADATOS
+                // 2. CAPTURA DE METADATOS CON VALIDACIÓN (Meta 1)
                 String descripcion = request.getParameter("descripcion");
                 String materialTela = request.getParameter("materialTela");
+                
+                if (descripcion == null || descripcion.trim().isEmpty()) {
+                    session.setAttribute("errorPersonalizacion", "La descripción es obligatoria.");
+                    redireccionarError(request, response, accion);
+                    return;
+                }
+
+                if (materialTela == null) {
+                    materialTela = "No especificado";
+                }
                 
                 Integer arregloId = null;
                 String arregloIdParam = request.getParameter("arregloId");
                 if (arregloIdParam != null && !arregloIdParam.trim().isEmpty()) {
-                    arregloId = Integer.parseInt(arregloIdParam);
+                    try {
+                        arregloId = Integer.parseInt(arregloIdParam.trim());
+                    } catch (NumberFormatException e) {
+                        arregloId = null;
+                    }
                 }
 
                 // 3. PROCESAR IMAGEN

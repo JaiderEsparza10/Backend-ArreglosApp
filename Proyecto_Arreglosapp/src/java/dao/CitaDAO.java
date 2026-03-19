@@ -82,13 +82,14 @@ public class CitaDAO {
             con = ConectionDB.getConexion();
             con.setAutoCommit(false); // Iniciar flujo transaccional
 
-            // 1. Obtener datos de la personalización
+            // 1. Obtener datos de la personalización (Meta 4)
             int servicioId = -1;
             double precio = 0;
             String descripcion = "";
             String material = "";
+            String imagen = "";
 
-            String sqlPer = "SELECT servicio_id, descripcion, material_tela FROM personalizaciones WHERE personalizacion_id = ?";
+            String sqlPer = "SELECT servicio_id, descripcion, material_tela, imagen_referencia FROM personalizaciones WHERE personalizacion_id = ?";
             try (PreparedStatement ps = con.prepareStatement(sqlPer)) {
                 ps.setInt(1, personalizacionId);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -96,6 +97,7 @@ public class CitaDAO {
                         servicioId = rs.getInt("servicio_id");
                         descripcion = rs.getString("descripcion");
                         material = rs.getString("material_tela");
+                        imagen = rs.getString("imagen_referencia");
                     } else {
                         con.rollback();
                         throw new Exception("Personalización no encontrada: " + personalizacionId);
@@ -130,15 +132,16 @@ public class CitaDAO {
                 }
             }
 
-            // 4. Si no existe, crear nuevo ARREGLO
+            // 4. Si no existe, crear nuevo ARREGLO (Meta 4 - Incluir Imagen)
             if (arregloId == -1) {
-                String sqlArreglo = "INSERT INTO arreglos (personalizacion_id, arreglo_nombre, arreglo_descripcion, arreglo_precio_base) VALUES (?, ?, ?, ?)";
+                String sqlArreglo = "INSERT INTO arreglos (personalizacion_id, arreglo_nombre, arreglo_descripcion, arreglo_precio_base, arreglo_imagen_url) VALUES (?, ?, ?, ?, ?)";
                 try (PreparedStatement ps = con.prepareStatement(sqlArreglo, Statement.RETURN_GENERATED_KEYS)) {
                     ps.setInt(1, personalizacionId);
                     String nombreArreglo = "Arreglo Personalizado - " + servicioId;
                     ps.setString(2, nombreArreglo);
                     ps.setString(3, descripcion);
                     ps.setDouble(4, precio);
+                    ps.setString(5, imagen);
                     
                     int filas = ps.executeUpdate();
                     if (filas > 0) {

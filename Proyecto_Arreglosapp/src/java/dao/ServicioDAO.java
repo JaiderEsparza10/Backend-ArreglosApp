@@ -195,24 +195,66 @@ public class ServicioDAO {
     }
 
     /**
-     * Eliminación lógica de un servicio (desactivar)
-     * @param servicioId ID del servicio a desactivar
-     * @return true si se desactivó exitosamente
+     * Realiza una desactivación lógica del servicio (Meta 3 - Cascada)
+     * Gestiona dependencias en FAVORITOS y PERSONALIZACIONES para evitar errores de FK.
      */
     public boolean desactivarServicio(int servicioId) throws Exception {
-        String sql = "UPDATE SERVICIOS SET servicio_activo = 0 WHERE servicio_id = ?";
+        String sqlCheck = "SELECT COUNT(*) FROM DETALLE_PEDIDO dp " +
+                         "JOIN ARREGLOS a ON dp.arreglo_id = a.arreglo_id " +
+                         "JOIN PERSONALIZACIONES p ON a.personalizacion_id = p.personalizacion_id " +
+                         "WHERE p.servicio_id = ?";
+        
+        String sqlFavoritos = "DELETE FROM FAVORITOS WHERE servicio_id = ?";
+        String sqlPerso = "UPDATE PERSONALIZACIONES SET estado = 'cancelado' WHERE servicio_id = ? AND estado = 'pendiente'";
+        String sqlServicio = "UPDATE SERVICIOS SET servicio_activo = 0 WHERE servicio_id = ?";
+        
+        Connection con = null;
+        try {
+            con = ConectionDB.getConexion();
+            
+            // 0. Verificar si existen pedidos asociados (Nueva Restricción)
+            try (PreparedStatement psCheck = con.prepareStatement(sqlCheck)) {
+                psCheck.setInt(1, servicioId);
+                try (ResultSet rs = psCheck.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        throw new Exception("No se puede eliminar el servicio porque ya tiene pedidos o citas registradas por clientes.");
+                    }
+                }
+            }
 
-        try (Connection con = ConectionDB.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+            con.setAutoCommit(false); // Iniciar transacción
 
-            ps.setInt(1, servicioId);
-            int filasActualizadas = ps.executeUpdate();
-            return filasActualizadas > 0;
+            // 1. Eliminar de favoritos (Cascada lógica/física)
+            try (PreparedStatement psF = con.prepareStatement(sqlFavoritos)) {
+                psF.setInt(1, servicioId);
+                psF.executeUpdate();
+            }
+
+            // 2. Gestionar personalizaciones pendientes
+            try (PreparedStatement psP = con.prepareStatement(sqlPerso)) {
+                psP.setInt(1, servicioId);
+                psP.executeUpdate();
+            }
+
+            // 3. Desactivar el servicio principal
+            try (PreparedStatement psS = con.prepareStatement(sqlServicio)) {
+                psS.setInt(1, servicioId);
+                int result = psS.executeUpdate();
+                
+                con.commit(); // Confirmar cambios
+                return result > 0;
+            }
+
         } catch (SQLException e) {
-            throw new Exception("Error al desactivar servicio: " + e.getMessage());
+            if (con != null) try { con.rollback(); } catch (SQLException ex) {}
+            throw new Exception("Error al desactivar servicio en cascada: " + e.getMessage());
+        } finally {
+            if (con != null) {
+                try { con.setAutoCommit(true); con.close(); } catch (SQLException ex) {}
+            }
         }
     }
-
+    
     /**
      * Reactiva un servicio previamente desactivado
      * @param servicioId ID del servicio a reactivar

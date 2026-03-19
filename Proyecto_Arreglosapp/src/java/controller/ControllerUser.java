@@ -127,6 +127,15 @@ public class ControllerUser extends HttpServlet {
             return;
         }
 
+        // RNF: El nombre no puede contener números (Nuevo Requerimiento)
+        if (nombre.trim().matches(".*\\d.*")) {
+            response.sendRedirect(rutaRegistro + "?msg=nombreInvalido&email=" +
+                    java.net.URLEncoder.encode(email.trim(), "UTF-8") +
+                    "&direccion=" + java.net.URLEncoder.encode(direccion != null ? direccion.trim() : "", "UTF-8") +
+                    "&telefono=" + java.net.URLEncoder.encode(telefono != null ? telefono.trim() : "", "UTF-8"));
+            return;
+        }
+
         // Regla de negocio: Las contraseñas deben coincidir para prevenir errores de entrada
         if (!pass.equals(confirmarPass)) {
             response.sendRedirect(rutaRegistro + "?msg=contrasenasNoCoinciden&nombre=" +

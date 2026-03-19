@@ -29,6 +29,11 @@
     background-color: #c62828;
 }
 
+.toast--advertencia {
+    background-color: #fbc02d;
+    color: #333; /* Texto oscuro para mejor contraste sobre amarillo */
+}
+
 .toast--visible {
     animation: toast-bajar 3s ease forwards;
 }

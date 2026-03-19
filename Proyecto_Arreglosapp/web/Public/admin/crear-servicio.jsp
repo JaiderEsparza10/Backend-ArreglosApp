@@ -79,12 +79,12 @@
                                                         </span>
                                                     </div>
                                                     <div class="form-servicio__campo"> <label class="form-servicio__label" for="tiempoEstimado">Tiempo
-                                                            Estimado</label>
-                                                        <input type="text" id="tiempoEstimado" name="tiempoEstimado"
-                                                            class="form-servicio__input" placeholder="Ej: 2-3 días"
-                                                            value="<%= valTiempo %>"
+                                                            Estimado (Días)</label>
+                                                        <input type="number" id="tiempoEstimado" name="tiempoEstimado"
+                                                            class="form-servicio__input" placeholder="Ej: 3"
+                                                            value="<%= valTiempo %>" min="1"
                                                             aria-describedby="tiempoEstimado-hint"> <span id="tiempoEstimado-hint"
-                                                            style="font-size:11px;color:#888;">Opcional</span>
+                                                            style="font-size:11px;color:#888;">Ingresa solo números</span>
                                                     </div>
                                                 </div>
 

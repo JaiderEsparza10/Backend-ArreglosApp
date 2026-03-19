@@ -53,26 +53,37 @@ public class PerfilServlet extends HttpServlet {
         // ─── EDITAR DATOS PERSONALES ──────────────────────────────────
         if ("editarDatos".equals(accion)) {
             try {
-                // Extracción de metadatos del perfil
+                // Extracción de metadatos del perfil con limpieza de espacios (Trimming)
                 String nombre = request.getParameter("nombre");
                 String direccion = request.getParameter("direccion");
                 String telefono = request.getParameter("telefono");
 
-                // Validación de integridad obligatoria
+                // VALIDACIÓN DE INTEGRIDAD ROBUSTA (Meta 1)
                 if (nombre == null || nombre.trim().isEmpty()) {
-                    session.setAttribute("errorPerfil", "El nombre no puede estar vacío");
+                    session.setAttribute("errorPerfil", "El nombre es obligatorio y no puede estar vacío");
+                    response.sendRedirect("Public/client/mi-perfil.jsp");
+                    return;
+                }
+                
+                // RNF: El nombre no puede contener números (Nuevo Requerimiento)
+                if (nombre.trim().matches(".*\\d.*")) {
+                    session.setAttribute("errorPerfil", "El nombre no puede contener números");
                     response.sendRedirect("Public/client/mi-perfil.jsp");
                     return;
                 }
 
+                if (direccion == null) {
+                    direccion = ""; // Valor por defecto si es nulo
+                }
+
                 // Persistencia de los cambios en la base de datos
                 boolean actualizado = usuarioDAO.actualizarDatosPersonales(
-                        usuario.getId(), nombre.trim(), direccion);
+                        usuario.getId(), nombre.trim(), direccion.trim());
 
                 if (actualizado) {
-                    // Sincronización proactiva de la sesión local para reflejar cambios inmediatos en el UI
+                    // Sincronización proactiva de la sesión local
                     usuario.setNombre(nombre.trim());
-                    usuario.setDireccion(direccion);
+                    usuario.setDireccion(direccion.trim());
                     session.setAttribute("usuario", usuario);
                 }
 

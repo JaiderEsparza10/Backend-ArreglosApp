@@ -8,11 +8,20 @@ var arregloIdAEliminar = null;
 // =====================
 // TOAST
 // =====================
-function mostrarToast(mensaje, exito) {
+function mostrarToast(mensaje, tipo) {
     var toast = document.getElementById('toast');
+    if (!toast) return;
+    
+    var clase = 'toast--exito'; // Default
+    if (tipo === 'error' || tipo === false || mensaje.toLowerCase().includes('error')) {
+        clase = 'toast--error';
+    } else if (tipo === 'advertencia' || mensaje.toLowerCase().includes('pendiente')) {
+        clase = 'toast--advertencia';
+    }
+
     toast.textContent = mensaje;
-    toast.className = 'toast ' + (exito ? 'toast--exito' : 'toast--error');
-    toast.classList.add('toast--visible');
+    toast.className = 'toast ' + clase + ' toast--visible';
+    
     setTimeout(function () {
         toast.classList.remove('toast--visible');
     }, 3000);

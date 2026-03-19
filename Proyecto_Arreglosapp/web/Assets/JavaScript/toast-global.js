@@ -27,14 +27,21 @@
  * @param {number} duracion - Duración en milisegundos (default: 3000ms)
  */
 function mostrarToast(mensaje, tipo, duracion) {
-    // Valores por defecto
-    tipo = tipo || 'info';
-    duracion = duracion || 3000;
-    
+    // Mapeo dinámico de Tipos a Clases CSS (Meta 2)
+    var tipoClase = 'toast--exito'; // Default success
+    if (tipo === 'error' || tipo === 'danger' || mensaje.toLowerCase().includes('error') || mensaje.toLowerCase().includes('canceló')) {
+        tipoClase = 'toast--error';
+    } else if (tipo === 'warning' || tipo === 'advertencia' || mensaje.toLowerCase().includes('pendiente') || mensaje.toLowerCase().includes('proceso')) {
+        tipoClase = 'toast--advertencia';
+    } else if (tipo === 'info') {
+        tipoClase = 'toast--info'; // Requires CSS class if needed, otherwise fallback
+    } else if (tipo === 'success' || tipo === 'exito') {
+        tipoClase = 'toast--exito';
+    }
+
     // Obtener o crear el contenedor
     var container = document.getElementById('toastContainer');
     if (!container) {
-        // Si no existe el contenedor, lo creamos
         container = document.createElement('div');
         container.id = 'toastContainer';
         container.className = 'toast-container';
@@ -43,26 +50,26 @@ function mostrarToast(mensaje, tipo, duracion) {
     
     // Crear el elemento toast
     var toast = document.createElement('div');
-    toast.className = 'toast toast--' + tipo;
+    toast.className = 'toast ' + tipoClase;
     toast.textContent = mensaje;
     
     // Agregar al contenedor
     container.appendChild(toast);
     
-    // Trigger de animación (pequeño delay para que CSS detecte el cambio)
+    // Trigger de animación
     setTimeout(function() {
         toast.classList.add('toast--visible');
     }, 10);
     
-    // Remover después de la duración especificada
+    // Remover después de la duración (3s default)
+    duracion = duracion || 3000;
     setTimeout(function() {
         toast.classList.remove('toast--visible');
-        // Esperar a que termine la animación antes de eliminar del DOM
         setTimeout(function() {
             if (toast.parentNode) {
                 toast.parentNode.removeChild(toast);
             }
-        }, 400); // Tiempo de transición CSS
+        }, 500);
     }, duracion);
 }
 

@@ -85,13 +85,29 @@ radios.forEach(function (radio) {
 });
 
 // =====================
-// TOAST
+// TOAST DINÁMICO (Meta 2)
 // =====================
-function mostrarToast(mensaje, exito) {
+function mostrarToast(mensaje, tipo) {
     var toast = document.getElementById('toast');
+    if (!toast) return;
+
+    if (!tipo) {
+        var msg = mensaje.toLowerCase();
+        if (msg.includes('✅') || msg.includes('éxito')) {
+            tipo = 'exito';
+        } else if (msg.includes('❌') || msg.includes('error')) {
+            tipo = 'error';
+        } else if (msg.includes('pendiente')) {
+            tipo = 'advertencia';
+        } else {
+            tipo = 'exito';
+        }
+    }
+
     toast.textContent = mensaje;
-    toast.className = 'toast ' + (exito ? 'toast--exito' : 'toast--error');
+    toast.className = 'toast toast--' + tipo;
     toast.classList.add('toast--visible');
+
     setTimeout(function () {
         toast.classList.remove('toast--visible');
     }, 3000);

@@ -83,13 +83,31 @@ document.getElementById('modalCancelar').addEventListener('click', function (e) 
 });
 
 // =====================
-// TOAST
+// TOAST DINÁMICO (Meta 2)
 // =====================
-function mostrarToast(mensaje, exito) {
+function mostrarToast(mensaje, tipo) {
     var toast = document.getElementById('toast');
+    if (!toast) return;
+
+    // Determinar tipo si no se proporciona (inferencia por contenido)
+    if (!tipo) {
+        var msg = mensaje.toLowerCase();
+        if (msg.includes('éxito') || msg.includes('correctamente') || msg.includes('confirmado') || msg.includes('completado')) {
+            tipo = 'exito';
+        } else if (msg.includes('error') || msg.includes('cancelado') || msg.includes('eliminado')) {
+            tipo = 'error';
+        } else if (msg.includes('pendiente') || msg.includes('en proceso')) {
+            tipo = 'advertencia';
+        } else {
+            tipo = 'exito'; // Por defecto
+        }
+    }
+
     toast.textContent = mensaje;
-    toast.className = 'toast ' + (exito ? 'toast--exito' : 'toast--error');
+    // Limpiar clases previas y aplicar la nueva
+    toast.className = 'toast toast--' + tipo;
     toast.classList.add('toast--visible');
+
     setTimeout(function () {
         toast.classList.remove('toast--visible');
     }, 3000);

@@ -93,74 +93,80 @@ public class CitaServlet extends HttpServlet {
                     return;
                 }
 
-                // Transformación de datos temporales a formato ISO para persistencia
-                String fechaHoraStr = fechaStr + "T" + horaStr + ":00";
-                LocalDateTime fechaHora = LocalDateTime.parse(fechaHoraStr,
-                        DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                // Transformación de datos temporales a formato ISO para persistencia (Manejo Seguro)
+                LocalDate fecha;
+                LocalTime hora;
+                try {
+                    fecha = LocalDate.parse(fechaStr);
+                    hora = LocalTime.parse(horaStr);
+                } catch (Exception e) {
+                    session.setAttribute("errorCita", "Formato de fecha o hora inválido.");
+                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
+                    return;
+                }
 
-                // =====================
-                // VALIDACIONES DE HORARIO (BACKEND)
-                // =====================
-                LocalDate fecha = LocalDate.parse(fechaStr);
-                LocalTime hora = LocalTime.parse(horaStr);
+                LocalDateTime fechaHora = LocalDateTime.of(fecha, hora);
+                LocalDateTime ahora = LocalDateTime.now();
                 
                 // 1. Validar que no sea fin de semana (lunes a viernes solo)
                 DayOfWeek diaSemana = fecha.getDayOfWeek();
                 if (diaSemana == DayOfWeek.SATURDAY || diaSemana == DayOfWeek.SUNDAY) {
-                    session.setAttribute("errorCita", "Solo atendemos de lunes a viernes");
+                    session.setAttribute("errorCita", "Solo atendemos de lunes a viernes.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
                 
-                // 2. Validar rango horario: 14:00 a 22:00
-                LocalTime horaMinima = LocalTime.of(14, 0);
-                LocalTime horaMaxima = LocalTime.of(22, 0);
+                // 2. Validar rango horario: 8:00 AM a 6:00 PM (Meta 5)
+                LocalTime horaMinima = LocalTime.of(8, 0);
+                LocalTime horaMaxima = LocalTime.of(18, 0);
                 if (hora.isBefore(horaMinima) || hora.isAfter(horaMaxima)) {
-                    session.setAttribute("errorCita", "El horario debe estar entre las 2:00 PM y 10:00 PM");
+                    session.setAttribute("errorCita", "El horario de atención es de 8:00 AM a 6:00 PM.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
                 
                 // 3. Validar que no sea una fecha/hora pasada
-                LocalDateTime ahora = LocalDateTime.now();
                 if (fechaHora.isBefore(ahora)) {
-                    session.setAttribute("errorCita", "No puedes agendar citas en fechas u horarios pasados");
+                    session.setAttribute("errorCita", "No puedes agendar citas en fechas u horarios pasados.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
 
-                // Validación de disponibilidad de horario
+                // 4. Validar disponibilidad de slot (Meta 4)
                 if (!citaDAO.isSlotAvailable(fecha, hora)) {
-                    session.setAttribute("errorCita", "Lo sentimos, este horario ya está reservado. Por favor, elige otra hora o fecha.");
+                    session.setAttribute("errorCita", "El horario seleccionado ya está reservado por otro usuario.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
 
-                // Validar que se tenga una personalización válida
+                // =====================
+                // PROCESAMIENTO DE PEDIDO Y CITA (Meta 4)
+                // =====================
                 if (personalizacionId == -1) {
-                    session.setAttribute("errorCita", "Debes tener una personalización válida para agendar una cita");
+                    session.setAttribute("errorCita", "Debes tener una personalización válida para agendar.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
 
-                // Paso 1: Crear el registro de pedido (Cabecera y Detalle)
+                // Paso 1: Crear el registro de pedido
                 int pedidoId = citaDAO.crearPedido(usuario.getId(), personalizacionId);
-                if (pedidoId == -1) {
-                    session.setAttribute("errorCita", "No se pudo crear el pedido");
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
-                    return;
-                }
-
-                // Paso 2: Vincular la cita física al pedido recién creado
-                if (motivo == null || motivo.trim().isEmpty()) motivo = "entrega_prenda";
-                Cita cita = new Cita(pedidoId, fechaHora, notas, direccion, motivo);
-                boolean creada = citaDAO.crearCita(cita);
-
-                if (creada) {
-                    // Redirección exitosa con flag de confirmación
-                    response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-pedidos.jsp?citaAgendada=1");
+                
+                if (pedidoId > 0) {
+                    // Paso 2: Vincular la cita física al pedido recién creado
+                    if (motivo == null || motivo.trim().isEmpty()) motivo = "Sin especificar";
+                    
+                    // Usar objeto Cita como requiere el DAO
+                    Cita nuevaCita = new Cita(pedidoId, fechaHora, notas, direccion, motivo);
+                    boolean creada = citaDAO.crearCita(nuevaCita);
+                    
+                    if (creada) {
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-pedidos.jsp?citaAgendada=1");
+                    } else {
+                        session.setAttribute("errorCita", "Error al crear el registro de la cita física.");
+                        response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
+                    }
                 } else {
-                    session.setAttribute("errorCita", "No se pudo agendar la cita. Intenta nuevamente.");
+                    session.setAttribute("errorCita", "No se pudo generar el pedido asociado a la cita.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                 }
 
@@ -169,7 +175,6 @@ public class CitaServlet extends HttpServlet {
                 session.setAttribute("errorCita", "Error: " + e.getMessage());
                 response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
             }
-
         } else if ("cambiarEstado".equals(accion)) {
             try {
                 // Capturar ID de la cita y nuevo estado
