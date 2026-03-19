@@ -67,6 +67,7 @@ public class DetallePedidoServlet extends HttpServlet {
 
             // Pasar el detalle a la JSP
             request.setAttribute("detalle", detalle);
+            request.setAttribute("pedidoId", pedidoId);
             System.out.println("DEBUG: Haciendo forward a detalle-pedido-admin.jsp");
             request.getRequestDispatcher("/Public/admin/detalle-pedido-admin.jsp").forward(request, response);
 
