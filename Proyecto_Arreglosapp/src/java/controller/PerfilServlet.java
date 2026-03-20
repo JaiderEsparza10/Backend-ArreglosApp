@@ -87,16 +87,7 @@ public class PerfilServlet extends HttpServlet {
                     session.setAttribute("usuario", usuario);
                 }
 
-                // Validación y actualización del medio de contacto (teléfono)
-                if (telefono != null && !telefono.trim().isEmpty()) {
-                    // RNF: Validación de formato numérico estricto
-                    if (!telefono.trim().matches("\\d+")) {
-                        session.setAttribute("errorPerfil", "El teléfono solo debe contener números");
-                        response.sendRedirect("Public/client/mi-perfil.jsp");
-                        return;
-                    }
-                    usuarioDAO.actualizarTelefono(usuario.getId(), telefono.trim());
-                }
+                // El teléfono ahora se gestiona desde sus propias acciones específicas.
 
                 response.sendRedirect("Public/client/mi-perfil.jsp?editado=1");
 
@@ -155,6 +146,43 @@ public class PerfilServlet extends HttpServlet {
                 response.sendRedirect("Public/client/mi-perfil.jsp");
             }
 
+        } else if ("agregarTelefono".equals(accion)) {
+            try {
+                String nuevoTelefono = request.getParameter("nuevoTelefono");
+                if (nuevoTelefono == null || !nuevoTelefono.trim().matches("\\d+")) {
+                    session.setAttribute("errorPerfil", "El teléfono debe contener solo números");
+                } else {
+                    usuarioDAO.agregarTelefonoAdicional(usuario.getId(), nuevoTelefono.trim());
+                    response.sendRedirect("Public/client/mi-perfil.jsp?telefonoAgregado=1");
+                    return;
+                }
+            } catch (Exception e) {
+                session.setAttribute("errorPerfil", "Error al agregar teléfono: " + e.getMessage());
+            }
+            response.sendRedirect("Public/client/mi-perfil.jsp");
+            
+        } else if ("eliminarTelefono".equals(accion)) {
+            try {
+                int telefonoId = Integer.parseInt(request.getParameter("telefonoId"));
+                usuarioDAO.eliminarTelefono(telefonoId, usuario.getId());
+                response.sendRedirect("Public/client/mi-perfil.jsp?telefonoEliminado=1");
+                return;
+            } catch (Exception e) {
+                session.setAttribute("errorPerfil", "Error al eliminar teléfono: " + e.getMessage());
+            }
+            response.sendRedirect("Public/client/mi-perfil.jsp");
+            
+        } else if ("setTelefonoPrincipal".equals(accion)) {
+            try {
+                int telefonoId = Integer.parseInt(request.getParameter("telefonoId"));
+                usuarioDAO.establecerTelefonoPrincipal(telefonoId, usuario.getId());
+                response.sendRedirect("Public/client/mi-perfil.jsp?telefonoPrincipal=1");
+                return;
+            } catch (Exception e) {
+                session.setAttribute("errorPerfil", "Error al establecer principal: " + e.getMessage());
+            }
+            response.sendRedirect("Public/client/mi-perfil.jsp");
+            
         } else {
             response.sendRedirect("Public/client/mi-perfil.jsp");
         }

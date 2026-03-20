@@ -77,6 +77,18 @@ window.addEventListener('load', function () {
         mostrarToast('✅ Contraseña cambiada correctamente', 'exito');
         history.replaceState({}, document.title, window.location.pathname);
     }
+    if (params.get('telefonoAgregado') === '1') {
+        mostrarToast('✅ Teléfono agregado exitosamente', 'exito');
+        history.replaceState({}, document.title, window.location.pathname);
+    }
+    if (params.get('telefonoEliminado') === '1') {
+        mostrarToast('✅ Teléfono eliminado exitosamente', 'exito');
+        history.replaceState({}, document.title, window.location.pathname);
+    }
+    if (params.get('telefonoPrincipal') === '1') {
+        mostrarToast('✅ Teléfono marcado como principal', 'exito');
+        history.replaceState({}, document.title, window.location.pathname);
+    }
 
     // Abrir sección si hay error de contraseña
     var hash = window.location.hash;
@@ -89,12 +101,26 @@ window.addEventListener('load', function () {
     if (formEditar) {
         formEditar.addEventListener('submit', function (e) {
             var inputNombre = this.querySelector('input[name="nombre"]');
-            var nombre = inputNombre.value.trim();
-            // Regex: Mínimo 3 caracteres, letras, espacios y tildes solamente.
-            var regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,}$/;
-            if (!regexNombre.test(nombre)) {
-                e.preventDefault();
-                mostrarToast('❌ El nombre solo debe contener letras y tener al menos 3 caracteres.', 'error');
+            if(inputNombre) {
+                var nombre = inputNombre.value.trim();
+                // Regex: Mínimo 3 caracteres, letras, espacios y tildes solamente.
+                var regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,}$/;
+                if (!regexNombre.test(nombre)) {
+                    e.preventDefault();
+                    mostrarToast('❌ El nombre solo debe contener letras y tener al menos 3 caracteres.', 'error');
+                }
+            }
+        });
+    }
+
+    // VALIDACIÓN DE TELÉFONO EN TIEMPO REAL
+    var inputTelefono = document.querySelector('input[name="nuevoTelefono"]');
+    if (inputTelefono) {
+        inputTelefono.addEventListener('input', function(e) {
+            if (/[^0-9]/.test(this.value)) {
+                mostrarToast('❌ El teléfono solo debe contener números', 'error');
+                // Limpiar todo lo que no sea número inmediatamente
+                this.value = this.value.replace(/[^0-9]/g, '');
             }
         });
     }

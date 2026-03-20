@@ -406,6 +406,176 @@ public class UsuarioDAO {
     }
 
     /**
+     * Obtiene todos los teléfonos registrados de un usuario.
+     * 
+     * @param userId ID del usuario.
+     * @return Lista de teléfonos con sus IDs y estado principal.
+     * @throws Exception Error SQL.
+     */
+    public List<Map<String, Object>> obtenerTodosTelefonos(int userId) throws Exception {
+        String sql = "SELECT telefono_id, telefono_numero, telefono_es_principal FROM TELEFONOS WHERE user_id = ? ORDER BY telefono_es_principal DESC, telefono_id ASC";
+        List<Map<String, Object>> lista = new ArrayList<>();
+        try (Connection con = ConectionDB.getConexion();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> tel = new HashMap<>();
+                    tel.put("id", rs.getInt("telefono_id"));
+                    tel.put("numero", rs.getString("telefono_numero"));
+                    tel.put("esPrincipal", rs.getBoolean("telefono_es_principal"));
+                    lista.add(tel);
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener teléfonos: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    /**
+     * Agrega un nuevo número telefónico. Si es el primero, lo marca como principal.
+     * 
+     * @param userId ID del usuario.
+     * @param telefono Número telefónico a agregar.
+     * @return true si se agregó correctamente.
+     * @throws Exception Error SQL.
+     */
+    public boolean agregarTelefonoAdicional(int userId, String telefono) throws Exception {
+        Connection con = null;
+        try {
+            con = ConectionDB.getConexion();
+            con.setAutoCommit(false);
+            
+            // Verificar cuántos tiene, y si ya superó el máximo de 3 (opcional, pero buena práctica)
+            String sqlCheck = "SELECT COUNT(*) as total, SUM(CASE WHEN telefono_es_principal = 1 THEN 1 ELSE 0 END) as principales FROM TELEFONOS WHERE user_id = ?";
+            boolean needsPrincipal = true;
+            try (PreparedStatement psC = con.prepareStatement(sqlCheck)) {
+                psC.setInt(1, userId);
+                try (ResultSet rs = psC.executeQuery()) {
+                    if (rs.next()) {
+                        if (rs.getInt("total") >= 3) {
+                            throw new Exception("Límite de 3 teléfonos alcanzado.");
+                        }
+                        needsPrincipal = rs.getInt("principales") == 0;
+                    }
+                }
+            }
+            
+            String sql = "INSERT INTO TELEFONOS (user_id, telefono_numero, telefono_es_principal) VALUES (?, ?, ?)";
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                ps.setString(2, telefono);
+                ps.setBoolean(3, needsPrincipal);
+                ps.executeUpdate();
+            }
+            
+            con.commit();
+            return true;
+        } catch (SQLException e) {
+            if (con != null) con.rollback();
+            throw new Exception("Error al agregar teléfono adicional: " + e.getMessage());
+        } finally {
+            if (con != null) {
+                con.setAutoCommit(true);
+                con.close();
+            }
+        }
+    }
+
+    /**
+     * Elimina un número telefónico. Si se elimina el principal, se asignará otro como principal.
+     */
+    public boolean eliminarTelefono(int telefonoId, int userId) throws Exception {
+        Connection con = null;
+        try {
+            con = ConectionDB.getConexion();
+            con.setAutoCommit(false);
+            
+            // Verificar si es principal
+            boolean esPrincipal = false;
+            String sqlCheck = "SELECT telefono_es_principal FROM TELEFONOS WHERE telefono_id = ? AND user_id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlCheck)) {
+                ps.setInt(1, telefonoId);
+                ps.setInt(2, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        esPrincipal = rs.getBoolean("telefono_es_principal");
+                    } else {
+                        return false; // No existe o no le pertenece
+                    }
+                }
+            }
+            
+            // Eliminar
+            String sqlDel = "DELETE FROM TELEFONOS WHERE telefono_id = ? AND user_id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlDel)) {
+                ps.setInt(1, telefonoId);
+                ps.setInt(2, userId);
+                int deleted = ps.executeUpdate();
+                if (deleted == 0) return false;
+            }
+            
+            // Si era principal, nombrar a otro (el más antiguo) si queda alguno
+            if (esPrincipal) {
+                String sqlUpdate = "UPDATE TELEFONOS SET telefono_es_principal = true WHERE user_id = ? ORDER BY telefono_id ASC LIMIT 1";
+                try (PreparedStatement ps = con.prepareStatement(sqlUpdate)) {
+                    ps.setInt(1, userId);
+                    ps.executeUpdate();
+                }
+            }
+            
+            con.commit();
+            return true;
+        } catch (SQLException e) {
+            if (con != null) con.rollback();
+            throw new Exception("Error al eliminar teléfono: " + e.getMessage());
+        } finally {
+            if (con != null) {
+                con.setAutoCommit(true);
+                con.close();
+            }
+        }
+    }
+
+    /**
+     * Establece un teléfono específico como principal.
+     */
+    public boolean establecerTelefonoPrincipal(int telefonoId, int userId) throws Exception {
+        Connection con = null;
+        try {
+            con = ConectionDB.getConexion();
+            con.setAutoCommit(false);
+            
+            // Quitar principal a todos
+            String sqlReset = "UPDATE TELEFONOS SET telefono_es_principal = false WHERE user_id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlReset)) {
+                ps.setInt(1, userId);
+                ps.executeUpdate();
+            }
+            
+            // Poner principal al deseado
+            String sqlSet = "UPDATE TELEFONOS SET telefono_es_principal = true WHERE telefono_id = ? AND user_id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlSet)) {
+                ps.setInt(1, telefonoId);
+                ps.setInt(2, userId);
+                int updated = ps.executeUpdate();
+                if (updated == 0) throw new Exception("Teléfono no encontrado o no pertenece al usuario.");
+            }
+            
+            con.commit();
+            return true;
+        } catch (SQLException e) {
+            if (con != null) con.rollback();
+            throw new Exception("Error al cambiar teléfono principal: " + e.getMessage());
+        } finally {
+            if (con != null) {
+                con.setAutoCommit(true);
+                con.close();
+            }
+        }
+    }
+    /**
      * Cuenta cuántos pedidos tiene el usuario en estados activos (no finalizados).
      * 
      * @param userId ID del usuario.

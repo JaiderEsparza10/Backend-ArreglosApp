@@ -44,8 +44,17 @@
         totalFavoritos = usuarioDAO.contarFavoritos(usuario.getId());
         totalPersonalizaciones = usuarioDAO.contarPersonalizaciones(usuario.getId());
         
-        String tel = usuarioDAO.obtenerTelefonoPrincipal(usuario.getId()); 
-        telefono = tel != null ? tel : ""; 
+        List<Map<String, Object>> telefonosActivos = usuarioDAO.obtenerTodosTelefonos(usuario.getId());
+        request.setAttribute("telefonosActivos", telefonosActivos);
+        
+        if (telefonosActivos != null && !telefonosActivos.isEmpty()) {
+            for (Map<String, Object> t : telefonosActivos) {
+                if ((Boolean) t.get("esPrincipal")) {
+                    telefono = (String) t.get("numero");
+                    break;
+                }
+            }
+        }
 
         // Recuperación de mensajes automáticos (RF20)
         List<Map<String, Object>> notificaciones = usuarioDAO.obtenerNotificaciones(usuario.getId());
@@ -140,12 +149,65 @@
                                                     class="perfil__form"> <input type="hidden" name="accion" value="editarDatos"> <label class="perfil__label">Nombre completo</label> <input type="text" name="nombre" class="perfil__input"
                                                         value="<%= nombreActual %>" required> <label class="perfil__label">Dirección</label> <input type="text" name="direccion" class="perfil__input"
                                                         value="<%= direccionActual %>"
-                                                        placeholder="Ej: Calle 10 # 5-20, Barrio Centro"> <label class="perfil__label">Teléfono</label> <input type="tel" name="telefono" class="perfil__input"
-                                                        value="<%= telefono %>" placeholder="Ej: 3001234567"
-                                                        pattern="[0-9]*" inputmode="numeric"
-                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"> <button type="submit" class="perfil__btn-guardar">Guardar
+                                                        placeholder="Ej: Calle 10 # 5-20, Barrio Centro"> <button type="submit" class="perfil__btn-guardar">Guardar
                                                         Cambios</button>
                                                 </form>
+                                            </div>
+                                        </section>
+
+                                        <!-- MIS TELÉFONOS -->
+                                        <section class="perfil-seccion" id="misTelefonos">
+                                            <div class="perfil-seccion__cabecera" onclick="toggleSeccion('listaTelefonos')">
+                                                <h3 class="perfil-seccion__titulo">📱 Mis Teléfonos</h3>
+                                                <span class="perfil-seccion__flecha" id="flechaListaTelefonos">▼</span>
+                                            </div>
+                                            <div class="perfil-seccion__contenido" id="listaTelefonos" style="display:none; padding: 10px;">
+                                                <% 
+                                                List<Map<String, Object>> telefonos = (List<Map<String, Object>>) request.getAttribute("telefonosActivos");
+                                                if (telefonos != null && !telefonos.isEmpty()) {
+                                                    for (Map<String, Object> t : telefonos) {
+                                                        int tId = (Integer) t.get("id");
+                                                        String tNum = (String) t.get("numero");
+                                                        boolean isPrin = (Boolean) t.get("esPrincipal");
+                                                %>
+                                                    <div style="display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:8px; border:1px solid #eee;">
+                                                        <div style="display:flex; align-items:center; gap:8px;">
+                                                            <span style="font-size:14px; font-weight:600; color:#333;"><%= tNum %></span>
+                                                            <% if (isPrin) { %>
+                                                                <span style="background:#e8f5e9; color:#2e7d32; font-size:10px; padding:2px 6px; border-radius:12px; font-weight:bold;">Principal</span>
+                                                            <% } %>
+                                                        </div>
+                                                        <div style="display:flex; gap:6px;">
+                                                            <% if (!isPrin) { %>
+                                                                <form action="/Proyecto_Arreglosapp/PerfilServlet" method="post" style="margin:0;">
+                                                                    <input type="hidden" name="accion" value="setTelefonoPrincipal">
+                                                                    <input type="hidden" name="telefonoId" value="<%= tId %>">
+                                                                    <button type="submit" style="background:#fffde7; color:#f57f17; border:1px solid #fff9c4; font-size:11px; padding:4px 8px; border-radius:6px; cursor:pointer;" title="Hacer principal">⭐</button>
+                                                                </form>
+                                                                <form action="/Proyecto_Arreglosapp/PerfilServlet" method="post" style="margin:0;">
+                                                                    <input type="hidden" name="accion" value="eliminarTelefono">
+                                                                    <input type="hidden" name="telefonoId" value="<%= tId %>">
+                                                                    <button type="submit" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; font-size:11px; padding:4px 8px; border-radius:6px; cursor:pointer;" title="Eliminar">🗑️</button>
+                                                                </form>
+                                                            <% } %>
+                                                        </div>
+                                                    </div>
+                                                <% 
+                                                    }
+                                                } else { 
+                                                %>
+                                                    <p style="text-align: center; color: #666; font-size: 13px; padding: 10px;">No tienes teléfonos registrados.</p>
+                                                <% } %>
+                                                
+                                                <% if (telefonos == null || telefonos.size() < 3) { %>
+                                                    <form action="/Proyecto_Arreglosapp/PerfilServlet" method="post" style="display:flex; gap:8px; margin-top:12px; border-top:1px solid #eee; padding-top:12px;">
+                                                        <input type="hidden" name="accion" value="agregarTelefono">
+                                                        <input type="tel" name="nuevoTelefono" class="perfil__input" placeholder="Nuevo número" required pattern="[0-9]*" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="flex:1;">
+                                                        <button type="submit" style="background:#7000ce; color:white; border:none; border-radius:10px; padding:0 15px; font-weight:bold; cursor:pointer;">+</button>
+                                                    </form>
+                                                <% } else { %>
+                                                    <p style="text-align:center; color:#f57f17; font-size:11px; margin-top:10px;">Límite de 3 teléfonos alcanzado.</p>
+                                                <% } %>
                                             </div>
                                         </section>
 

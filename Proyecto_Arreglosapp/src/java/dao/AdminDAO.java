@@ -276,7 +276,7 @@ public class AdminDAO {
         StringBuilder sql = new StringBuilder(
                 "SELECT u.user_id, u.user_nombre, u.user_email, t.telefono_numero "
                         + "FROM USUARIOS u "
-                        + "LEFT JOIN TELEFONOS t ON u.user_id = t.user_id "
+                        + "LEFT JOIN TELEFONOS t ON u.user_id = t.user_id AND t.telefono_es_principal = true "
                         + "WHERE u.rol_id = 2 ");
 
         if (busqueda != null && !busqueda.trim().isEmpty()) {
@@ -504,7 +504,7 @@ public class AdminDAO {
     public Map<String, Object> obtenerUsuarioPorId(int userId) throws Exception {
         String sql = "SELECT u.user_id, u.user_nombre, u.user_email, u.user_ubicacion_direccion, t.telefono_numero " +
                      "FROM USUARIOS u " +
-                     "LEFT JOIN TELEFONOS t ON u.user_id = t.user_id " +
+                     "LEFT JOIN TELEFONOS t ON u.user_id = t.user_id AND t.telefono_es_principal = true " +
                      "WHERE u.user_id = ?";
         
         try (Connection con = ConectionDB.getConexion();

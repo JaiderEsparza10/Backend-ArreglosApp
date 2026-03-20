@@ -122,4 +122,8 @@ window.addEventListener('load', function () {
         mostrarToast('✅ Cita agendada correctamente', true);
         history.replaceState({}, document.title, window.location.pathname);
     }
+    if (params.get('estadoActualizado') === '1') {
+        mostrarToast('✅ Estado de la cita actualizado con éxito', true);
+        history.replaceState({}, document.title, window.location.pathname);
+    }
 });
