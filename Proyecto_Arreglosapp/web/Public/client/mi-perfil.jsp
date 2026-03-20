@@ -161,7 +161,7 @@
                                                         String lowerMsg = msgNotif.toLowerCase();
                                                         String claseItem = "";
                                                         
-                                                        if (lowerMsg.contains("completada") || lowerMsg.contains("confirmada") || lowerMsg.contains("éxito") || lowerMsg.contains("exito")) {
+                                                        if (lowerMsg.contains("completada") || lowerMsg.contains("confirmada") || lowerMsg.contains("éxito") || lowerMsg.contains("exito") || lowerMsg.contains("terminado")) {
                                                             claseItem = "notificacion-item--exito";
                                                         } else if (lowerMsg.contains("cancelada") || lowerMsg.contains("error") || lowerMsg.contains("rechazada")) {
                                                             claseItem = "notificacion-item--error";
