@@ -19,10 +19,9 @@
                         <h1 class="enlace-volver__titulo">Agendar Cita</h1>
                     </div>
 
-                    <% if (errorMsg !=null) { %>
-                        <div class="cita__alerta cita__alerta--error">❌ <%= errorMsg %>
-                        </div>
-                        <% } %>
+                    <% if (errorMsg != null) { %>
+                        <input type="hidden" id="serverErrorMsg" value="<%= errorMsg %>">
+                    <% } %>
 
                             <form class="cita__formulario" action="/Proyecto_Arreglosapp/CitaServlet" method="post"
                                 id="formCita"> <input type="hidden" name="accion" value="agendar"> <input type="hidden" name="personalizacionId" value="<%= personalizacionId %>"> <input type="hidden" name="fechaCita" id="fechaCitaInput">
@@ -90,10 +89,7 @@
                         </a>
                         <a href="mi-perfil.jsp" class="navbar-inferior__item"> <img src="../../Assets/icons/usuario-transparente.png" class="navbar-inferior__icono"> <span class="navbar-inferior__texto">Perfil</span>
                         </a>
-                    </nav>
-                </footer>
-
-                <script src="../../Assets/JavaScript/agendar-cita.js"></script>
+                <script src="../../Assets/JavaScript/agendar-cita.js?v=4"></script>
             </body>
 
             </html>

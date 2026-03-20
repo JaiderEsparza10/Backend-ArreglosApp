@@ -296,7 +296,7 @@
                         </nav>
                     </footer>
 
-                    <script src="../../Assets/JavaScript/mi-perfil.js"></script>
+                    <script src="../../Assets/JavaScript/mi-perfil.js?v=2"></script>
                 </body>
 
                 </html>

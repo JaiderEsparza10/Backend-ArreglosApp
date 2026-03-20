@@ -227,7 +227,7 @@
                                                         class="navbar-inferior__icono" alt=""><span class="navbar-inferior__texto">Perfil</span></a>
                                             </nav>
                                         </footer>
-                                        <script src="../../Assets/JavaScript/mis-pedidos.js"></script>
+                                        <script src="../../Assets/JavaScript/mis-pedidos.js?v=2"></script>
                                     </body>
 
                                     </html>

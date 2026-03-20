@@ -3,6 +3,7 @@
 // =====================
 var fechaSeleccionada = null;
 var horaSeleccionada = null;
+var horasOcupadasEnBD = [];
 var mesActual = new Date().getMonth();
 var anioActual = new Date().getFullYear();
 
@@ -12,9 +13,8 @@ var meses = [
 ];
 
 var horasDisponibles = [
-    '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', 
-    '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', 
-    '16:00', '16:30', '17:00', '17:30', '18:00'
+    '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+    '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00'
 ];
 
 // =====================
@@ -89,7 +89,29 @@ function seleccionarFecha(fechaStr) {
     document.getElementById('textoFechaSeleccionada').classList.add('cita__fecha-seleccionada--activa');
 
     renderCalendario();
-    renderHoras(); // Actualizar los horarios disponibles para la fecha seleccionada
+    
+    // Ajax request to get already reserved slots for this specific date
+    var data = new URLSearchParams();
+    data.append('accion', 'obtenerHorasOcupadas');
+    data.append('fechaCita', fechaStr);
+
+    fetch('/Proyecto_Arreglosapp/CitaServlet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: data.toString()
+    })
+    .then(function(response) {
+        if (!response.ok) throw new Error('Error de conexión');
+        return response.json();
+    })
+    .then(function(horasBloqueadas) {
+        horasOcupadasEnBD = horasBloqueadas;
+        renderHoras();
+    })
+    .catch(function(error) {
+        horasOcupadasEnBD = [];
+        renderHoras();
+    });
 }
 
 document.getElementById('btnMesAnterior').addEventListener('click', function () {
@@ -156,6 +178,10 @@ function renderHoras() {
             btn.classList.add('cita__hora-btn--deshabilitado');
             btn.disabled = true;
             btn.title = 'Esta hora ya no está disponible';
+        } else if (horasOcupadasEnBD.includes(hora)) {
+            btn.classList.add('cita__hora-btn--deshabilitado');
+            btn.disabled = true;
+            btn.title = 'Hora ocupada por otro usuario';
         } else {
             if (horaSeleccionada === hora) btn.classList.add('cita__hora-btn--seleccionado');
 
@@ -235,3 +261,10 @@ function mostrarToast(mensaje, tipo) {
 // =====================
 renderCalendario();
 renderHoras();
+
+window.addEventListener('load', function() {
+    var serverErrorInput = document.getElementById('serverErrorMsg');
+    if (serverErrorInput && serverErrorInput.value) {
+        mostrarToast('❌ ' + serverErrorInput.value, 'error');
+    }
+});

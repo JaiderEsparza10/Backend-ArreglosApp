@@ -56,7 +56,30 @@ public class CitaServlet extends HttpServlet {
 
         String accion = request.getParameter("accion");
 
-        if ("agendar".equals(accion)) {
+        if ("obtenerHorasOcupadas".equals(accion)) {
+            try {
+                String fechaStr = request.getParameter("fechaCita");
+                if (fechaStr != null && !fechaStr.trim().isEmpty()) {
+                    LocalDate fecha = LocalDate.parse(fechaStr);
+                    java.util.List<String> horasOcupadas = citaDAO.obtenerHorasOcupadasPorFecha(fecha);
+                    
+                    StringBuilder json = new StringBuilder("[");
+                    for (int i = 0; i < horasOcupadas.size(); i++) {
+                        json.append("\"").append(horasOcupadas.get(i)).append("\"");
+                        if (i < horasOcupadas.size() - 1) json.append(",");
+                    }
+                    json.append("]");
+                    
+                    response.setContentType("application/json");
+                    response.getWriter().write(json.toString());
+                } else {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                }
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+            return;
+        } else if ("agendar".equals(accion)) {
             try {
                 // Extracción de parámetros de fecha, hora y ubicación
                 String fechaStr = request.getParameter("fechaCita");
@@ -116,11 +139,11 @@ public class CitaServlet extends HttpServlet {
                     return;
                 }
                 
-                // 2. Validar rango horario: 8:00 AM a 6:00 PM (Meta 5)
-                LocalTime horaMinima = LocalTime.of(8, 0);
-                LocalTime horaMaxima = LocalTime.of(18, 0);
+                // 2. Validar rango horario: 2:00 PM a 10:00 PM
+                LocalTime horaMinima = LocalTime.of(14, 0);
+                LocalTime horaMaxima = LocalTime.of(22, 0);
                 if (hora.isBefore(horaMinima) || hora.isAfter(horaMaxima)) {
-                    session.setAttribute("errorCita", "El horario de atención es de 8:00 AM a 6:00 PM.");
+                    session.setAttribute("errorCita", "El horario de atención es de 2:00 PM a 10:00 PM.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
@@ -134,7 +157,7 @@ public class CitaServlet extends HttpServlet {
 
                 // 4. Validar disponibilidad de slot (Meta 4)
                 if (!citaDAO.isSlotAvailable(fecha, hora)) {
-                    session.setAttribute("errorCita", "El horario seleccionado ya está reservado por otro usuario.");
+                    session.setAttribute("errorCita", "No se puede agendar la cita porque el espacio ya está ocupado.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }

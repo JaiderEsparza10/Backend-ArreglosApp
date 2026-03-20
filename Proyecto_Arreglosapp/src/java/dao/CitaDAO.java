@@ -69,6 +69,34 @@ public class CitaDAO {
     }
 
     /**
+     * Obtiene una lista de las horas (en formato HH:mm) que ya están ocupadas para una fecha dada.
+     * 
+     * @param fecha Fecha a consultar
+     * @return Lista de horas ocupadas en formato String
+     * @throws Exception Error de base de datos
+     */
+    public List<String> obtenerHorasOcupadasPorFecha(LocalDate fecha) throws Exception {
+        String sql = "SELECT TIME_FORMAT(cita_fecha_hora, '%H:%i') FROM citas c " +
+                     "WHERE DATE(c.cita_fecha_hora) = ? AND c.cita_estado NOT IN ('cancelada')";
+        
+        List<String> horasOcupadas = new ArrayList<>();
+        try (Connection con = ConectionDB.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setDate(1, Date.valueOf(fecha));
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    horasOcupadas.add(rs.getString(1));
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener horas ocupadas: " + e.getMessage());
+        }
+        return horasOcupadas;
+    }
+
+    /**
      * Crea un pedido transaccionalmente a partir de una personalización.
      * Realiza un mapeo dinámico de la categoría al arreglo correspondiente.
      * 
