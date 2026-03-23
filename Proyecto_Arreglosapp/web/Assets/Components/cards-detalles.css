@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos para las tarjetas de información detallada de los servicios, incluyendo textos y enlaces.
+*/
 /* ESTILOS PARA LA INFORMACIÓN QUE SE ALMACENA EN LOS DETALLES */
 .informacion-detalles__informacion {
   display: flex;

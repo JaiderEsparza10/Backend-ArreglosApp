@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Información detallada sobre servicios de reparación de bolsillos y remiendos generales.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

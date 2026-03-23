@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Detalle informativo sobre los servicios de ajuste de medidas y entallado de prendas.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Exhibición de servicios seleccionados para facilitar el inicio de personalizaciones.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="model.Favorito" %>

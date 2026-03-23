@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Interceptar todas las solicitudes al servidor para validar la autenticación y el control de acceso.
+ */
 package filter;
 
 import jakarta.servlet.*;
@@ -10,10 +14,7 @@ import model.Usuario;
 import util.JWTUtil;
 
 /**
- * Este filtro se encarga de interceptar todas las solicitudes al servidor para
- * verificar
- * la autenticación del usuario mediante tokens JWT y controlar el acceso según
- * los roles.
+ * Este middleware protege las rutas privadas verificando tokens JWT y permisos basados en roles de usuario.
  */
 @WebFilter("/*")
 public class AuthFilter implements Filter {

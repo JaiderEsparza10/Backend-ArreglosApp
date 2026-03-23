@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Notificación de éxito confirmando la eliminación definitiva de una cuenta de usuario.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="es">

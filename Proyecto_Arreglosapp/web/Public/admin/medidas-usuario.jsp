@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Visualización de las medidas corporales guardadas por un usuario para referencia del administrador.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

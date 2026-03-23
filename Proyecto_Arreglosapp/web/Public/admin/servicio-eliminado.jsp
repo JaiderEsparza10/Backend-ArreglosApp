@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Feedback visual confirmando que un servicio ha sido eliminado correctamente del catálogo.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

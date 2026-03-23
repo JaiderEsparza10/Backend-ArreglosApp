@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Detalle de servicios de sastrería artesanal y dobladillos con acabado manual.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

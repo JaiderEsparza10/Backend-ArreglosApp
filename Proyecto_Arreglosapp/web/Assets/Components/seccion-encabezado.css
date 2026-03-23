@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos para el contenedor principal del encabezado (Header) de la aplicación.
+*/
 /* SECCIÓN DEL ENCABEZADO DE LA PAGINA */
 .seccion-encabezado{
     grid-area: header;

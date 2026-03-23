@@ -1,6 +1,30 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%@ page import="model.Usuario" %>
-        <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) { usuario=(Usuario)
-            sesion.getAttribute("usuario"); } if (usuario==null) { response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } String errorMsg=(String) sesion.getAttribute("errorCita"); if (errorMsg !=null) { sesion.removeAttribute("errorCita"); } String personalizacionId=request.getParameter("personalizacionId"); if (personalizacionId==null || personalizacionId.trim().isEmpty()) { response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-arreglos.jsp"); return; } %>
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Interfaz para programar la entrega o recogida de prendas asociadas a un arreglo.
+--%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> 
+<%@ page import="model.Usuario" %>
+<% 
+    // Validación de sesión y contexto de personalización para el agendamiento
+    HttpSession sesion = request.getSession(false); 
+    Usuario usuario = null; 
+    if (sesion != null) { 
+        usuario = (Usuario) sesion.getAttribute("usuario"); 
+    } 
+    if (usuario == null) { 
+        response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); 
+        return; 
+    } 
+    String errorMsg = (String) sesion.getAttribute("errorCita"); 
+    if (errorMsg != null) { 
+        sesion.removeAttribute("errorCita"); 
+    } 
+    String personalizacionId = request.getParameter("personalizacionId"); 
+    if (personalizacionId == null || personalizacionId.trim().isEmpty()) { 
+        response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-arreglos.jsp"); 
+        return; 
+    } 
+%>
             <!DOCTYPE html>
             <html lang="es">
 

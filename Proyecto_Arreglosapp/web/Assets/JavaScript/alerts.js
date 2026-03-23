@@ -1,6 +1,6 @@
-/* 
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/JavaScript.js to edit this template
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Sistema centralizado de alertas y notificaciones visuales basadas en parámetros de URL.
  */
 // Assets/js/alerts.js
 document.addEventListener("DOMContentLoaded", function () {

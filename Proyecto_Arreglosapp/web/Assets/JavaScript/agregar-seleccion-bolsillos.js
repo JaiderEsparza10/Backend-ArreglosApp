@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Lógica para agregar arreglos de bolsillos a la selección del usuario.
+ */
 function mostrarToast(mensaje, exito) {
     var toast = document.getElementById('toast');
     toast.textContent = mensaje;

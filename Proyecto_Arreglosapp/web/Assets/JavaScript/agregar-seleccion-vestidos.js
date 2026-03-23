@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Lógica para agregar ajustes finos de vestidos y ropa a la selección.
+ */
 function mostrarToast(mensaje, tipo) {
     var toast = document.getElementById('toast');
     if (!toast) return;

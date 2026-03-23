@@ -1,10 +1,11 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Definir la entidad Usuario para gestionar la autenticación y los perfiles del sistema.
+ */
 package model;
 
 /**
- * Modelo de Datos: Usuario.
- * Entidad núcleo para la autenticación y perfilamiento de clientes y administradores.
- * 
- * @author Antigravity - Senior Architect
+ * Representa a un usuario (Cliente o Administrador) dentro de la plataforma.
  */
 public class Usuario {
     private int id;

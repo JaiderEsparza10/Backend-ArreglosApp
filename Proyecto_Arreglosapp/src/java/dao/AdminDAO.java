@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Proporcionar herramientas de gestión avanzada para el perfil de administrador.
+ */
 package dao;
 
 import config.ConectionDB;
@@ -5,7 +9,7 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * Versión corregida de AdminDAO con métodos funcionales
+ * Esta clase contiene métodos para la supervisión de citas, pedidos y la gestión global de usuarios.
  */
 public class AdminDAO {
 

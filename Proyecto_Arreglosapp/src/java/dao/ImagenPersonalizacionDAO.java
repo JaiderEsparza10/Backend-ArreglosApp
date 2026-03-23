@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Administrar la galería de imágenes asociadas a las solicitudes de personalización.
+ */
 package dao;
 
 import config.ConectionDB;
@@ -6,8 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DAO para gestión de imágenes de personalizaciones.
- * Soporta múltiples imágenes por personalización con imagen principal.
+ * Proporciona soporte para múltiples imágenes por cada trabajo a medida, incluyendo la imagen principal.
  */
 public class ImagenPersonalizacionDAO {
 

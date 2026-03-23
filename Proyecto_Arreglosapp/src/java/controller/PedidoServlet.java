@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Permitir a los clientes gestionar y realizar el seguimiento de sus pedidos activos.
+ */
 package controller;
 
 import dao.PedidoDAO;
@@ -12,11 +16,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * Controlador de Gestión de Pedidos por parte del Cliente.
- * RF-09: Seguimiento y Cancelación de Pedidos.
- * Responde solicitudes asíncronas (JSON) para la gestión del ciclo de vida del pedido.
- * 
- * @author Antigravity - Senior Architect
+ * Este controlador responde a solicitudes asíncronas para la cancelación y consulta de estados de pedidos desde la vista del cliente.
  */
 @WebServlet("/PedidoServlet")
 public class PedidoServlet extends HttpServlet {

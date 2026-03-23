@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Detalle de servicios de costura básica, reparaciones y alteraciones con maquinaria.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Administrar el proceso de agendamiento de citas y la creación de pedidos asociados.
+ */
 package controller;
 
 import dao.CitaDAO;
@@ -17,11 +21,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Controlador de Gestión de Citas.
- * RF-08: Agendamiento de Citas.
- * Maneja el flujo desde la selección de horarios hasta la confirmación del pedido y la cita.
- * 
- * @author Antigravity - Senior Architect
+ * Este controlador valida la disponibilidad de horarios y coordina la logística presencial de los servicios.
  */
 @WebServlet("/CitaServlet")
 public class CitaServlet extends HttpServlet {

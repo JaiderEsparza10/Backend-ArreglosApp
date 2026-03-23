@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Gestionar la pre-selección de servicios (favoritos) por parte de los clientes.
+ */
 package controller;
 
 import dao.FavoritoDAO;
@@ -15,12 +19,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 /**
- * Controlador de Gestión de Selección de Servicios (Favoritos).
- * RF-07: Selección de Servicios.
- * Permite a los clientes pre-seleccionar servicios para su posterior personalización o agendamiento.
- * Utiliza respuestas asíncronas JSON para mejorar la experiencia de usuario reactiva.
- * 
- * @author Antigravity - Senior Architect
+ * Este controlador utiliza respuestas JSON para permitir que los usuarios marquen servicios de interés sin recargar la página.
  */
 @WebServlet("/FavoritoServlet")
 public class FavoritoServlet extends HttpServlet {

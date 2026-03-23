@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Versión simplificada de la vista de detalles de pedido para depuración y visualización rápida.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="dao.AdminDAO" %>
 <%@ page import="model.Usuario" %>

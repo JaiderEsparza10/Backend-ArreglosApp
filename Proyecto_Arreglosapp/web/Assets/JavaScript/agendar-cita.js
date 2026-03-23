@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Gestión interactiva del calendario y selección de horarios para agendar citas.
+ */
 // =====================
 // ESTADO
 // =====================

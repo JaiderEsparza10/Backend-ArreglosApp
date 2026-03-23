@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Administrar la creación y edición de solicitudes de personalización de arreglos.
+ */
 package controller;
 
 import dao.PersonalizacionDAO;
@@ -15,6 +19,9 @@ import model.Personalizacion;
 import model.Usuario;
 import java.io.IOException;
 
+/**
+ * Gestiona el envío de formularios con archivos multimedia para detallar los requerimientos específicos de un ajuste de prenda.
+ */
 @WebServlet("/PersonalizacionServlet")
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024, // 1MB

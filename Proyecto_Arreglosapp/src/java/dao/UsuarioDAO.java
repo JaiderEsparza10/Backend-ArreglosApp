@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Gestionar la persistencia y operaciones de acceso a datos relacionadas con los usuarios del sistema.
+ */
 package dao;
 
 import config.ConectionDB;
@@ -10,12 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Esta clase proporciona los métodos para gestionar la persistencia de los
- * datos de los usuarios.
- * Permite realizar operaciones de autenticación, registro y actualización en la
- * base de datos MySQL.
- * 
- * @author Antigravity - Senior Architect
+ * Esta clase centraliza todas las consultas y actualizaciones sobre la tabla de usuarios y sus teléfonos.
  */
 public class UsuarioDAO {
 

@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Administrar el catálogo de servicios base ofrecidos por la plataforma.
+ */
 package dao;
 
 import config.ConectionDB;
@@ -7,10 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DAO de Servicios - Gestión del catálogo base
- * Jerarquía: Servicios → Personalizaciones → Arreglos
- * 
- * @author Arquitecto de Software - DBA
+ * Esta clase se encarga de las operaciones CRUD y la lógica de activación de servicios.
  */
 public class ServicioDAO {
 

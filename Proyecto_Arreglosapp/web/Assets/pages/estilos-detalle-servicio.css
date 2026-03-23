@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos para la vista de detalle de un servicio específico, permitiendo selección o personalización.
+*/
 .detalle-servicio {
     display: flex;
     flex-direction: column;

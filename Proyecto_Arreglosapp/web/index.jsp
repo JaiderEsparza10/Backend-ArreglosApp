@@ -1,12 +1,13 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Interfaz de inicio de sesión para el acceso de clientes y administradores.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <% 
-    /**
-     * VISTA: Inicio de Sesión (Index).
-     * Propósito: Punto de entrada principal para el acceso de usuarios (Clientes y Administradores).
-     * Requisitos Funcionales: RF1 (Autenticación).
-     * Nota: Maneja mensajes de respuesta (éxito/error) desde AuthServlet mediante parámetros de URL.
-     */
-    String msg = request.getParameter("msg");  String email = request.getParameter("email");  String passwordRecuperada = request.getParameter("passwordRecuperada"); 
+    // Recuperación de parámetros de estado y credenciales previas
+    String msg = request.getParameter("msg");  
+    String email = request.getParameter("email");  
+    String passwordRecuperada = request.getParameter("passwordRecuperada"); 
 %>
     <!DOCTYPE html>
     <html lang="es">

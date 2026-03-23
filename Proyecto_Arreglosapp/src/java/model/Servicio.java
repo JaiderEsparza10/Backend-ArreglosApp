@@ -1,11 +1,11 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Definir la entidad Servicio que representa los trabajos de costura y arreglos disponibles.
+ */
 package model;
 
 /**
- * Modelo de Datos: Servicio.
- * Define la estructura de los servicios base del sistema.
- * Jerarquía: Servicios → Personalizaciones → Arreglos
- * 
- * @author Arquitecto de Software - DBA
+ * Estructura de datos para los servicios base ofrecidos por el taller.
  */
 public class Servicio {
     private int servicioId;
@@ -15,12 +15,9 @@ public class Servicio {
     private int servicioTiempoEstimado;
     private boolean servicioActivo;
     
-    // Campos de auditoría
+    // Campos para auditoría e identificación visual
     private String fechaCreacion;
-    
-    // Campo para imagen (compatibilidad)
     private String imagenUrl;
-    // ================================================================
     
     public int getServicioId() { return servicioId; }
     public void setServicioId(int servicioId) { this.servicioId = servicioId; }
@@ -43,49 +40,29 @@ public class Servicio {
     public String getFechaCreacion() { return fechaCreacion; }
     public void setFechaCreacion(String fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 
-    // ================================================================
-    // Métodos de conveniencia para compatibilidad
-    // ================================================================
+    // Métodos de compatibilidad para asegurar el funcionamiento con código heredado
     
-    /**
-     * Método de compatibilidad para código existente
-     */
     public String getNombre() { return servicioNombre; }
     public void setNombre(String nombre) { this.servicioNombre = nombre; }
     
-    /**
-     * Método de compatibilidad para código existente
-     */
     public String getDescripcion() { return servicioDescripcion; }
     public void setDescripcion(String descripcion) { this.servicioDescripcion = descripcion; }
     
-    /**
-     * Método de compatibilidad para código existente
-     */
     public double getPrecioBase() { return servicioPrecioBase; }
     public void setPrecioBase(double precioBase) { this.servicioPrecioBase = precioBase; }
     
-    /**
-     * Método de compatibilidad para código existente
-     */
     public int getTiempoEstimado() { return servicioTiempoEstimado; }
     public void setTiempoEstimado(int tiempoEstimado) { this.servicioTiempoEstimado = tiempoEstimado; }
     
-    /**
-     * Método de compatibilidad para código existente
-     */
     public boolean isDisponible() { return servicioActivo; }
     public void setDisponible(boolean disponible) { this.servicioActivo = disponible; }
     
-    /**
-     * Método de compatibilidad para código existente (mapeo de IDs)
-     */
     public int getArregloId() { return servicioId; }
     public void setArregloId(int arregloId) { this.servicioId = arregloId; }
     
     /**
-     * Método de compatibilidad para imagenUrl (para código existente)
+     * Retorna la URL de la imagen del servicio, con una imagen por defecto si es nula.
      */
     public String getImagenUrl() { return imagenUrl != null ? imagenUrl : "Assets/image/imagen-sastreria.jpg"; }
     public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
-}
+}

@@ -1,12 +1,13 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Gestionar la relación entre usuarios y sus servicios o arreglos seleccionados como favoritos.
+ */
 package model;
 
 import java.time.LocalDateTime;
 
 /**
- * Modelo de Datos: Favorito / Selección.
- * Representa la asociación persistente entre un usuario y un servicio de su interés.
- * 
- * @author Antigravity - Senior Architect
+ * Entidad que representa la selección persistente de un servicio por parte de un usuario.
  */
 public class Favorito {
     private int favoritoId;
@@ -23,7 +24,14 @@ public class Favorito {
     }
 
     /**
-     * Constructor para mapeo rápido de selecciones.
+     * Constructor para inicializar una selección rápida de un servicio.
+     * 
+     * @param userId Identificador del usuario.
+     * @param arregloId Identificador técnico del arreglo.
+     * @param servicio Categoría general del servicio.
+     * @param nombreServicio Nombre descriptivo del arreglo.
+     * @param precio Valor unitario del servicio.
+     * @param imagenUrl Ruta de la imagen ilustrativa.
      */
     public Favorito(int userId, int arregloId, String servicio, String nombreServicio, double precio,
             String imagenUrl) {
@@ -35,7 +43,7 @@ public class Favorito {
         this.imagenUrl = imagenUrl;
     }
 
-    // Getters y Setters con encapsulamiento
+    // Métodos para el acceso y modificación de los datos encapsulados
     public int getFavoritoId() { return favoritoId; }
     public void setFavoritoId(int favoritoId) { this.favoritoId = favoritoId; }
 
@@ -45,7 +53,9 @@ public class Favorito {
     public int getArregloId() { return arregloId; }
     public void setArregloId(int arregloId) { this.arregloId = arregloId; }
 
-    // Método de compatibilidad para la nueva arquitectura
+    /**
+     * Proporciona compatibilidad con la nueva arquitectura de identificadores.
+     */
     public int getServicioId() { return arregloId; }
     public void setServicioId(int servicioId) { this.arregloId = servicioId; }
 

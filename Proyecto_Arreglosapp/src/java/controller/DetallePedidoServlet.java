@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Facilitar la visualización detallada de un pedido específico para el administrador.
+ */
 package controller;
 
 import dao.AdminDAO;
@@ -12,7 +16,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Servlet para manejar los detalles de un pedido en el panel de administración.
+ * Este controlador recupera la información completa de un pedido y la envía a la vista de detalle administrativo.
  */
 @WebServlet("/DetallePedidoServlet")
 public class DetallePedidoServlet extends HttpServlet {

@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos para el flujo de recuperación de contraseña, alertas dinámicas e indicadores de seguridad.
+*/
 /* ALERTA ESTILO LOGIN */
 .recuperar__alerta-login {
     background-color: rgba(255, 0, 0, 0.15);

@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Herramienta de administración de usuarios para búsqueda, visualización de perfiles y control de acceso.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="dao.AdminDAO" %>
 <%@ page import="model.Usuario" %>

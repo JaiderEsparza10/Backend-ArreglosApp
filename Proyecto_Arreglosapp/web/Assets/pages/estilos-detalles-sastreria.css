@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos específicos para la visualización de imágenes en los detalles de sastrería.
+*/
 /* ESTILOS PARA LAS IMAGENES DE LOS DETALLES */
 .informacion-detalles__imagen-sastreria{
     width: var(--ancho-contenedores-informacion);

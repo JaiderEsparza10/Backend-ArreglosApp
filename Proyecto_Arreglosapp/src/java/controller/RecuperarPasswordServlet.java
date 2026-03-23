@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Ofrecer un mecanismo seguro para que los usuarios restauren el acceso a sus cuentas tras olvidar su contraseña.
+ */
 package controller;
 
 import dao.UsuarioDAO;
@@ -10,11 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Controlador de Recuperación de Credenciales.
- * RF-04: Recuperar Contraseña.
- * Implementa un flujo de dos pasos: verificación de email y restablecimiento de contraseña.
- * 
- * @author Antigravity - Senior Architect
+ * Este controlador implementa un flujo de validación de identidad por correo y permite definir una nueva credencial de acceso.
  */
 @WebServlet("/RecuperarPasswordServlet")
 public class RecuperarPasswordServlet extends HttpServlet {

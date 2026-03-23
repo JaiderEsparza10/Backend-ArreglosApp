@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Permitir a los usuarios gestionar su información personal y configuraciones de seguridad.
+ */
 package controller;
 
 import dao.UsuarioDAO;
@@ -11,11 +15,7 @@ import model.Usuario;
 import java.io.IOException;
 
 /**
- * Controlador de Gestión de Perfil de Usuario.
- * RF-03: Gestión de Perfil.
- * Maneja la actualización de información personal y el cambio seguro de contraseñas.
- * 
- * @author Antigravity - Senior Architect
+ * Gestiona la edición del perfil, actualización de direcciones y el cambio de contraseñas mediante validación previa.
  */
 @WebServlet("/PerfilServlet")
 public class PerfilServlet extends HttpServlet {

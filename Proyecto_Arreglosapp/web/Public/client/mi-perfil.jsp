@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Interfaz de gestión de perfil, seguridad y resumen de actividad para el cliente.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="model.Usuario" %>
 <%@ page import="dao.UsuarioDAO" %>
@@ -6,12 +10,7 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 
 <% 
-    /**
-     * VISTA: Perfil del Usuario (Cliente).
-     * Propósito: Visualizar información personal, resumen de actividad y gestionar credenciales.
-     * Requisitos Funcionales: RF3, RF4, RF20.
-     * Seguridad: Requiere sesión activa de Cliente. Redirige a Admin Dashboard si el rol es Admin.
-     */
+    // Control de acceso y carga de información personal y notificaciones
     HttpSession sesion = request.getSession(false); 
     Usuario usuario = null; 
     

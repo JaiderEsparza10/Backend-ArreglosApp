@@ -2,6 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Centralizar la configuración y gestión de la conexión a la base de datos MySQL.
+ */
 package config;
 
 import java.sql.Connection;
@@ -9,8 +13,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Esta clase centraliza la configuración y gestión de la conexión a la base de
- * datos MySQL.
+ * Esta clase se encarga de establecer el enlace con el motor de base de datos.
  */
 public class ConectionDB {
     private static final String URL = "jdbc:mysql://localhost:3306/PROYECTO_ARREGLOSAPP";

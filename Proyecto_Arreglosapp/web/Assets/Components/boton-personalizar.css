@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos para el botón de acceso al formulario de personalización de arreglos.
+*/
 /* ENLACE PARA ENVIAR HACIA EL APARTADO DE PERSONALIZAR ARREGLO */
 .informacion__enlace-personalizar{
     width: var(--ancho-contenedores-informacion);

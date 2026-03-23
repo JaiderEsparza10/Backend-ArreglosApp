@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Confirmación de éxito tras la actualización satisfactoria de un servicio en la base de datos.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

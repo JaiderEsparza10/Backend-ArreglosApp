@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos base, reset de márgenes, variables globales (colores, fuentes) y accesibilidad WCAG.
+*/
 /* Utilizamos el selector universal para realizar el reseteo de margen, padding y definimos el tipo de caja */
 * {
   margin: 0;

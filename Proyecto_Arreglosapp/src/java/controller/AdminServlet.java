@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Actuar como el controlador principal para todas las operaciones de administración del sistema.
+ */
 package controller;
 
 import dao.AdminDAO;
@@ -13,16 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 /**
- * Controlador principal de operaciones administrativas del sistema.
- *
- * Gestiona las siguientes funcionalidades:
- * - Dashboard administrativo con estadísticas en tiempo real
- * - Gestión completa de pedidos (ver detalles, actualizar estados, pagos, entregas, abonos)
- * - Gestión de citas (agendar, filtrar, cambiar estados, registrar asistencia)
- * - Gestión de usuarios (listar, buscar, eliminar)
- * - Gestión de servicios (listar, crear, actualizar, eliminar)
- *
- * @author JAIDER - ESPAR
+ * Gestiona el panel de control, la supervisión de pedidos, citas, usuarios y el catálogo de servicios.
  */
 @WebServlet("/AdminServlet")
 public class AdminServlet extends HttpServlet {

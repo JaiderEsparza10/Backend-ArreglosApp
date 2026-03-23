@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Vista de confirmación indicando que el registro de un nuevo usuario se completó correctamente.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 <head>

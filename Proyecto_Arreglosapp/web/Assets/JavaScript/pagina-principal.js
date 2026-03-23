@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Sistema de filtrado de servicios por nombre y precio en la página de inicio.
+ */
 var buscador = document.getElementById('buscador');
 var btnLimpiar = document.getElementById('btnLimpiar');
 var sinResultados = document.getElementById('sinResultados');

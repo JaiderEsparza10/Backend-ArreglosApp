@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Documento legal con los términos de uso y políticas de servicio de la aplicación.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

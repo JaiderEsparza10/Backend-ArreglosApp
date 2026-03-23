@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Registro y consulta de las medidas anatómicas del usuario para la confección de prendas.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

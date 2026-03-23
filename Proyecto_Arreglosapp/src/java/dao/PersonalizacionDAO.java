@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Gestionar las solicitudes de personalización y arreglos a medida.
+ */
 package dao;
 
 import config.ConectionDB;
@@ -6,6 +10,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Esta clase se encarga de registrar y recuperar los detalles técnicos de los pedidos especiales.
+ */
 public class PersonalizacionDAO {
 
     /**

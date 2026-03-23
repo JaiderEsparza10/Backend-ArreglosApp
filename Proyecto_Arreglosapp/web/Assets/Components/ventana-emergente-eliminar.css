@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos para las ventanas modales de confirmación de eliminación de recursos.
+*/
 /* 1. Contenedor principal del modal (Fondo oscuro) */
 .modal {
   visibility: hidden;

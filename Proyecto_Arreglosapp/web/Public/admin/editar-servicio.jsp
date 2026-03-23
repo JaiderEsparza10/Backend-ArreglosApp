@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Interfaz para la edición de la información básica y precio de un servicio del catálogo.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

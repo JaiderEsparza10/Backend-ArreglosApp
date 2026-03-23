@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Gestionar la creación de pedidos y el agendamiento coordinado de citas presenciales.
+ */
 package dao;
 
 import config.ConectionDB;
@@ -10,10 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Gestiona la creación de pedidos y el agendamiento de citas asociadas.
- * RF-07: Selección de Servicios y RF-08: Agendamiento de Citas.
- * 
- * @author Antigravity - Senior Architect
+ * Esta clase controla la disponibilidad de horarios y vincula los pedidos con sus citas correspondientes.
  */
 public class CitaDAO {
 

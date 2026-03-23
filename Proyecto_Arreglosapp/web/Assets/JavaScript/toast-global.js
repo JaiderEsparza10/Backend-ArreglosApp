@@ -1,23 +1,6 @@
 /**
- * ========================================
- * TOAST NOTIFICATIONS - JAVASCRIPT GLOBAL
- * ========================================
- * 
- * Este archivo proporciona la función global mostrarToast() para
- * mostrar notificaciones consistentes en todo el proyecto ArreglosApp.
- * 
- * REQUISITOS:
- * - Incluir estilos.css principal (que importa toast-uniforme.css)
- * - Tener un div con id="toastContainer" en el body
- * 
- * USO:
- * mostrarToast('Mensaje de éxito', 'success'); // Verde
- * mostrarToast('Mensaje de error', 'error');   // Rojo
- * mostrarToast('Información', 'info');         // Azul
- * mostrarToast('Advertencia', 'warning');      // Amarillo
- * 
- * El toast se mostrará durante 3 segundos y luego desaparecerá automáticamente.
- * ========================================
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Sistema global de notificaciones tipo Toast para feedback visual en toda la aplicación.
  */
 
 /**

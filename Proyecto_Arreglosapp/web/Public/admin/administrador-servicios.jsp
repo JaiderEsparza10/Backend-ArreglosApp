@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Interfaz de gestión del catálogo de servicios, permitiendo visualizar, editar y eliminar opciones.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="dao.ServicioDAO" %>
 <%@ page import="model.Usuario" %>

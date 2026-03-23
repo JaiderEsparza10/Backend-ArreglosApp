@@ -1,14 +1,21 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Formulario de registro para la creación de nuevas cuentas de cliente.
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <% 
-    /**
-     * VISTA: Registro de Usuario.
-     * Propósito: Permitir a los nuevos clientes crear una cuenta en el sistema.
-     * Requisitos Funcionales: RF2 (Registro de clientes).
-     * Nota: Mantiene los valores ingresados en caso de error de validación para mejorar la UX.
-     */
-    String msg = request.getParameter("msg");  String nombre = request.getParameter("nombre");  String email = request.getParameter("email");  String direccion = request.getParameter("direccion");  String telefono = request.getParameter("telefono"); 
+    // Captura de datos previos para mantener el estado del formulario ante errores
+    String msg = request.getParameter("msg");  
+    String nombre = request.getParameter("nombre");  
+    String email = request.getParameter("email");  
+    String direccion = request.getParameter("direccion");  
+    String telefono = request.getParameter("telefono"); 
 %>
-    <!DOCTYPE html>
+    <%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Formulario de registro para la creación de nuevas cuentas de usuario en ArreglosApp.
+--%>
+<!DOCTYPE html>
     <html lang="es">
 
     <head>

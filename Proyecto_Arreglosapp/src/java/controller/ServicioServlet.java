@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Permitir al administrador gestionar el catálogo oficial de servicios disponibles.
+ */
 package controller;
 
 import dao.ServicioDAO;
@@ -16,11 +20,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 /**
- * Controlador de Catálogo de Servicios.
- * RF-12: Gestión de Servicios por el Administrador.
- * Administra el CRUD (Crear, Leer, Actualizar, Eliminar) del catálogo oficial de arreglos disponibles.
- * 
- * @author Antigravity - Senior Architect
+ * Este controlador facilita las operaciones de creación, edición y eliminación lógica de los arreglos ofrecidos por el taller.
  */
 @WebServlet("/ServicioServlet")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 25)

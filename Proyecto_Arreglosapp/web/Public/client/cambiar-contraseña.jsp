@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Formulario para la actualización de la contraseña de acceso del cliente.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 <head>

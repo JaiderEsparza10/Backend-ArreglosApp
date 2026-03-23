@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Formulario dinámico para la creación de nuevos servicios o edición de existentes en el catálogo.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%@ page import="model.Usuario" %> <%@ page import="model.Servicio" %> <%@ page import="dao.ServicioDAO" %>
                 <% HttpSession sesion=request.getSession(false); Usuario admin=null; if (sesion !=null) {
                     admin=(Usuario) sesion.getAttribute("usuario"); } if (admin==null || admin.getRolId() !=1) { response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } String errorMsg=(String) sesion.getAttribute("errorServicio"); if (errorMsg !=null) { sesion.removeAttribute("errorServicio"); } Servicio editando=null; String idParam=request.getParameter("id"); if (idParam !=null && !idParam.trim().isEmpty()) { try { int

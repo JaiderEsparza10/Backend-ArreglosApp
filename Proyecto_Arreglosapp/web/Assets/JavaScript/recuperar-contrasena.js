@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Funciones para alternar la visibilidad de contraseñas y validación de coincidencia en tiempo real.
+ */
 // Toggle contraseña visible
 function togglePass(inputId, ojoId) {
     var input = document.getElementById(inputId);

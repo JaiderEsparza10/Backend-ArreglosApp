@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos detallados para la página de agendamiento de citas, incluyendo el calendario interactivo y selección de horas.
+*/
 /* CONTENEDOR PRINCIPAL */
 .contenido-cita {
     grid-area: main;

@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Gestionar el proceso de autenticación centralizada, control de sesiones y seguridad mediante tokens JWT.
+ */
 package controller;
 
 import dao.UsuarioDAO;
@@ -10,11 +14,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 /**
- * Controlador de Autenticación Centralizada.
- * RF-01: Autenticación de Usuarios.
- * Maneja el flujo de inicio de sesión, generación de tokens JWT y cierre de sesiones.
- *
- * @author Antigravity - Senior Architect
+ * Este controlador procesa los inicios de sesión, valida las credenciales y liquida las sesiones activas.
  */
 @WebServlet("/AuthServlet")
 public class AuthServlet extends HttpServlet {

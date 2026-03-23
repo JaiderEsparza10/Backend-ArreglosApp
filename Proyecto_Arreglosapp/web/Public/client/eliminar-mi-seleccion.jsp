@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Interfaz para confirmar la eliminación de servicios marcados en la selección del cliente.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

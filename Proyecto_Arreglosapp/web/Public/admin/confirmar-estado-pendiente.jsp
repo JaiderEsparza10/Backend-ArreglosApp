@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Confirmación visual de que un pedido ha sido puesto en estado pendiente de revisión.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

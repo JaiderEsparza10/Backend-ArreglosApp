@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Detalle informativo sobre ajustes de alta costura para vestidos y prendas delicadas.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

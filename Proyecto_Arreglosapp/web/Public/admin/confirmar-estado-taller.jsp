@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Notificación de éxito al administrador al mover un pedido a la fase de taller o proceso.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

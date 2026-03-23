@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos para el formulario de personalización de arreglos, incluyendo selección de categorías y carga de imágenes.
+*/
 /* CONTENEDOR PRINCIPAL */
 .contenido-personalizar {
     grid-area: main;

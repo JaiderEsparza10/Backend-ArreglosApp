@@ -1,8 +1,12 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Visualización de los servicios marcados como favoritos por el cliente.
+--%>
 <%@page import="model.Usuario"%>
 <%@page import="model.Favorito"%>
 <%@page import="java.util.List"%>
 <%
-    // Verificar si el usuario está autenticado
+    // Validación de integridad de sesión para el acceso a preferencias
     Usuario usuario = (Usuario) session.getAttribute("usuario");
     if (usuario == null) {
         response.sendRedirect("../../index.jsp");

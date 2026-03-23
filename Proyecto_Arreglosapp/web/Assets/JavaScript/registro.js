@@ -1,6 +1,6 @@
 /**
- * ARCHIVO: registro.js
- * PROPÓSITO: Validación de lado del cliente para el formulario de registro de nuevos usuarios.
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Validación de lado del cliente para el formulario de registro de nuevos usuarios.
  * REQUISITOS FUNCIONALES: RF2.
  */
 

@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos para la vista de detalles de arreglos a medida, incluyendo encabezados y contenedores compartidos.
+*/
 /* SECCIÓN DEL ENCABEZADO */
 .contenedor-encabezado-detalles {
   background-color: var(--color-boton);

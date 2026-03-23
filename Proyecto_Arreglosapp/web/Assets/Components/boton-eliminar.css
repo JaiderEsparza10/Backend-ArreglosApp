@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos para los botones de eliminación de servicios en la vista de selección.
+*/
 /* BOTON NORMAL PARA PERSONALIZAR */
 .pago-enlace__enlace {
   background: var(--color-gradiente-enlace);

@@ -1,17 +1,16 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Formulario dinámico para la personalización de arreglos y edición de solicitudes existentes.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="model.Usuario" %>
 <%@ page import="model.Personalizacion" %>
 <%@ page import="dao.PersonalizacionDAO" %>
 
 <% 
+    // Gestión del estado de personalización y captura de mensajes de servidor
     HttpSession sesion = request.getSession(false);
     Usuario usuario = (sesion != null) ? (Usuario) sesion.getAttribute("usuario") : null;
-    
-    // Redirección si no hay sesión activa
-    if (usuario == null) {
-        response.sendRedirect(request.getContextPath() + "/index.jsp");
-        return;
-    }
 
     // Captura de mensajes de error del Servlet
     String errorMsg = (String) sesion.getAttribute("errorPersonalizacion");

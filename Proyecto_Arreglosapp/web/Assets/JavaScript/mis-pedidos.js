@@ -1,6 +1,6 @@
 /**
- * ARCHIVO: mis-pedidos.js
- * PROPÓSITO: Gestión de la interfaz de pedidos del cliente, incluyendo cambio de pestañas (Activos/Historial) y cancelación de pedidos vía Fetch API.
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Gestión de la interfaz de pedidos del cliente, incluyendo cambio de pestañas y cancelación de pedidos.
  * REQUISITOS FUNCIONALES: RF6, RF8.
  */
 var pedidoIdACancelar = null;

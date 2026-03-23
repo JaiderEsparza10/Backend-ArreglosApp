@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Vista detallada de un servicio específico del catálogo con opciones de selección y personalización.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%@ page import="model.Usuario" %> <%@ page import="model.Servicio" %> <%@ page import="dao.ServicioDAO" %>
                 <% HttpSession sesion=request.getSession(false); Usuario usuario=null; if (sesion !=null) {
                     usuario=(Usuario) sesion.getAttribute("usuario"); } if (usuario==null) { response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } String idParam=request.getParameter("id"); Servicio servicio=null; if (idParam !=null &&

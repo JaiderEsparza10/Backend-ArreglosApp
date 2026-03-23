@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Catálogo de servicios disponibles para que el cliente explore y seleccione arreglos.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="model.Usuario" %>
 <%@ page import="model.Servicio" %>
@@ -6,12 +10,7 @@
 <%@ page import="java.util.ArrayList" %>
 
 <% 
-    /**
-     * VISTA: Página Principal (Catálogo).
-     * Propósito: Exhibir el catálogo completo de servicios de arreglos de ropa disponibles.
-     * Requisitos Funcionales: RF1, RF4 (Visualización de servicios).
-     * Nota: Permite filtrar servicios por nombre (buscador JS) y precio.
-     */
+    // Validación de sesión y carga de servicios para el catálogo
     HttpSession sesion = request.getSession(false); 
     Usuario usuario = null; 
     

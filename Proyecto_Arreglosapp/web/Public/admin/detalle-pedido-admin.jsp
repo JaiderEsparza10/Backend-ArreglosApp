@@ -1,4 +1,8 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%@ page import="dao.AdminDAO" %> <%@ page import="model.Usuario" %> <%@ page import="java.util.Map" %> <%@ page import="java.text.SimpleDateFormat" %> <% Usuario admin=(Usuario) session.getAttribute("usuario"); if (admin==null || admin.getRolId() !=1) { response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } String pedidoIdStr=request.getParameter("pedidoId"); if (pedidoIdStr==null) { response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp"); return;
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Vista expandida de la información de un pedido, incluyendo datos del cliente, cita y personalización.
+--%>
+<%@ page import="dao.AdminDAO" %> <%@ page import="model.Usuario" %> <%@ page import="java.util.Map" %> <%@ page import="java.text.SimpleDateFormat" %> <% Usuario admin=(Usuario) session.getAttribute("usuario"); if (admin==null || admin.getRolId() !=1) { response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); return; } String pedidoIdStr=request.getParameter("pedidoId"); if (pedidoIdStr==null) { response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-dashboard.jsp"); return;
                         } int pedidoId=Integer.parseInt(pedidoIdStr); AdminDAO adminDAO=new AdminDAO(); Map<String,
                         Object> detalle = null;
                         try { detalle = adminDAO.obtenerDetallePedido(pedidoId); } catch (Exception e) {

@@ -1,7 +1,26 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <% HttpSession sesion=request.getSession(); String errorMsg=(String) sesion.getAttribute("errorRecuperar"); sesion.removeAttribute("errorRecuperar"); String paso=request.getParameter("paso"); boolean esPaso2="2"
-        .equals(paso); String emailGuardado=(String) sesion.getAttribute("emailRecuperar"); if (esPaso2 && emailGuardado==null) { response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp");
-        return; } %>
-        <!DOCTYPE html>
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Interfaz para el restablecimiento de contraseñas olvidadas.
+--%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> 
+<% 
+    // Gestión del flujo de recuperación y manejo de mensajes de error
+    HttpSession sesion = request.getSession(); 
+    String errorMsg = (String) sesion.getAttribute("errorRecuperar"); 
+    sesion.removeAttribute("errorRecuperar"); 
+    String paso = request.getParameter("paso"); 
+    boolean esPaso2 = "2".equals(paso); 
+    String emailGuardado = (String) sesion.getAttribute("emailRecuperar"); 
+    if (esPaso2 && emailGuardado == null) { 
+        response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp");
+        return; 
+    } 
+%>
+        <%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Formulario de recuperación de cuenta para usuarios que han olvidado sus credenciales.
+--%>
+<!DOCTYPE html>
         <html lang="es">
 
         <head>

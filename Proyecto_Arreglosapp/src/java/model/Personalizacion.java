@@ -1,24 +1,24 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Gestionar los detalles técnicos y de diseño para la personalización de los arreglos solicitados por los usuarios.
+ */
 package model;
 
 import java.time.LocalDateTime;
 
 /**
- * Modelo de Datos: Personalización.
- * Contiene las especificaciones técnicas y visuales de un arreglo a medida.
+ * Entidad que almacena las preferencias detalladas de un ajuste o diseño a medida.
  */
 public class Personalizacion {
     private int personalizacionId;
     private int userId;
     private Integer arregloId;
-    
-    // ✅ PASO 1: Declarar la variable que faltaba
-    private Integer servicioId; // Actualizado de categoriaId a servicioId 
-    
-    private String servicio; // Para el nombre descriptivo (ej: "Sastrería") del JOIN
+    private Integer servicioId; 
+    private String servicio; 
     private String descripcion;
     private String materialTela;
     private String imagenReferencia;
-    private String estado; // pendiente, en_proceso, completado
+    private String estado; // Posibles: pendiente, en_proceso, completado
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
 
@@ -26,20 +26,27 @@ public class Personalizacion {
     }
 
     /**
-     * Constructor actualizado para incluir el servicioId.
+     * Constructor para registrar una nueva solicitud de personalización.
+     * 
+     * @param userId Identificador del usuario propietario.
+     * @param arregloId Identificador del arreglo base.
+     * @param servicioId Identificador del servicio relacionado.
+     * @param descripcion Detalle textual de lo que el usuario desea.
+     * @param materialTela Tipo de tela o material especificado.
+     * @param imagenReferencia Ruta de la imagen proporcionada como guía.
      */
     public Personalizacion(int userId, Integer arregloId, Integer servicioId, String descripcion, String materialTela,
             String imagenReferencia) {
         this.userId = userId;
         this.arregloId = arregloId;
-        this.servicioId = servicioId; // ✅ Asignar el ID
+        this.servicioId = servicioId; 
         this.descripcion = descripcion;
         this.materialTela = materialTela;
         this.imagenReferencia = imagenReferencia;
-        this.estado = "pendiente";
+        this.estado = "pendiente"; // Estado inicial automático
     }
 
-    // Getters y Setters
+    // Métodos para la gestión segura de los atributos de la entidad
     public int getPersonalizacionId() { return personalizacionId; }
     public void setPersonalizacionId(int personalizacionId) { this.personalizacionId = personalizacionId; }
 
@@ -49,7 +56,6 @@ public class Personalizacion {
     public Integer getArregloId() { return arregloId; }
     public void setArregloId(Integer arregloId) { this.arregloId = arregloId; }
 
-    // ✅ PASO 2: Estos métodos ahora funcionarán porque la variable existe
     public Integer getServicioId() { return servicioId; }
     public void setServicioId(Integer servicioId) { this.servicioId = servicioId; }
 
@@ -73,4 +79,4 @@ public class Personalizacion {
 
     public LocalDateTime getFechaActualizacion() { return fechaActualizacion; }
     public void setFechaActualizacion(LocalDateTime fechaActualizacion) { this.fechaActualizacion = fechaActualizacion; }
-}
+}

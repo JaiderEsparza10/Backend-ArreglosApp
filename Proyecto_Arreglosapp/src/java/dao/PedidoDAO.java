@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Centralizar la gestión de las órdenes de servicio y su ciclo de vida.
+ */
 package dao;
 
 import config.ConectionDB;
@@ -7,6 +11,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Esta clase maneja la recuperación de pedidos activos, el historial y las cancelaciones.
+ */
 public class PedidoDAO {
 
     public List<Map<String, Object>> obtenerPedidosActivos(int userId) throws Exception {

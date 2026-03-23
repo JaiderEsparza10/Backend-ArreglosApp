@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Proporcionar utilidades técnicas para el aprovisionamiento inicial (bootstrapping) del administrador maestro.
+ */
 package controller;
 
 import dao.UsuarioDAO;
@@ -11,11 +15,7 @@ import java.io.PrintWriter;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
- * Servlet de Utilidad: Configuración Inicial del Sistema.
- * Facilita el aprovisionamiento manual del primer usuario administrador mediante la generación de Hash BCrypt.
- * Proporciona scripts SQL e intentos de inserción automática para bootstrapping.
- * 
- * @author Antigravity - Senior Architect
+ * Genera hashes de seguridad y scripts SQL necesarios para la configuración base del sistema en entornos nuevos.
  */
 @WebServlet("/SetupAdminServlet")
 public class SetupAdminServlet extends HttpServlet {

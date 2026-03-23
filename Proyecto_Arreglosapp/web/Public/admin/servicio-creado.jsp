@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Página de éxito que se muestra tras la creación de un nuevo servicio en el sistema.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

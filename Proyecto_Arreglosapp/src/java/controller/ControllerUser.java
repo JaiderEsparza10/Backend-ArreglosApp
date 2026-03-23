@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Gestionar el ciclo de vida de las cuentas de usuario, incluyendo el registro y la eliminación segura.
+ */
 package controller;
 
 import dao.UsuarioDAO;
@@ -8,11 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 /**
- * Controlador de Gestión de Cuentas de Usuario.
- * RF-02: Registro de Usuarios.
- * Valida y procesa la creación de nuevos perfiles de cliente en la plataforma.
- * 
- * @author Antigravity - Senior Architect
+ * Este controlador procesa las solicitudes de alta de nuevos clientes y la limpieza de perfiles por parte de administración.
  */
 @WebServlet("/UsuarioServlet")
 public class ControllerUser extends HttpServlet {

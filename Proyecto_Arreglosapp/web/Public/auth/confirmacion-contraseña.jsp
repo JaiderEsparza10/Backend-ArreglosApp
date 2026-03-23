@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Página informativa que confirma el cambio exitoso de la contraseña del usuario.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 <head>

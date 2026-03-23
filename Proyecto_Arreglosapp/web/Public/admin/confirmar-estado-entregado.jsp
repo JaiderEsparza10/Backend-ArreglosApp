@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Página de confirmación y feedback tras marcar un pedido como entregado al cliente.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

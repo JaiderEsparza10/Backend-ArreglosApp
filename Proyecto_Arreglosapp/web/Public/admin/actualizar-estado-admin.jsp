@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Interfaz para que el administrador seleccione el nuevo estado de un pedido en curso.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 

@@ -1,21 +1,7 @@
-/* ========================================
-   TOAST NOTIFICATIONS - ESTILO UNIFORME
-   ========================================
-   
-   Este archivo define el estilo consistente para todos
-   los mensajes toast del proyecto ArreglosApp.
-   
-   Para usar en cualquier JSP:
-   1. Asegúrate de que el JSP importe estilos.css principal
-   2. Incluye el div: <div id="toastContainer" class="toast-container"></div>
-   3. Usa la función JavaScript: mostrarToast(mensaje, tipo)
-   
-   Colores:
-   - Éxito: Verde sólido (#28a745)
-   - Error: Rojo sólido (#dc3545)
-   - Info: Azul (#17a2b8) - opcional
-   - Advertencia: Amarillo (#ffc107) - opcional
-   ======================================== */
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Definición de estilos consistentes y variantes (éxito, error, advertencia) para los mensajes toast.
+*/
 
 /* Contenedor de toast (esquina superior derecha) */
 .toast-container {

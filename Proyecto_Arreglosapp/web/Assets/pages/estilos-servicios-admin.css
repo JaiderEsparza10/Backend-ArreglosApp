@@ -1,3 +1,7 @@
+/* 
+   Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+   Propósito: Estilos para la gestión administrativa de servicios, incluyendo lista de cards y modales de eliminación.
+*/
 /* ENCABEZADO CON BOTÓN AGREGAR */
 .dashboard__encabezado-accion {
     display: flex;

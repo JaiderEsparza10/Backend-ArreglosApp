@@ -1,3 +1,7 @@
+/**
+ * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * Propósito: Gestionar la persistencia de los servicios marcados como favoritos por los usuarios.
+ */
 package dao;
 
 import config.ConectionDB;
@@ -6,6 +10,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Esta clase permite vincular usuarios con sus servicios de interés para acceso rápido.
+ */
 public class FavoritoDAO {
 
     /**

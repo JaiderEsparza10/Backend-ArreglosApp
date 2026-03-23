@@ -1,3 +1,7 @@
+<%-- 
+    Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+    Propósito: Información sobre el servicio de planchado profesional para diversos tipos de telas.
+--%>
 <!DOCTYPE html>
 <html lang="es">
 
