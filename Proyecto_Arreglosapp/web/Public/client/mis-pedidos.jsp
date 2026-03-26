@@ -14,25 +14,27 @@
         response.sendRedirect("/Proyecto_Arreglosapp/index.jsp"); 
         return; 
     }
+
+    PedidoDAO pedidoDAO=new PedidoDAO(); 
+    List<Map<String, Object>> pedidosActivos = null;
+    List<Map<String, Object>> historialPedidos = null;
+    String fEstado = request.getParameter("fEstado");
+
+    try {
+        // Filtrado por estado específico o carga de todos los pedidos activos del usuario
+        if (fEstado != null && !fEstado.isEmpty()) {
+            pedidosActivos = pedidoDAO.obtenerPedidosPorEstado(usuario.getId(), fEstado);
+        } else {
+            pedidosActivos = pedidoDAO.obtenerPedidosActivos(usuario.getId());
+        }
+        historialPedidos = pedidoDAO.obtenerHistorialPedidos(usuario.getId());
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    DateTimeFormatter fmtFecha = DateTimeFormatter.ofPattern("dd MMM yyyy"); 
+    DateTimeFormatter fmtHora = DateTimeFormatter.ofPattern("hh:mm a");
 %>
-                                PedidoDAO pedidoDAO=new PedidoDAO(); List<Map<String, Object>> pedidosActivos = null;
-                                List<Map<String, Object>> historialPedidos = null;
-                                    String fEstado = request.getParameter("fEstado");
-
-                                    try {
-                                    // Filtrado por estado específico o carga de todos los pedidos activos del usuario
-                                    if (fEstado != null && !fEstado.isEmpty()) {
-                                    pedidosActivos = pedidoDAO.obtenerPedidosPorEstado(usuario.getId(), fEstado);
-                                    } else {
-                                    pedidosActivos = pedidoDAO.obtenerPedidosActivos(usuario.getId());
-                                    }
-                                    historialPedidos = pedidoDAO.obtenerHistorialPedidos(usuario.getId());
-                                    } catch (Exception e) {
-                                    e.printStackTrace();
-                                    }
-
-                                    DateTimeFormatter fmtFecha = DateTimeFormatter.ofPattern("dd MMM yyyy"); DateTimeFormatter fmtHora = DateTimeFormatter.ofPattern("hh:mm a");
-                                    %>
                                     <!DOCTYPE html>
                                     <html lang="es">
 
