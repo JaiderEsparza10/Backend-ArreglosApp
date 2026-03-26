@@ -1,6 +1,12 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Gestionar la pre-selección de servicios (favoritos) por parte de los clientes.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: FavoritoServlet.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Controlador asíncrono de pre-selección (Wishlist).
+ *               Permite la interacción dinámica mediante JSON para agregar,
+ *               eliminar y listar servicios de interés del usuario.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package controller;
 

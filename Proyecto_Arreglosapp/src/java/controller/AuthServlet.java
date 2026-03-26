@@ -1,6 +1,12 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Gestionar el proceso de autenticación centralizada, control de sesiones y seguridad mediante tokens JWT.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: AuthServlet.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Motor central de seguridad y autenticación (AAA).
+ *               Gestiona el ciclo de vida de la sesión, validación BCrypt 
+ *               y emisión de tokens JWT para persistencia de identidad.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package controller;
 
@@ -14,7 +20,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 /**
- * Este controlador procesa los inicios de sesión, valida las credenciales y liquida las sesiones activas.
+ * Controlador (Servlet) que gestiona el flujo de autenticación.
+ * Procesa inicios de sesión, valida credenciales y liquida sesiones activas.
  */
 @WebServlet("/AuthServlet")
 public class AuthServlet extends HttpServlet {

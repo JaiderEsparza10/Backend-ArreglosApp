@@ -1,6 +1,12 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Permitir a los clientes gestionar y realizar el seguimiento de sus pedidos activos.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: PedidoServlet.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Gestor de seguimiento y ciclo de vida de pedidos (Clientes).
+ *               Permite la consulta de estados y la cancelación controlada
+ *               asíncrona (AJAX) bajo reglas de negocio de tiempo real.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package controller;
 
@@ -16,7 +22,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * Este controlador responde a solicitudes asíncronas para la cancelación y consulta de estados de pedidos desde la vista del cliente.
+ * Controlador (Servlet) que gestiona las operaciones de pedidos para el cliente.
+ * Responde a solicitudes asíncronas para la cancelación y consulta de estados.
  */
 @WebServlet("/PedidoServlet")
 public class PedidoServlet extends HttpServlet {
@@ -66,12 +73,11 @@ public class PedidoServlet extends HttpServlet {
                     // Ejecución de la lógica de negocio controlada: No se cancelan pedidos en fases avanzadas
                     boolean cancelado = pedidoDAO.cancelarPedido(pedidoId, usuario.getId());
 
-                if (cancelado) {
-                    out.print("{\"success\":true,\"message\":\"Pedido cancelado correctamente\"}");
-                } else {
-                    out.print(
-                            "{\"success\":false,\"message\":\"No se pudo cancelar. Solo se pueden cancelar pedidos pendientes o confirmados.\"}");
-                }
+                    if (cancelado) {
+                        out.print("{\"success\":true,\"message\":\"Pedido cancelado correctamente\"}");
+                    } else {
+                        out.print("{\"success\":false,\"message\":\"No se pudo cancelar. Solo se pueden cancelar pedidos pendientes o confirmados.\"}");
+                    }
                 }
             } catch (NumberFormatException e) {
                 // Control de errores en el formato de entrada (seguridad de tipos)

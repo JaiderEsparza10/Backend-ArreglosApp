@@ -1,6 +1,12 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Gestionar las solicitudes de personalización y arreglos a medida.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: PersonalizacionDAO.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Motor de persistencia para requerimientos de diseño a medida.
+ *               Gestiona la captura de especificaciones técnicas y materiales
+ *               antes de su materialización en una orden comercial.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package dao;
 
@@ -11,15 +17,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Esta clase se encarga de registrar y recuperar los detalles técnicos de los pedidos especiales.
+ * Clase de Acceso a Datos (DAO) para el subsistema de personalización.
+ * Permite la gestión del borrador técnico de la prenda o arreglo solicitado.
  */
 public class PersonalizacionDAO {
 
     /**
-     * Registra una nueva personalización de arreglo en la base de datos.
+     * Registra un nuevo folio de personalización.
+     * Captura la intención inicial del cliente con sus parámetros estéticos.
      * 
-     * @param personalizacion El objeto con los detalles de la personalización.
-     * @return true si la inserción fue exitosa, false en caso contrario.
+     * @param personalizacion Modelo con descripción, material y referencia visual.
+     * @return true si el registro fue exitoso.
+     * @throws Exception Error de base de datos o fallo en recuperación de ID.
      */
     public boolean crearPersonalizacion(Personalizacion personalizacion) throws Exception {
         String sql = "INSERT INTO PERSONALIZACIONES (user_id, servicio_id, descripcion, material_tela, imagen_referencia, estado) VALUES (?, ?, ?, ?, ?, ?)";
@@ -36,6 +45,7 @@ public class PersonalizacionDAO {
 
             int filasInsertadas = ps.executeUpdate();
 
+            // Recuperación de la llave primaria generada por el motor SQL
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     personalizacion.setPersonalizacionId(rs.getInt(1));
@@ -49,7 +59,12 @@ public class PersonalizacionDAO {
     }
 
     /**
-     * Obtiene personalizaciones de un usuario con nombres de servicios.
+     * Recupera el listado de borradores técnicos creados por el usuario.
+     * Realiza un JOIN con SERVICIOS para mostrar el nombre amigable de la categoría.
+     * 
+     * @param userId Propietario de los registros.
+     * @return Lista de modelos hidratados y ordenados cronológicamente.
+     * @throws Exception Error JDBC.
      */
     public List<Personalizacion> obtenerPersonalizacionesPorUsuario(int userId) throws Exception {
         String sql = "SELECT p.*, s.servicio_nombre " +
@@ -68,13 +83,14 @@ public class PersonalizacionDAO {
                     Personalizacion p = new Personalizacion();
                     p.setPersonalizacionId(rs.getInt("personalizacion_id"));
                     p.setUserId(rs.getInt("user_id"));
-                                        p.setServicioId(rs.getInt("servicio_id"));
-                    p.setServicio(rs.getString("servicio_nombre")); // Nombre del servicio
+                    p.setServicioId(rs.getInt("servicio_id"));
+                    p.setServicio(rs.getString("servicio_nombre")); // Hidratación del nombre del servicio base
                     p.setDescripcion(rs.getString("descripcion"));
                     p.setMaterialTela(rs.getString("material_tela"));
                     p.setImagenReferencia(rs.getString("imagen_referencia"));
                     p.setEstado(rs.getString("estado"));
 
+                    // Conversión de tipos temporales SQL -> Java Time
                     if (rs.getTimestamp("fecha_creacion") != null) {
                         p.setFechaCreacion(rs.getTimestamp("fecha_creacion").toLocalDateTime());
                     }
@@ -88,7 +104,12 @@ public class PersonalizacionDAO {
     }
 
     /**
-     * Actualiza una personalización existente.
+     * Modifica los parámetros técnicos de una solicitud existente.
+     * Emplea COALESCE para preservar la imagen previa si no se adjunta una nueva.
+     * 
+     * @param p Objeto con las actualizaciones.
+     * @return true si la fila fue actualizada (valida propiedad del usuario).
+     * @throws Exception Error SQL.
      */
     public boolean actualizarPersonalizacion(Personalizacion p) throws Exception {
         String sql = "UPDATE PERSONALIZACIONES SET " +
@@ -115,7 +136,14 @@ public class PersonalizacionDAO {
         }
     }
 
-    // Obtener una personalización por ID y userId
+    /**
+     * Localiza un requerimiento específico validando la identidad del solicitante.
+     * 
+     * @param personalizacionId ID único del registro.
+     * @param userId             ID del propietario (Seguridad).
+     * @return Instancia del modelo o null si no se encuentra o no pertenece al usuario.
+     * @throws Exception Error JDBC.
+     */
     public Personalizacion obtenerPorId(int personalizacionId, int userId) throws Exception {
         String sql = "SELECT p.*, s.servicio_nombre " +
                      "FROM PERSONALIZACIONES p " +
@@ -133,13 +161,14 @@ public class PersonalizacionDAO {
                     Personalizacion p = new Personalizacion();
                     p.setPersonalizacionId(rs.getInt("personalizacion_id"));
                     p.setUserId(rs.getInt("user_id"));
-                                        p.setServicioId(rs.getInt("servicio_id"));
-                    p.setServicio(rs.getString("servicio_nombre")); // Nombre del servicio
+                    p.setServicioId(rs.getInt("servicio_id"));
+                    p.setServicio(rs.getString("servicio_nombre")); // Mapeo de identidad del servicio
                     p.setDescripcion(rs.getString("descripcion"));
                     p.setMaterialTela(rs.getString("material_tela"));
                     p.setImagenReferencia(rs.getString("imagen_referencia"));
                     p.setEstado(rs.getString("estado"));
 
+                    // Recuperación de marcas de tiempo del sistema
                     if (rs.getTimestamp("fecha_creacion") != null) {
                         p.setFechaCreacion(rs.getTimestamp("fecha_creacion").toLocalDateTime());
                     }
@@ -157,7 +186,15 @@ public class PersonalizacionDAO {
         return null;
     }
 
-    // Eliminar una personalización
+    /**
+     * Purga un requerimiento técnico del sistema.
+     * Solo permite la eliminación si el usuario es el propietario legítimo.
+     * 
+     * @param personalizacionId ID a eliminar.
+     * @param userId             ID del usuario para comprobación de seguridad.
+     * @return true si el borrado fue efectivo.
+     * @throws Exception Error de integridad o JDBC.
+     */
     public boolean eliminarPersonalizacion(int personalizacionId, int userId) throws Exception {
         String sql = "DELETE FROM PERSONALIZACIONES WHERE personalizacion_id = ? AND user_id = ?";
 

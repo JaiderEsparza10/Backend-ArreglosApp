@@ -1,6 +1,12 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Administrar el proceso de agendamiento de citas y la creación de pedidos asociados.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: CitaServlet.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Controlador central para la gestión de turnos y logística.
+ *               Valida disponibilidad de horarios, reglas de atención 
+ *               (L-V, 2-10 PM) y coordina la creación atómica de Pedido-Cita.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package controller;
 
@@ -21,7 +27,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Este controlador valida la disponibilidad de horarios y coordina la logística presencial de los servicios.
+ * Controlador (Servlet) que gestiona el workflow de agendamiento presencial.
+ * Actúa como puente entre la vista de agendamiento y la persistencia logística.
  */
 @WebServlet("/CitaServlet")
 public class CitaServlet extends HttpServlet {
@@ -30,13 +37,14 @@ public class CitaServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        // Inicialización de la capa de acceso a datos para citas
+        // Inicialización del motor de persistencia para logística (Inyección manual)
         citaDAO = new CitaDAO();
     }
 
     /**
-     * Procesa la solicitud de agendamiento de una nueva cita.
-     * Coordina la creación del pedido y su cita física asociada en una sola flujo de operación.
+     * Orquestador de solicitudes POST para agendamiento y cambio de estados.
+     * Implementa lógica de validación de negocio en el servidor para garantizar
+     * la integridad de las fechas y la disponibilidad de cupos.
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -45,7 +53,7 @@ public class CitaServlet extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
 
-        // Verificación de sesión activa mediante el objeto Usuario
+        // Seguridad: Filtro de sesión manual para asegurar contexto de usuario
         HttpSession session = request.getSession(false);
         Usuario usuario = (session != null) ? (Usuario) session.getAttribute("usuario") : null;
 
@@ -56,6 +64,7 @@ public class CitaServlet extends HttpServlet {
 
         String accion = request.getParameter("accion");
 
+        // CASO A: Consulta asíncrona de disponibilidad (AJAX)
         if ("obtenerHorasOcupadas".equals(accion)) {
             try {
                 String fechaStr = request.getParameter("fechaCita");
@@ -63,6 +72,7 @@ public class CitaServlet extends HttpServlet {
                     LocalDate fecha = LocalDate.parse(fechaStr);
                     java.util.List<String> horasOcupadas = citaDAO.obtenerHorasOcupadasPorFecha(fecha);
                     
+                    // Generación manual de JSON para evitar dependencias externas (GSON/Jackson)
                     StringBuilder json = new StringBuilder("[");
                     for (int i = 0; i < horasOcupadas.size(); i++) {
                         json.append("\"").append(horasOcupadas.get(i)).append("\"");
@@ -79,16 +89,18 @@ public class CitaServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             return;
+            
+        // CASO B: Procesamiento de Agendamiento Físico
         } else if ("agendar".equals(accion)) {
             try {
-                // Extracción de parámetros de fecha, hora y ubicación
+                // Captura de datos del formulario de logística
                 String fechaStr = request.getParameter("fechaCita");
                 String horaStr = request.getParameter("horaCita");
                 String direccion = request.getParameter("direccionEntrega");
                 String motivo = request.getParameter("motivoCita");
                 String notas = request.getParameter("notas");
 
-                // Vínculo con una personalización previa opcional
+                // Extracción del vínculo técnico (Personalización)
                 String personalizacionIdStr = request.getParameter("personalizacionId");
                 int personalizacionId = -1;
                 if (personalizacionIdStr != null && !personalizacionIdStr.trim().isEmpty()) {
@@ -99,7 +111,7 @@ public class CitaServlet extends HttpServlet {
                     }
                 }
 
-                // Validaciones de integridad de la solicitud (Lado del servidor)
+                // Fase 1: Validaciones de campos obligatorios
                 if (fechaStr == null || fechaStr.trim().isEmpty()) {
                     session.setAttribute("errorCita", "Debes seleccionar una fecha");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
@@ -116,7 +128,7 @@ public class CitaServlet extends HttpServlet {
                     return;
                 }
 
-                // Transformación de datos temporales a formato ISO para persistencia (Manejo Seguro)
+                // Fase 2: Parsing y normalización temporal
                 LocalDate fecha;
                 LocalTime hora;
                 try {
@@ -131,7 +143,7 @@ public class CitaServlet extends HttpServlet {
                 LocalDateTime fechaHora = LocalDateTime.of(fecha, hora);
                 LocalDateTime ahora = LocalDateTime.now();
                 
-                // 1. Validar que no sea fin de semana (lunes a viernes solo)
+                // REGLA DE NEGOCIO 1: Calendario laboral (Lunes a Viernes)
                 DayOfWeek diaSemana = fecha.getDayOfWeek();
                 if (diaSemana == DayOfWeek.SATURDAY || diaSemana == DayOfWeek.SUNDAY) {
                     session.setAttribute("errorCita", "Solo atendemos de lunes a viernes.");
@@ -139,7 +151,7 @@ public class CitaServlet extends HttpServlet {
                     return;
                 }
                 
-                // 2. Validar rango horario: 2:00 PM a 10:00 PM
+                // REGLA DE NEGOCIO 2: Franja horaria técnica (14:00 - 22:00)
                 LocalTime horaMinima = LocalTime.of(14, 0);
                 LocalTime horaMaxima = LocalTime.of(22, 0);
                 if (hora.isBefore(horaMinima) || hora.isAfter(horaMaxima)) {
@@ -148,37 +160,35 @@ public class CitaServlet extends HttpServlet {
                     return;
                 }
                 
-                // 3. Validar que no sea una fecha/hora pasada
+                // REGLA DE NEGOCIO 3: Restricción de viajes en el tiempo
                 if (fechaHora.isBefore(ahora)) {
                     session.setAttribute("errorCita", "No puedes agendar citas en fechas u horarios pasados.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
 
-                // 4. Validar disponibilidad de slot (Meta 4)
+                // REGLA DE NEGOCIO 4: Exclusividad del slot (Evitar Overbooking)
                 if (!citaDAO.isSlotAvailable(fecha, hora)) {
                     session.setAttribute("errorCita", "No se puede agendar la cita porque el espacio ya está ocupado.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
 
-                // =====================
-                // PROCESAMIENTO DE PEDIDO Y CITA (Meta 4)
-                // =====================
+                // Fase 3: Integridad del flujo (Requiere personalización previa)
                 if (personalizacionId == -1) {
                     session.setAttribute("errorCita", "Debes tener una personalización válida para agendar.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
                     return;
                 }
 
-                // Paso 1: Crear el registro de pedido
+                // Fase 4: Persistencia transaccional subordinada
+                // Paso 4.1: Creación del Pedido Maestro
                 int pedidoId = citaDAO.crearPedido(usuario.getId(), personalizacionId);
                 
                 if (pedidoId > 0) {
-                    // Paso 2: Vincular la cita física al pedido recién creado
+                    // Paso 4.2: Creación de la Cita Logística
                     if (motivo == null || motivo.trim().isEmpty()) motivo = "Sin especificar";
                     
-                    // Usar objeto Cita como requiere el DAO
                     Cita nuevaCita = new Cita(pedidoId, fechaHora, notas, direccion, motivo);
                     boolean creada = citaDAO.crearCita(nuevaCita);
                     
@@ -194,27 +204,28 @@ public class CitaServlet extends HttpServlet {
                 }
 
             } catch (Exception e) {
-                // Manejo de excepciones técnicas durante la transacción
+                // Manejo de errores de infraestructura o lógica SQL
                 session.setAttribute("errorCita", "Error: " + e.getMessage());
                 response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
             }
+
+        // CASO C: Modificación de estados (Dashboard/Client)
         } else if ("cambiarEstado".equals(accion)) {
             try {
-                // Capturar ID de la cita y nuevo estado
                 String idCitaStr = request.getParameter("idCita");
                 String nuevoEstado = request.getParameter("nuevoEstado");
                 
                 if (idCitaStr != null && !idCitaStr.isEmpty() && nuevoEstado != null && !nuevoEstado.isEmpty()) {
                     int idCita = Integer.parseInt(idCitaStr);
                     
-                    // Validar que el estado sea válido
+                    // Validación de nulos en estado
                     if (nuevoEstado == null || nuevoEstado.trim().isEmpty()) {
                         session.setAttribute("errorCita", "El estado es obligatorio");
                         response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-pedidos.jsp");
                         return;
                     }
                     
-                    // Validar estados permitidos
+                    // Validación de máquina de estados (Estados permitidos)
                     if (!nuevoEstado.equals("pendiente") && !nuevoEstado.equals("confirmada") && 
                         !nuevoEstado.equals("en_progreso") && !nuevoEstado.equals("completada") && 
                         !nuevoEstado.equals("cancelada")) {
@@ -223,7 +234,7 @@ public class CitaServlet extends HttpServlet {
                         return;
                     }
                     
-                    // Actualizar el estado de la cita
+                    // Persistencia del nuevo estado
                     boolean actualizado = citaDAO.actualizarEstadoCita(idCita, nuevoEstado);
                     
                     if (actualizado) {
@@ -245,6 +256,7 @@ public class CitaServlet extends HttpServlet {
                 response.sendRedirect("/Proyecto_Arreglosapp/Public/client/mis-pedidos.jsp");
             }
         } else {
+            // Acción no reconocida por el controlador
             session.setAttribute("errorCita", "Acción no válida");
             response.sendRedirect("/Proyecto_Arreglosapp/Public/client/agendar-cita.jsp");
         }

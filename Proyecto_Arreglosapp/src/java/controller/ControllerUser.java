@@ -1,6 +1,13 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Gestionar el ciclo de vida de las cuentas de usuario, incluyendo el registro y la eliminación segura.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: ControllerUser.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Controlador de gestión de perfiles e identidad.
+ *               Maneja el registro de nuevos usuarios con validaciones de RNF,
+ *               y la limpieza segura de registros (Admin Only) auditando 
+ *               la integridad referencial.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package controller;
 
@@ -12,7 +19,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 /**
- * Este controlador procesa las solicitudes de alta de nuevos clientes y la limpieza de perfiles por parte de administración.
+ * Controlador (Servlet) que gestiona el ciclo de vida de los datos de usuario.
+ * Procesa las solicitudes de alta de nuevos clientes y la limpieza de perfiles por parte de administración.
  */
 @WebServlet("/UsuarioServlet")
 public class ControllerUser extends HttpServlet {

@@ -1,6 +1,12 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Ofrecer un mecanismo seguro para que los usuarios restauren el acceso a sus cuentas tras olvidar su contraseña.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: RecuperarPasswordServlet.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Gestor de flujo de recuperación de credenciales (Restauración).
+ *               Implementa validación de identidad por fases mediante 
+ *               verificación de email y actualización atómica de contraseñas.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package controller;
 
@@ -14,7 +20,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Este controlador implementa un flujo de validación de identidad por correo y permite definir una nueva credencial de acceso.
+ * Controlador (Servlet) que gestiona el proceso de olvidó de contraseña.
+ * Permite a los usuarios restaurar el acceso tras validar su correo electrónico.
  */
 @WebServlet("/RecuperarPasswordServlet")
 public class RecuperarPasswordServlet extends HttpServlet {
@@ -23,12 +30,11 @@ public class RecuperarPasswordServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        // Inicialización del motor de búsqueda y actualización de usuarios
         usuarioDAO = new UsuarioDAO();
     }
 
     /**
-     * Estandariza solicitudes GET redirigiéndolas al procesador de negocio POST.
+     * Canaliza solicitudes GET hacia el procesador unificado de negocio.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -37,7 +43,7 @@ public class RecuperarPasswordServlet extends HttpServlet {
     }
 
     /**
-     * Canaliza las etapas del proceso de recuperación basado en el parámetro 'accion'.
+     * Procesa las etapas de recuperación: 'verificarEmail' y 'cambiarPassword'.
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -53,23 +59,22 @@ public class RecuperarPasswordServlet extends HttpServlet {
             accion = accion.trim();
         }
 
-        // ─── PASO 1: VERIFICACIÓN DE IDENTIDAD POR EMAIL ──────────────
+        // ─── ETAPA 1: VALIDACIÓN DE EXISTENCIA POR CORREO ──────────────
         if ("verificarEmail".equals(accion)) {
             try {
                 String email = request.getParameter("email");
 
-                // Validación de entrada obligatoria
                 if (email == null || email.trim().isEmpty()) {
                     session.setAttribute("errorRecuperar", "Ingresa tu correo electrónico");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp");
                     return;
                 }
 
-                // Consulta de existencia en la base de datos
+                // Consulta de integridad en el repositorio de usuarios
                 boolean existe = usuarioDAO.existeEmail(email.trim());
 
                 if (existe) {
-                    // Almacenamiento temporal en sesión para el siguiente paso del flujo
+                    // Pre-autenticación por email para la fase de cambio
                     session.setAttribute("emailRecuperar", email.trim());
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp?paso=2");
                 } else {
@@ -78,15 +83,13 @@ public class RecuperarPasswordServlet extends HttpServlet {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
                 session.setAttribute("errorRecuperar", "Error: " + e.getMessage());
                 response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp");
             }
 
-        // ─── PASO 2: ACTUALIZACIÓN DE CREDENCIALES ────────────────────
+        // ─── ETAPA 2: REASIGNACIÓN DE CREDENCIALES (CAMBIO FINAL) ──────
         } else if ("cambiarPassword".equals(accion)) {
             try {
-                // Recuperación del contexto desde la sesión segura
                 String email = (String) session.getAttribute("emailRecuperar");
                 String passwordNueva = request.getParameter("passwordNueva");
                 String passwordConfirm = request.getParameter("passwordConfirmar");
@@ -96,7 +99,7 @@ public class RecuperarPasswordServlet extends HttpServlet {
                     return;
                 }
 
-                // Validaciones de integridad y coincidencia de contraseñas
+                // Validación de coincidencia y vacío
                 if (passwordNueva == null || passwordNueva.trim().isEmpty()) {
                     session.setAttribute("errorRecuperar", "La contraseña no puede estar vacía");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp?paso=2");
@@ -109,33 +112,30 @@ public class RecuperarPasswordServlet extends HttpServlet {
                     return;
                 }
 
-                // RNF: Cumplimiento de políticas de complejidad (mín. 8 char, uppercase, digits)
+                // RNF: Validación de políticas de seguridad (Complejidad)
                 if (!passwordNueva.matches("^(?=.*[A-Z])(?=.*\\d).{8,}$")) {
                     session.setAttribute("errorRecuperar", "La contraseña debe tener mínimo 8 caracteres, una mayúscula y un número");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp?paso=2");
                     return;
                 }
 
-                // Persistencia del nuevo Hash BCrypt mediante el motor de usuario
+                // Aplicación de cambio final con cifrado atómico
                 boolean cambiada = usuarioDAO.actualizarPassword(email, passwordNueva);
 
                 if (cambiada) {
-                    // Limpieza de sesión tras éxito en la transacción
                     session.removeAttribute("emailRecuperar");
                     response.sendRedirect("/Proyecto_Arreglosapp/index.jsp?passwordRecuperada=1");
                 } else {
-                    session.setAttribute("errorRecuperar", "No se pudo actualizar la contraseña");
+                    session.setAttribute("errorRecuperar", "No se pudo actualizar");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp?paso=2");
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
                 session.setAttribute("errorRecuperar", "Error: " + e.getMessage());
                 response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp?paso=2");
             }
 
         } else {
-            // Manejo de acciones no definidas o malformadas
             response.sendRedirect("/Proyecto_Arreglosapp/Public/auth/recuperar-contrasena.jsp");
         }
     }

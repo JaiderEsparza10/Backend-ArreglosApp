@@ -1,6 +1,12 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Actuar como el controlador principal para todas las operaciones de administración del sistema.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: AdminServlet.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Controlador maestro de administración (Dashboard).
+ *               Coordina la gestión de usuarios, servicios, pedidos y citas,
+ *               incluyendo la sincronización de estados y notificaciones.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package controller;
 

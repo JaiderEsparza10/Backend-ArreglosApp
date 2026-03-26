@@ -1,6 +1,12 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Permitir a los usuarios gestionar su información personal y configuraciones de seguridad.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: PerfilServlet.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Centro de gestión de identidad y seguridad del cliente.
+ *               Maneja la edición de datos personales, políticas de 
+ *               complejidad de contraseñas y gestión multi-teléfono.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package controller;
 
@@ -15,7 +21,8 @@ import model.Usuario;
 import java.io.IOException;
 
 /**
- * Gestiona la edición del perfil, actualización de direcciones y el cambio de contraseñas mediante validación previa.
+ * Controlador (Servlet) que gestiona la edición del perfil de usuario.
+ * Permite la actualización de datos personales, cambio de contraseñas y teléfonos.
  */
 @WebServlet("/PerfilServlet")
 public class PerfilServlet extends HttpServlet {
@@ -30,7 +37,7 @@ public class PerfilServlet extends HttpServlet {
 
     /**
      * Procesa las modificaciones del perfil mediante solicitudes POST.
-     * Soporta las acciones 'editarDatos' y 'cambiarPassword'.
+     * Soporta las acciones 'editarDatos', 'cambiarPassword', 'agregarTelefono', etc.
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -58,7 +65,7 @@ public class PerfilServlet extends HttpServlet {
                 String direccion = request.getParameter("direccion");
                 String telefono = request.getParameter("telefono");
 
-                // VALIDACIÓN DE INTEGRIDAD ROBUSTA (Meta 1)
+                // VALIDACIÓN DE INTEGRIDAD ROBUSTA
                 if (nombre == null || nombre.trim().isEmpty()) {
                     session.setAttribute("errorPerfil", "El nombre es obligatorio y no puede estar vacío");
                     response.sendRedirect("Public/client/mi-perfil.jsp");
@@ -86,8 +93,6 @@ public class PerfilServlet extends HttpServlet {
                     usuario.setDireccion(direccion.trim());
                     session.setAttribute("usuario", usuario);
                 }
-
-                // El teléfono ahora se gestiona desde sus propias acciones específicas.
 
                 response.sendRedirect("Public/client/mi-perfil.jsp?editado=1");
 
@@ -123,7 +128,7 @@ public class PerfilServlet extends HttpServlet {
                     return;
                 }
 
-                // Verificación de identidad mediante validación de contraseña actual (Multi-factor conceptual)
+                // Verificación de identidad mediante validación de contraseña actual
                 boolean passwordCorrecta = usuarioDAO.verificarPassword(usuario.getId(), passwordActual);
                 if (!passwordCorrecta) {
                     session.setAttribute("errorPassword", "La contraseña actual es incorrecta");

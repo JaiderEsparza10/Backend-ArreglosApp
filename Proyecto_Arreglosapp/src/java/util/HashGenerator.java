@@ -1,32 +1,43 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Generar y verificar hashes de contraseñas utilizando la librería BCrypt para asegurar la autenticación.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: HashGenerator.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Utilidad de criptografía simétrica (BCrypt).
+ *               Proporciona herramientas para la generación de hashes de 
+ *               contraseñas y scripts SQL de aprovisionamiento, asegurando 
+ *               la integridad de las credenciales en la capa de persistencia.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package util;
 
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
- * Esta clase proporciona una herramienta para crear hashes seguros y probar la validación de credenciales.
+ * Clase utilitaria para la gestión de seguridad de contraseñas.
+ * Facilita la creación de hashes robustos y la generación de comandos SQL para administración.
  */
 public class HashGenerator {
+    
     /**
-     * Punto de entrada principal para ejecutar la generación de un hash de prueba.
+     * Ejecuta una rutina de prueba para la generación y validación de credenciales.
+     * Útil para crear la cuenta maestra inicial fuera del entorno web.
      * 
-     * @param args Argumentos de la línea de comandos (no utilizados).
+     * @param args Argumentos de sistema (sin uso actual).
      */
     public static void main(String[] args) {
-        // Contraseña de ejemplo para la generación del hash
+        // Definición de credenciales semilla
         String password = "admin123";
-        // Genera el hash utilizando una sal aleatoria
+        // Derivación de clave mediante BCrypt con sal automática (CostFactor por defecto)
         String hash = BCrypt.hashpw(password, BCrypt.gensalt());
         
-        System.out.println("Contraseña: " + password);
-        System.out.println("Hash generado: " + hash);
+        System.out.println("--- GENERADOR DE SEGURIDAD ARREGLOSAPP ---");
+        System.out.println("Clave Plana: " + password);
+        System.out.println("Hash Destino: " + hash);
         System.out.println();
         
-        // Muestra un ejemplo de sentencia SQL para insertar manualmente un administrador
-        System.out.println("SQL para insertar:");
+        // Generación de script SQL desacoplado para despliegue manual
+        System.out.println("SCRIPT DE INSERCIÓN MAESTRA (SQL):");
         System.out.println("INSERT INTO USUARIOS (user_email, user_password_hash, user_nombre, user_ubicacion_direccion, rol_id) ");
         System.out.println("VALUES (");
         System.out.println("    'admin@arreglosapp.com',");
@@ -36,9 +47,9 @@ public class HashGenerator {
         System.out.println("    1");
         System.out.println(");");
         
-        // Realiza una prueba de validación comparando la contraseña plana con el hash generado
+        // Prueba de Consistencia: Verificación cruzada del hash generado
         boolean verifica = BCrypt.checkpw(password, hash);
         System.out.println();
-        System.out.println("Verificación del hash: " + (verifica ? "CORRECTO" : "INCORRECTO"));
+        System.out.println("ESTADO DE VERIFICACIÓN: " + (verifica ? "EXITOSO - INTEGRIDAD CONFIRMADA" : "FALLIDO - ERROR DE CIFRADO"));
     }
 }

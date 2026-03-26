@@ -1,6 +1,13 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Proveer métodos para la creación, validación y extracción de datos de tokens JWT (JSON Web Tokens).
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: JWTUtil.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Motor de seguridad y provisión de Identidad (JWT).
+ *               Gestiona el ciclo de vida de los tokens de sesión, 
+ *               incluyendo la firma criptográfica (HS256), validación de 
+ *               expiración y extracción de Claims (Metadatos de Usuario).
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package util;
 
@@ -12,23 +19,25 @@ import java.security.Key;
 import java.util.Date;
 
 /**
- * Esta utilidad gestiona la seguridad de las sesiones mediante tokens compactos y verificables.
+ * Utilidad criptográfica para la gestión de JSON Web Tokens (JWT).
+ * Proporciona una capa de abstracción sobre la librería JJWT para manejar la seguridad stateless.
  */
 public class JWTUtil {
 
-    // Clave secreta generada automáticamente para firmar los tokens
+    // Semilla criptográfica generada dinámicamente para la firma HS256
     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    // Tiempo de vida del token establecido en 24 horas
+    
+    // TTL (Time To Live): Duración de validez del token (24 Horas)
     private static final long EXPIRATION_TIME = 86400000; 
 
     /**
-     * Genera un nuevo token JWT para un usuario autenticado.
+     * Genera un token compacto y firmado que encapsula la identidad del usuario.
      * 
-     * @param email Correo electrónico del usuario.
-     * @param userId Identificador único del usuario.
-     * @param rolId Identificador del rol asignado.
-     * @param nombre Nombre del usuario.
-     * @return Una cadena que representa el token JWT generado.
+     * @param email  Identificador primario (Subject).
+     * @param userId ID único de base de datos.
+     * @param rolId  Privilegios de acceso (RBAC).
+     * @param nombre Alias descriptivo para la UI.
+     * @return String con estructura Header.Payload.Signature.
      */
     public static String generateToken(String email, int userId, int rolId, String nombre) {
         return Jwts.builder()
@@ -43,10 +52,10 @@ public class JWTUtil {
     }
 
     /**
-     * Valida el token proporcionado y extrae sus reclamos (claims).
+     * Valida la integridad estructural y temporal de un token.
      * 
-     * @param token El token JWT a validar.
-     * @return El objeto Claims si el token es válido, o null si falla la validación.
+     * @param token Cadena JWT proveniente de la sesión o cabecera.
+     * @return Claims si el token es íntegro y vigente; null si fue alterado o expiró.
      */
     public static Claims validateToken(String token) {
         try {
@@ -56,13 +65,13 @@ public class JWTUtil {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
-            // Retorna nulo si el token ha sido alterado o ha expirado
+            // Se silencia la excepción para retornar un estado booleano/nulo controlado
             return null;
         }
     }
 
     /**
-     * Extrae el correo electrónico contenido en el token.
+     * Accesor: Recupera el Email (Subject) del token.
      */
     public static String extractEmail(String token) {
         Claims claims = validateToken(token);
@@ -70,7 +79,7 @@ public class JWTUtil {
     }
 
     /**
-     * Recupera el identificador de usuario almacenado en el token.
+     * Accesor: Recupera el ID de usuario interno.
      */
     public static Integer extractUserId(String token) {
         Claims claims = validateToken(token);
@@ -78,7 +87,7 @@ public class JWTUtil {
     }
 
     /**
-     * Obtiene el identificador de rol registrado en el token.
+     * Accesor: Recupera el Rol Id para lógica de autorización.
      */
     public static Integer extractRolId(String token) {
         Claims claims = validateToken(token);
@@ -86,7 +95,7 @@ public class JWTUtil {
     }
 
     /**
-     * Extrae el nombre del usuario desde el token.
+     * Accesor: Recupera el nombre legible del portador.
      */
     public static String extractNombre(String token) {
         Claims claims = validateToken(token);
@@ -94,17 +103,17 @@ public class JWTUtil {
     }
 
     /**
-     * Determina si el token ha superado su fecha de expiración.
+     * Validador Temporal: Verifica si el token ha superado su fecha de expiración.
      * 
-     * @param token El token a verificar.
-     * @return Verdadero si el token ya no es válido por tiempo, falso de lo contrario.
+     * @param token JWT a evaluar.
+     * @return true si la sesión debe ser renovada o finalizada.
      */
     public static boolean isTokenExpired(String token) {
         Claims claims = validateToken(token);
         if (claims == null)
             return true;
 
-        // Compara la fecha de expiración con la fecha y hora actual
+        // Evaluación cronológica contra el reloj del servidor
         return claims.getExpiration().before(new Date());
     }
 }

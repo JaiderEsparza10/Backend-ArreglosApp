@@ -1,6 +1,12 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Gestionar la creación de pedidos y el agendamiento coordinado de citas presenciales.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: CitaDAO.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Gestiona el ciclo de vida de los pedidos y la agenda de citas.
+ *               Implementa reglas de negocio para la concurrencia de horarios
+ *               y la integración transaccional entre personalizaciones y órdenes.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package dao;
 
@@ -14,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Esta clase controla la disponibilidad de horarios y vincula los pedidos con sus citas correspondientes.
+ * Clase de Acceso a Datos (DAO) para la gestión operativa de citas y pedidos.
+ * Centraliza el control de disponibilidad y el motor de generación de pedidos.
  */
 public class CitaDAO {
 
@@ -26,12 +33,13 @@ public class CitaDAO {
     public static final int MAX_APPOINTMENTS_PER_SLOT = 1;
 
     /**
-     * Verifica si un slot de tiempo específico está disponible para agendar una cita.
+     * Valida la factibilidad técnica de agendar en un momento específico.
+     * Cruza la información con las citas existentes (no canceladas).
      * 
-     * @param date Fecha de la cita (LocalDate)
-     * @param time Hora de la cita (LocalTime)
-     * @return true si el horario está disponible, false si ya está ocupado
-     * @throws Exception Error de base de datos
+     * @param date Fecha del calendario.
+     * @param time Bloque horario (HH:mm).
+     * @return true si el contador de ocupación es inferior al límite configurado (MAX_APPOINTMENTS_PER_SLOT).
+     * @throws Exception Error de conexión o consulta JDBC.
      */
     public boolean isSlotAvailable(LocalDate date, LocalTime time) throws Exception {
         String sql = "SELECT COUNT(*) FROM citas c " +
@@ -59,22 +67,23 @@ public class CitaDAO {
     }
 
     /**
-     * Sobrecarga del método para verificar disponibilidad con LocalDateTime.
+     * Versión simplificada para validación integral con LocalDateTime.
      * 
-     * @param fechaHora Fecha y hora de la cita (LocalDateTime)
-     * @return true si el horario está disponible, false si ya está ocupado
-     * @throws Exception Error de base de datos
+     * @param fechaHora Instancia temporal completa.
+     * @return true si hay cupo disponible.
+     * @throws Exception Error JDBC.
      */
     public boolean isSlotAvailable(LocalDateTime fechaHora) throws Exception {
         return isSlotAvailable(fechaHora.toLocalDate(), fechaHora.toLocalTime());
     }
 
     /**
-     * Obtiene una lista de las horas (en formato HH:mm) que ya están ocupadas para una fecha dada.
+     * Genera un reporte de congestión para una fecha específica.
+     * Útil para filtrar slots disponibles en el lado del cliente (Frontend).
      * 
-     * @param fecha Fecha a consultar
-     * @return Lista de horas ocupadas en formato String
-     * @throws Exception Error de base de datos
+     * @param fecha Día a inspeccionar.
+     * @return Lista de horas bloqueadas (formato HH:mm).
+     * @throws Exception Error SQL.
      */
     public List<String> obtenerHorasOcupadasPorFecha(LocalDate fecha) throws Exception {
         String sql = "SELECT TIME_FORMAT(cita_fecha_hora, '%H:%i') FROM citas c " +
@@ -98,20 +107,21 @@ public class CitaDAO {
     }
 
     /**
-     * Crea un pedido transaccionalmente a partir de una personalización.
-     * Realiza un mapeo dinámico de la categoría al arreglo correspondiente.
+     * Motor de conversión: Transforma un requerimiento de personalización en una orden de venta firme.
+     * Este proceso es ATÓMICO y vincula: Personalización -> Arreglo -> Pedido -> Detalle.
      * 
-     * @param userId ID del cliente.
-     * @param personalizacionId ID de la personalización solicitada.
-     * @return El ID del pedido generado o -1 si falló.
+     * @param userId            Identificador del cliente contratante.
+     * @param personalizacionId Requerimiento técnico base.
+     * @return ID numérico de la nueva orden (o -1 en fallo de integridad).
+     * @throws Exception Si ocurre un fallo en el "Commit" o violación de restricciones.
      */
     public int crearPedido(int userId, int personalizacionId) throws Exception {
         Connection con = null;
         try {
             con = ConectionDB.getConexion();
-            con.setAutoCommit(false); // Iniciar flujo transaccional
+            con.setAutoCommit(false); // Apertura de transacción crítica
 
-            // 1. Obtener datos de la personalización (Meta 4)
+            // Fase 1: Extracción de parámetros técnicos de la personalización
             int servicioId = -1;
             double precio = 0;
             String descripcion = "";
@@ -134,7 +144,7 @@ public class CitaDAO {
                 }
             }
 
-            // 2. Obtener precio base del servicio
+            // Fase 2: Tasación económica basada en el servicio original
             String sqlServ = "SELECT servicio_precio_base FROM servicios WHERE servicio_id = ?";
             try (PreparedStatement ps = con.prepareStatement(sqlServ)) {
                 ps.setInt(1, servicioId);
@@ -148,20 +158,19 @@ public class CitaDAO {
                 }
             }
 
-            // 3. Verificar si ya existe un ARREGLO para esta personalización
+            // Fase 3: Idempotencia - Verificar existencia previa del Arreglo
             int arregloId = -1;
             String sqlCheckArreglo = "SELECT arreglo_id FROM arreglos WHERE personalizacion_id = ?";
             try (PreparedStatement ps = con.prepareStatement(sqlCheckArreglo)) {
                 ps.setInt(1, personalizacionId);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        // Ya existe un arreglo, usar el ID existente
-                        arregloId = rs.getInt("arreglo_id");
+                        arregloId = rs.getInt("arreglo_id"); // Reutilización de entidad existente
                     }
                 }
             }
 
-            // 4. Si no existe, crear nuevo ARREGLO (Meta 4 - Incluir Imagen)
+            // Fase 4: Materialización del requerimiento en un Arreglo catalogado
             if (arregloId == -1) {
                 String sqlArreglo = "INSERT INTO arreglos (personalizacion_id, arreglo_nombre, arreglo_descripcion, arreglo_precio_base, arreglo_imagen_url) VALUES (?, ?, ?, ?, ?)";
                 try (PreparedStatement ps = con.prepareStatement(sqlArreglo, Statement.RETURN_GENERATED_KEYS)) {
@@ -188,7 +197,7 @@ public class CitaDAO {
                 }
             }
 
-            // 4. Insertar cabecera del pedido
+            // Fase 5: Registro de la cabecera de la Orden Comercial
             int pedidoId = -1;
             String sqlPedido = "INSERT INTO pedidos (usuario_id, pedido_estado, pedido_total) VALUES (?, 'pendiente', ?)";
             try (PreparedStatement ps = con.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS)) {
@@ -206,7 +215,7 @@ public class CitaDAO {
                 return -1;
             }
 
-            // 5. Insertar DETALLE_PEDIDO para vincular pedido con arreglo
+            // Fase 6: Cierre del vínculo mediante Detalle del Pedido
             String sqlDetalle = "INSERT INTO detalle_pedido (pedido_id, arreglo_id, detalle_cantidad, detalle_precio_unitario, detalle_subtotal) VALUES (?, ?, 1, ?, ?)";
             try (PreparedStatement ps = con.prepareStatement(sqlDetalle)) {
                 ps.setInt(1, pedidoId);
@@ -216,10 +225,8 @@ public class CitaDAO {
                 ps.executeUpdate();
             }
 
-            // 5. No se actualiza personalizaciones con pedido_id (columna no existe en la BD real)
-            // La relación se mantiene a través de la secuencia: PERSONALIZACIÓN → ARREGLO → DETALLE_PEDIDO → PEDIDO
-
-            con.commit(); // Confirmar éxito de toda la operación
+            // Nota Técnica: La trazabilidad se garantiza por la cadena FK en la BD.
+            con.commit(); // Consolidación final de la transacción
             return pedidoId;
 
         } catch (SQLException e) {
@@ -233,31 +240,39 @@ public class CitaDAO {
     }
 
     /**
-     * Sobrecarga para crear pedidos simples (no requiere personalizacionId).
+     * Sobrecarga para flujos simplificados que no derivan de una personalización previa.
+     * 
+     * @param userId Propietario del pedido.
+     * @return ID del pedido.
+     * @throws Exception Error JDBC.
      */
     public int crearPedido(int userId) throws Exception {
         return crearPedido(userId, -1);
     }
 
     /**
-     * Registra una cita física para la entrega o toma de medidas de un pedido.
-     * RF-08: Agendamiento de Citas.
+     * Formaliza el agendamiento de una cita en el sistema.
+     * Cumple con el Requerimiento Funcional RF-08.
+     * 
+     * @param cita Objeto con la metadata de la cita (fecha, motivo, notas).
+     * @return true si el registro fue exitoso.
+     * @throws Exception Error de base de datos.
      */
     public boolean crearCita(Cita cita) throws Exception {
+        // La dirección de entrega es estática según política del taller local
         String sql = "INSERT INTO citas (pedido_id, cita_fecha_hora, cita_estado, cita_notas, cita_motivo, cita_direccion_entrega) VALUES (?, ?, ?, ?, ?, 'Calle 9nb 2occ 04 - Barrio Bavaria 2')";
         try (Connection con = ConectionDB.getConexion();
                 PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, cita.getPedidoId());
             ps.setTimestamp(2, Timestamp.valueOf(cita.getCitaFechaHora()));
-            ps.setString(3, "pendiente"); // Usar valor válido del ENUM
-            ps.setString(4, cita.getCitaNotas()); // Solo las notas, sin dirección
+            ps.setString(3, "pendiente"); // Estado inicial controlado por el sistema
+            ps.setString(4, cita.getCitaNotas()); 
             ps.setString(5, cita.getCitaMotivo());
-            // La dirección es fija: "Calle 9nb 2occ 04 - Barrio Bavaria 2"
             
             int filas = ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next())
-                    cita.setCitaId(rs.getInt(1));
+                    cita.setCitaId(rs.getInt(1)); // Recuperación del ID autonumérico
             }
             return filas > 0;
         } catch (SQLException e) {
@@ -266,10 +281,12 @@ public class CitaDAO {
     }
     
     /**
-     * Actualiza el estado de una cita específica
-     * @param citaId ID de la cita a actualizar
-     * @param nuevoEstado Nuevo estado de la cita
-     * @return true si se actualizó exitosamente
+     * Transiciona el estado operativo de una cita.
+     * 
+     * @param citaId      Identificador único.
+     * @param nuevoEstado Categoría de destino (programada, confirmada, etc).
+     * @return true si hubo afectación de filas.
+     * @throws Exception Error SQL.
      */
     public boolean actualizarEstadoCita(int citaId, String nuevoEstado) throws Exception {
         String sql = "UPDATE citas SET cita_estado = ? WHERE cita_id = ?";
@@ -288,12 +305,15 @@ public class CitaDAO {
     }
 
     /**
-     * Obtiene citas filtradas por nombre de servicio usando LIKE
-     * @param userId ID del usuario
-     * @param filtroServicio Nombre del servicio a filtrar
-     * @return Lista de citas que coinciden con el filtro
+     * Recupera el historial de citas de un usuario permitiendo búsquedas por servicio.
+     * 
+     * @param userId         Propietario de la cuenta.
+     * @param filtroServicio Fragmento del nombre del servicio (opcional).
+     * @return Lista de modelos Cita con la metadata hidratada.
+     * @throws Exception Error en JOINs de alta profundidad.
      */
     public List<Cita> obtenerCitasFiltradas(int userId, String filtroServicio) throws Exception {
+        // Query de consolidación con 6 niveles de JOIN para llegar al nombre del servicio base
         StringBuilder sql = new StringBuilder(
             "SELECT c.*, p.usuario_id, s.servicio_nombre " +
             "FROM citas c " +
@@ -333,8 +353,6 @@ public class CitaDAO {
                     c.setCitaNotas(rs.getString("cita_notas"));
                     c.setCitaMotivo(rs.getString("cita_motivo"));
                     c.setDireccionEntrega(rs.getString("cita_direccion_entrega"));
-                    // Agregar nombre del servicio para mostrar en filtros
-                    // c.setServicioNombre(rs.getString("servicio_nombre")); // Comentado - método no existe
                     citas.add(c);
                 }
             }
@@ -345,7 +363,11 @@ public class CitaDAO {
     }
 
     /**
-     * Consulta el listado de citas vinculadas a un cliente específico
+     * Obtiene el historial cronológico de citas para un cliente.
+     * 
+     * @param userId Identificador del usuario.
+     * @return Lista de instancias de Cita ordenadas por fecha descendente.
+     * @throws Exception Error SQL.
      */
     public List<Cita> obtenerCitasPorUsuario(int userId) throws Exception {
         String sql = "SELECT c.*, c.cita_direccion_entrega FROM citas c " +
@@ -365,7 +387,7 @@ public class CitaDAO {
                     }
                     c.setCitaEstado(rs.getString("cita_estado"));
                     c.setCitaNotas(rs.getString("cita_notas"));
-                    c.setDireccionEntrega(rs.getString("cita_direccion_entrega")); // Mapear dirección
+                    c.setDireccionEntrega(rs.getString("cita_direccion_entrega")); 
                     c.setCitaMotivo(rs.getString("cita_motivo"));
                     citas.add(c);
                 }

@@ -1,6 +1,13 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Permitir al administrador gestionar el catálogo oficial de servicios disponibles.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: ServicioServlet.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Gestor administrativo del catálogo maestro (Servicios).
+ *               Permite el mantenimiento CRUD (Crear, Leer, Actualizar, Borrar)
+ *               de la oferta comercial, incluyendo gestión de activos (Imágenes)
+ *               y validaciones de integridad comercial (Precios, Tiempos).
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package controller;
 
@@ -20,7 +27,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 /**
- * Este controlador facilita las operaciones de creación, edición y eliminación lógica de los arreglos ofrecidos por el taller.
+ * Controlador (Servlet) que gestiona el catálogo de servicios desde el panel administrativo.
+ * Soporta operaciones de alta, edición y baja lógica (desactivación).
  */
 @WebServlet("/ServicioServlet")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 25)
@@ -58,7 +66,7 @@ public class ServicioServlet extends HttpServlet {
         // ─── CREAR NUEVO SERVICIO ─────────────────────────────────────
         if ("crear".equals(accion)) {
             try {
-                // Extracción de metadatos con manejo seguro de tipos (Meta 1)
+                // Extracción de metadatos con manejo seguro de tipos
                 String nombre = request.getParameter("nombre");
                 String descripcion = request.getParameter("descripcion");
                 String precioStr = request.getParameter("precio");
@@ -74,12 +82,12 @@ public class ServicioServlet extends HttpServlet {
                 try {
                     tiempoEst = Integer.parseInt(tiempoStr.trim());
                 } catch (NumberFormatException e) {
-                    session.setAttribute("errorServicio", "El tiempo estimado debe ser un número entero válido.");
+                    session.setAttribute("errorServicio", "El tiempo estimado debe ser un número entero.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
                     return;
                 }
 
-                // Validaciones de Integridad de Negocio (Backend Validation)
+                // Validaciones de Integridad de Negocio
                 if (nombre == null || nombre.trim().isEmpty()) {
                     session.setAttribute("errorServicio", "El nombre del servicio es obligatorio.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
@@ -94,7 +102,7 @@ public class ServicioServlet extends HttpServlet {
                 }
 
                 if (descripcion == null || descripcion.trim().isEmpty()) {
-                    session.setAttribute("errorServicio", "La descripción del servicio es obligatoria.");
+                    session.setAttribute("errorServicio", "La descripción es obligatoria.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
                     return;
                 }
@@ -126,25 +134,23 @@ public class ServicioServlet extends HttpServlet {
                     return;
                 }
 
-                // VALIDACIÓN DE DUPLICADOS - Evitar error 500
+                // VALIDACIÓN DE DUPLICADOS - Protocolo preventivo
                 if (servicioDAO.existeNombreServicio(nombre.trim())) {
-                    session.setAttribute("errorServicio", "El nombre del servicio '" + nombre.trim() + "' ya existe. Por favor, elige otro nombre.");
+                    session.setAttribute("errorServicio", "El nombre del servicio '" + nombre.trim() + "' ya existe.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp");
                     return;
                 }
 
-                // Procesamiento de la iconografía/fotografía del servicio
+                // Procesamiento de la iconografía del servicio
                 String imagenUrl = procesarImagen(request);
 
-                // Crear objeto Servicio con los datos del formulario
+                // Mapeo al modelo de datos
                 Servicio servicio = new Servicio();
                 servicio.setServicioNombre(nombre.trim());
                 servicio.setServicioDescripcion(descripcion);
                 servicio.setServicioPrecioBase(precio);
                 servicio.setServicioTiempoEstimado(tiempoEst);
                 
-                // Usar el nuevo ServicioDAO para insertar en tabla SERVICIOS
-                ServicioDAO servicioDAO = new ServicioDAO();
                 boolean creado = servicioDAO.crearServicio(servicio);
 
                 if (creado) {
@@ -173,7 +179,7 @@ public class ServicioServlet extends HttpServlet {
                 int servicioId = 0;
                 int tiempoEst = 0;
 
-                // VALIDACIÓN DE INTEGRIDAD ROBUSTA (Meta 1)
+                // VALIDACIÓN DE INTEGRIDAD ROBUSTA
                 if (servicioIdStr == null || servicioIdStr.trim().isEmpty()) {
                     session.setAttribute("errorServicio", "ID de servicio no proporcionado.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-servicios.jsp");
@@ -198,7 +204,6 @@ public class ServicioServlet extends HttpServlet {
                     descripcion = "";
                 }
 
-                // Validación de tiempo estimado (Meta 1)
                 if (tiempoStr == null || tiempoStr.trim().isEmpty()) {
                     session.setAttribute("errorServicio", "El tiempo estimado es obligatorio.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
@@ -213,14 +218,14 @@ public class ServicioServlet extends HttpServlet {
                     return;
                 }
 
-                // VALIDACIÓN DE DUPLICADOS (excluyendo el servicio actual)
+                // VALIDACIÓN DE DUPLICADOS (Excluyendo el registro en edición)
                 if (servicioDAO.existeNombreServicioExcluyendo(nombre.trim(), servicioId)) {
                     session.setAttribute("errorServicio", "El nombre '" + nombre.trim() + "' ya existe.");
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
                     return;
                 }
 
-                // Validación de precio obligatoria
+                // Validación de precio
                 double precio = 0.0;
                 if (precioStr != null && !precioStr.trim().isEmpty()) {
                     try {
@@ -240,6 +245,8 @@ public class ServicioServlet extends HttpServlet {
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/crear-servicio.jsp?id=" + servicioId);
                     return;
                 }
+
+                // Procesamiento de imagen opcional en edición
                 String imagenUrl = procesarImagen(request);
 
                 Servicio s = new Servicio();
@@ -264,13 +271,13 @@ public class ServicioServlet extends HttpServlet {
                 response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-servicios.jsp");
             }
 
-        // ─── ELIMINACIÓN DE SERVICIO ──────────────────────────────────
+        // ─── ELIMINACIÓN LÓGICA (Baja de catálogo) ────────────────────
         } else if ("eliminar".equals(accion)) {
             try {
                 String servicioIdStr = request.getParameter("arregloId");
                 if (servicioIdStr != null && !servicioIdStr.isEmpty()) {
                     int servicioId = Integer.parseInt(servicioIdStr);
-                    // Ejecución del borrado lógico en el catálogo
+                    // Ejecución del borrado lógico en el catálogo maestro
                     servicioDAO.desactivarServicio(servicioId);
                     response.sendRedirect("/Proyecto_Arreglosapp/Public/admin/administrador-servicios.jsp?eliminado=1");
                 }
@@ -282,25 +289,25 @@ public class ServicioServlet extends HttpServlet {
     }
 
     /**
-     * Método Auxiliar: Centraliza el procesamiento de archivos binarios (Imágenes).
-     * RNF: Gestión de Activos Multimedia.
+     * Método Auxiliar: Gestiona la persistencia física de archivos binarios.
+     * RNF: Gestión de Activos Multimedia y carga segura.
      */
     private String procesarImagen(HttpServletRequest request) throws Exception {
         Part filePart = request.getPart("imagen");
         if (filePart != null && filePart.getSize() > 0) {
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
             
-            // Validar que sea una imagen
+            // Verificación selectiva de tipo MIME
             String contentType = filePart.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
                 throw new Exception("El archivo debe ser una imagen válida");
             }
             
-            // Generar nombre único para evitar sobrescribir
+            // Inyección de entropía temporal para prevenir colisiones nominales
             String fileExtension = fileName.substring(fileName.lastIndexOf("."));
             String uniqueFileName = System.currentTimeMillis() + "_" + fileName.hashCode() + fileExtension;
             
-            // Construcción dinámica de la ruta de almacenamiento local
+            // Construcción dinámica de la ruta física en el contexto de despliegue
             String uploadPath = getServletContext().getRealPath("") + File.separator + "Assets" + File.separator + "uploads";
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
@@ -311,7 +318,7 @@ public class ServicioServlet extends HttpServlet {
             String filePath = uploadPath + File.separator + uniqueFileName;
             filePart.write(filePath);
             
-            // Retornar ruta relativa para guardar en BD
+            // Retorno de URI relativa para persistencia en persistencia relacional
             return "Assets/uploads/" + uniqueFileName;
         }
         return null;

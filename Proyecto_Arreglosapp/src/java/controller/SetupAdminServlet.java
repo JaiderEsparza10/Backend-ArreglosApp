@@ -1,6 +1,13 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Proporcionar utilidades técnicas para el aprovisionamiento inicial (bootstrapping) del administrador maestro.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: SetupAdminServlet.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Utilidad de aprovisionamiento de seguridad (Bootstrapping).
+ *               Genera hashes BCrypt, scripts SQL de inserción maestra 
+ *               y realiza el despliegue automático de la cuenta raíz 
+ *               si el sistema detecta un repositorio vacío.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package controller;
 
@@ -15,13 +22,15 @@ import java.io.PrintWriter;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
- * Genera hashes de seguridad y scripts SQL necesarios para la configuración base del sistema en entornos nuevos.
+ * Controlador (Servlet) especializado en la configuración inicial del sistema.
+ * Solo debe utilizarse durante la fase de despliegue o recuperación de desastres.
  */
 @WebServlet("/SetupAdminServlet")
 public class SetupAdminServlet extends HttpServlet {
 
     /**
      * Genera y visualiza la información del bootstrap administrativo.
+     * Proporciona los hashes y comandos SQL para la inserción manual o automática.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

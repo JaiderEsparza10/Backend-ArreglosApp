@@ -1,6 +1,13 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Interceptar todas las solicitudes al servidor para validar la autenticación y el control de acceso.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: AuthFilter.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Middleware de seguridad y control de acceso (IAM).
+ *               Intercepta el tráfico HTTP para validar la vigencia de tokens JWT
+ *               y aplicar políticas de autorización basadas en roles (RBAC) 
+ *               garantizando el aislamiento de rutas privadas.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package filter;
 
@@ -14,24 +21,27 @@ import model.Usuario;
 import util.JWTUtil;
 
 /**
- * Este middleware protege las rutas privadas verificando tokens JWT y permisos basados en roles de usuario.
+ * Filtro de seguridad perimetral de la aplicación.
+ * Actúa como un guardián (Interceptor) que valida la identidad del usuario en cada petición.
  */
 @WebFilter("/*")
 public class AuthFilter implements Filter {
 
     /**
-     * Inicializa la configuración del filtro de autenticación.
+     * Ciclo de vida: Inicialización del motor de filtrado.
      */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // Inicialización del filtro
+        // Reservado para configuraciones futuras de parámetros de inicialización
     }
 
     /**
-     * Realiza el filtrado de cada solicitud, validando la presencia y validez del
-     * token JWT
-     * en la sesión y redirigiendo al login si no se cumplen los requisitos de
-     * acceso.
+     * Orquestador principal del flujo de seguridad.
+     * Evalúa si la ruta solicitada es pública o requiere sesión activa con privilegios específicos.
+     *
+     * @param request  Solicitud entrante (Servidor).
+     * @param response Respuesta saliente (Cliente).
+     * @param chain    Cadena de filtros para continuar la ejecución.
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -40,15 +50,16 @@ public class AuthFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        // Normalización de la ruta relativa al contexto de la aplicación
         String path = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
 
-        // Rutas que no requieren autenticación
+        // ─── FASE 1: EXCEPCIONES DE SEGURIDAD (Rutas Públicas) ────────
         if (isPublicPath(path)) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Verificar si el usuario está autenticado
+        // ─── FASE 2: VALIDACIÓN DE ESTADO AUTENTICADO ─────────────────
         HttpSession session = httpRequest.getSession(false);
         String token = null;
         Usuario usuario = null;
@@ -58,23 +69,28 @@ public class AuthFilter implements Filter {
             usuario = (Usuario) session.getAttribute("usuario");
         }
 
-        // Validar token y usuario
+        // Validación atómica de Token JWT y Objeto de Sesión
         if (token == null || usuario == null || JWTUtil.validateToken(token) == null) {
-            // Redirigir al login
+            // Expulsión del flujo si el token expiró o el usuario no está en sesión
             httpResponse.sendRedirect(httpRequest.getContextPath() + "/index.jsp");
             return;
         }
 
-        // Verificar permisos por rol
+        // ─── FASE 3: POLÍTICAS DE AUTORIZACIÓN (RBAC) ─────────────────
         if (!hasAccess(path, usuario.getRolId())) {
+            // Bloqueo de acceso por violación de privilegios de rol
             httpResponse.sendRedirect(httpRequest.getContextPath() + "/index.jsp");
             return;
         }
 
-        // Continuar con la solicitud
+        // ─── FASE 4: CONTINUACIÓN DEL FLUJO ───────────────────────────
         chain.doFilter(request, response);
     }
 
+    /**
+     * Define la "White-List" de recursos accesibles sin autenticación.
+     * Incluye archivos estáticos, activos multimedia y servlets de login/registro.
+     */
     private boolean isPublicPath(String path) {
         return path.equals("/") ||
                 path.equals("/index.jsp") ||
@@ -88,22 +104,27 @@ public class AuthFilter implements Filter {
                 path.equals("/ServicioServlet");
     }
 
+    /**
+     * Implementa las reglas de negocio de segmentación de rutas por Rol ID.
+     * 1: Administrador (Acceso total)
+     * 2: Cliente (Acceso limitado a su panel)
+     */
     private boolean hasAccess(String path, int rolId) {
-        // Rutas de administrador
+        // Segmento Administrativo: Restricción absoluta
         if (path.startsWith("/Public/admin/")) {
-            return rolId == 1; // Solo administradores
+            return rolId == 1;
         }
 
-        // Rutas de cliente
+        // Segmento de Cliente: Restricción de consumo final
         if (path.startsWith("/Public/client/")) {
-            return rolId == 2; // Solo clientes
+            return rolId == 2;
         }
 
-        return true; // Rutas públicas
+        return true; // Resto de rutas se consideran neutras
     }
 
     @Override
     public void destroy() {
-        // Limpieza del filtro
+        // Liberación de recursos críticos si existieran
     }
 }

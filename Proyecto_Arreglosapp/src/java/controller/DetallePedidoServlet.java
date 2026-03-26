@@ -1,6 +1,12 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Facilitar la visualización detallada de un pedido específico para el administrador.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: DetallePedidoServlet.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Recuperador de metadatos profundos de pedidos.
+ *               Extrae la información vinculada de Pedido-Cita-Personalización
+ *               para la vista administrativa de detalle (Dashboard).
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package controller;
 

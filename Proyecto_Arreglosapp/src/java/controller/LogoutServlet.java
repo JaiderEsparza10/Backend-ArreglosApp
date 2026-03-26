@@ -1,6 +1,12 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Garantizar la destrucción segura de la sesión HTTP en el servidor al cerrar la sesión.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: LogoutServlet.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Terminador de sesión y limpieza de contexto.
+ *               Asegura la destrucción definitiva de la HttpSession y 
+ *               la redirección al punto de entrada seguro.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package controller;
 
@@ -13,7 +19,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Este controlador invalida el contexto de seguridad del usuario y lo redirige a la página de inicio.
+ * Controlador (Servlet) que gestiona el cierre de sesión de forma segura.
+ * Invalida el contexto de seguridad del usuario y lo redirige a la página de inicio.
  */
 @WebServlet("/LogoutServlet")
 public class LogoutServlet extends HttpServlet {

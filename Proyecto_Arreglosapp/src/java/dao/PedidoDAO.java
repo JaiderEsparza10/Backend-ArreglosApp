@@ -1,6 +1,13 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Centralizar la gestión de las órdenes de servicio y su ciclo de vida.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: PedidoDAO.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Orquestador de la persistencia y consulta de órdenes de servicio.
+ *               Implementa consultas complejas (JOINs) para reconstruir la 
+ *               trazabilidad completa: Cliente -> Pedido -> Arreglo -> 
+ *               Personalización -> Servicio -> Cita.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package dao;
 
@@ -12,12 +19,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Esta clase maneja la recuperación de pedidos activos, el historial y las cancelaciones.
+ * Clase de Acceso a Datos (DAO) para el motor de pedidos.
+ * Gestiona el ciclo de vida comercial (Pendiente, En Proceso, Terminado, Cancelado).
  */
 public class PedidoDAO {
 
+    /**
+     * Recupera las órdenes vigentes que requieren atención operativa.
+     * Incluye estados: 'pendiente', 'confirmado', 'en_proceso'.
+     * 
+     * @param userId Identificador del cliente.
+     * @return Lista de mapas con la hidratación completa del pedido.
+     * @throws Exception Error en la resolución de los 5 niveles de JOIN.
+     */
     public List<Map<String, Object>> obtenerPedidosActivos(int userId) throws Exception {
-        System.out.println("=== DEBUG: PedidoDAO.obtenerPedidosActivos() llamado para userId=" + userId + " ===");
+        // Consulta multi-tabla para reconstruir el objeto de negocio complejo
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha, p.pedido_total, " +
                 "s.servicio_id, s.servicio_nombre, s.servicio_descripcion, s.servicio_precio_base, " +
                 "a.arreglo_id, a.arreglo_nombre, a.arreglo_descripcion, a.arreglo_imagen_url, " +
@@ -34,6 +50,14 @@ public class PedidoDAO {
         return ejecutarConsulta(sql, userId);
     }
 
+    /**
+     * Recupera el archivo histórico de transacciones finalizadas.
+     * Filtra por estados terminales: 'terminado', 'cancelado'.
+     * 
+     * @param userId Propietario de la cuenta.
+     * @return Lista de pedidos históricos.
+     * @throws Exception Error JDBC.
+     */
     public List<Map<String, Object>> obtenerHistorialPedidos(int userId) throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha, p.pedido_total, " +
                 "s.servicio_id, s.servicio_nombre, s.servicio_descripcion, s.servicio_precio_base, " +
@@ -51,6 +75,14 @@ public class PedidoDAO {
         return ejecutarConsulta(sql, userId);
     }
 
+    /**
+     * Consulta parametrizada por un estado específico.
+     * 
+     * @param userId Identificador del cliente.
+     * @param estado Valor del ENUM pedido_estado.
+     * @return Colección filtrada.
+     * @throws Exception Error en ResultSet mapping.
+     */
     public List<Map<String, Object>> obtenerPedidosPorEstado(int userId, String estado) throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha, p.pedido_total, " +
                 "s.servicio_id, s.servicio_nombre, s.servicio_descripcion, s.servicio_precio_base, " +
@@ -68,6 +100,14 @@ public class PedidoDAO {
         return ejecutarConsulta(sql, userId, estado);
     }
 
+    /**
+     * Motor de búsqueda por coincidencia parcial en el catálogo.
+     * 
+     * @param userId         Propietario de la cuenta.
+     * @param nombreServicio Término de búsqueda (LIKE).
+     * @return Lista de pedidos que contienen el servicio buscado.
+     * @throws Exception Error SQL.
+     */
     public List<Map<String, Object>> buscarPedidosPorNombreServicio(int userId, String nombreServicio) throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha, p.pedido_total, " +
                 "s.servicio_id, s.servicio_nombre, s.servicio_descripcion, s.servicio_precio_base, " +
@@ -85,6 +125,15 @@ public class PedidoDAO {
         return ejecutarConsulta(sql, userId, "%" + nombreServicio + "%");
     }
 
+    /**
+     * Permite al cliente desistir de una solicitud antes de que inicie la ejecución física.
+     * Regla: Solo pedidos en 'pendiente' o 'confirmado' pueden ser cancelados por esta vía.
+     * 
+     * @param pedidoId Identificador de la orden.
+     * @param userId   Validación de propiedad.
+     * @return true si la actualización fue exitosa.
+     * @throws Exception Violación de reglas de negocio o fallo SQL.
+     */
     public boolean cancelarPedido(int pedidoId, int userId) throws Exception {
         String sql = "UPDATE PEDIDOS SET pedido_estado = 'cancelado', " +
                 "pedido_fecha = CURRENT_TIMESTAMP " +
@@ -100,7 +149,13 @@ public class PedidoDAO {
         }
     }
 
-    // Método para Dashboard/Admin - Lista todos los pedidos con datos completos
+    /**
+     * Vista administrativa global de todas las operaciones comerciales.
+     * Enriquecida con datos de contacto del cliente para gestión de CRM.
+     * 
+     * @return Lista exhaustiva de órdenes en el sistema.
+     * @throws Exception Error en JOINs de 6 niveles (Pedidos+Detalles+Arreglos+Personalizaciones+Servicios+Usuarios+Citas).
+     */
     public List<Map<String, Object>> listarTodos() throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha, p.pedido_total, p.usuario_id, " +
                 "s.servicio_id, s.servicio_nombre, s.servicio_descripcion, s.servicio_precio_base, " +
@@ -119,7 +174,14 @@ public class PedidoDAO {
         return ejecutarConsultaAdmin(sql);
     }
 
-    // Método para Dashboard/Admin - Lista pedidos por estado
+    /**
+     * Filtrado administrativo por estado operativo.
+     * Útil para segmentar el flujo de trabajo en el tablero de control.
+     * 
+     * @param estado Criterio de segmentación ('pendiente', 'confirmado', etc).
+     * @return Lista segmentada de pedidos.
+     * @throws Exception Error JDBC.
+     */
     public List<Map<String, Object>> listarPorEstado(String estado) throws Exception {
         String sql = "SELECT p.pedido_id, p.pedido_estado, p.pedido_fecha, p.pedido_total, p.usuario_id, " +
                 "s.servicio_id, s.servicio_nombre, s.servicio_descripcion, s.servicio_precio_base, " +
@@ -139,24 +201,31 @@ public class PedidoDAO {
         return ejecutarConsultaAdmin(sql, estado);
     }
 
+    /**
+     * Motor de mapeo genérico para consultas de cliente.
+     * Transforma un ResultSet en una estructura desacoplada (Map) para facilitar
+     * la serialización a JSON o el acceso dinámico desde el JSP.
+     * 
+     * @param sql    Sentencia SQL con placeholders (?).
+     * @param params Argumentos de filtrado.
+     * @return Colección de objetos hidratados.
+     * @throws Exception Error de mapeo o conexión.
+     */
     private List<Map<String, Object>> ejecutarConsulta(String sql, Object... params) throws Exception {
         List<Map<String, Object>> lista = new ArrayList<>();
-        System.out.println("=== DEBUG EJECUTAR CONSULTA ===");
-        System.out.println("SQL: " + sql);
-        System.out.println("Parámetros: " + java.util.Arrays.toString(params));
         
         try (Connection con = ConectionDB.getConexion();
                 PreparedStatement ps = con.prepareStatement(sql)) {
+            // Inyección segura de parámetros para prevenir SQL Injection
             for (int i = 0; i < params.length; i++) {
                 ps.setObject(i + 1, params[i]);
             }
             try (ResultSet rs = ps.executeQuery()) {
-                int rowCount = 0;
                 while (rs.next()) {
-                    rowCount++;
-                    System.out.println("=== ENCONTRADA FILA #" + rowCount + " ===");
+                    // LinkedHashMap preserva el orden de inserción de las llaves
                     Map<String, Object> p = new LinkedHashMap<>();
-                    // Datos del pedido
+                    
+                    // Bloque A: Metadata del Pedido
                     p.put("pedidoId", rs.getInt("pedido_id"));
                     p.put("pedidoEstado", rs.getString("pedido_estado"));
                     p.put("pedidoTotal", rs.getDouble("pedido_total"));
@@ -164,23 +233,23 @@ public class PedidoDAO {
                         p.put("pedidoFecha", rs.getTimestamp("pedido_fecha").toLocalDateTime());
                     }
                     
-                    // Datos del servicio
+                    // Bloque B: Especificaciones del Servicio Base
                     p.put("servicioId", rs.getInt("servicio_id"));
                     p.put("servicioNombre", rs.getString("servicio_nombre"));
                     p.put("servicioDescripcion", rs.getString("servicio_descripcion"));
                     p.put("servicioPrecioBase", rs.getDouble("servicio_precio_base"));
                     
-                    // Datos del arreglo
+                    // Bloque C: Detalle del Arreglo Materializado
                     p.put("arregloId", rs.getInt("arreglo_id"));
                     p.put("arregloNombre", rs.getString("arreglo_nombre"));
                     p.put("arregloDescripcion", rs.getString("arreglo_descripcion"));
                     p.put("arregloImagenUrl", rs.getString("arreglo_imagen_url"));
                     
-                    // Datos de la personalización
+                    // Bloque D: Detalles de Personalización Técnica
                     p.put("personalizacionDescripcion", rs.getString("personalizacion_descripcion"));
                     p.put("materialTela", rs.getString("material_tela"));
                     
-                    // Datos de la cita
+                    // Bloque E: Logística vinculada (Cita)
                     p.put("citaId", rs.getInt("cita_id"));
                     if (rs.getTimestamp("cita_fecha_hora") != null) {
                         p.put("citaFechaHora", rs.getTimestamp("cita_fecha_hora").toLocalDateTime());
@@ -194,14 +263,20 @@ public class PedidoDAO {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("=== ERROR SQL ===");
-            System.out.println("Error: " + e.getMessage());
             throw new Exception("Error al ejecutar consulta de pedidos: " + e.getMessage());
         }
-        System.out.println("=== TAMAÑO LISTA FINAL: " + lista.size() + " ===");
         return lista;
     }
 
+    /**
+     * Motor de mapeo especializado para el panel administrativo.
+     * Extiende la hidratación básica incluyendo la identidad del cliente (Nombre/Email).
+     * 
+     * @param sql    Query administrativa con JOIN a la tabla de usuarios.
+     * @param params Filtros dinámicos.
+     * @return Lista de mapas con trazabilidad administrativa total.
+     * @throws Exception Error JDBC.
+     */
     private List<Map<String, Object>> ejecutarConsultaAdmin(String sql, Object... params) throws Exception {
         List<Map<String, Object>> lista = new ArrayList<>();
         try (Connection con = ConectionDB.getConexion();
@@ -212,7 +287,8 @@ public class PedidoDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Map<String, Object> p = new LinkedHashMap<>();
-                    // Datos del pedido
+                    
+                    // Datos básicos de la orden
                     p.put("pedidoId", rs.getInt("pedido_id"));
                     p.put("pedidoEstado", rs.getString("pedido_estado"));
                     p.put("pedidoTotal", rs.getDouble("pedido_total"));
@@ -221,27 +297,27 @@ public class PedidoDAO {
                         p.put("pedidoFecha", rs.getTimestamp("pedido_fecha").toLocalDateTime());
                     }
                     
-                    // Datos del servicio
+                    // Especificaciones técnicas
                     p.put("servicioId", rs.getInt("servicio_id"));
                     p.put("servicioNombre", rs.getString("servicio_nombre"));
                     p.put("servicioDescripcion", rs.getString("servicio_descripcion"));
                     p.put("servicioPrecioBase", rs.getDouble("servicio_precio_base"));
                     
-                    // Datos del arreglo
+                    // Entidad de confección (Arreglo)
                     p.put("arregloId", rs.getInt("arreglo_id"));
                     p.put("arregloNombre", rs.getString("arreglo_nombre"));
                     p.put("arregloDescripcion", rs.getString("arreglo_descripcion"));
                     p.put("arregloImagenUrl", rs.getString("arreglo_imagen_url"));
                     
-                    // Datos de la personalización
+                    // Requerimientos del cliente
                     p.put("personalizacionDescripcion", rs.getString("personalizacion_descripcion"));
                     p.put("materialTela", rs.getString("material_tela"));
                     
-                    // Datos del usuario (para admin)
+                    // Identidad del cliente (Exclusivo Admin)
                     p.put("userNombre", rs.getString("user_nombre"));
                     p.put("userEmail", rs.getString("user_email"));
                     
-                    // Datos de la cita
+                    // Datos logísticos (Cita)
                     p.put("citaId", rs.getInt("cita_id"));
                     if (rs.getTimestamp("cita_fecha_hora") != null) {
                         p.put("citaFechaHora", rs.getTimestamp("cita_fecha_hora").toLocalDateTime());

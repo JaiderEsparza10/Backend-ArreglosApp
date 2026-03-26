@@ -1,6 +1,12 @@
 /**
- * Author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
- * Propósito: Proporcionar herramientas de gestión avanzada para el perfil de administrador.
+ * ══════════════════════════════════════════════════════════════════════════════
+ * @file: AdminDAO.java
+ * @author: Jaider Andres Esparza Arenas con ayuda de Antigravity.
+ * @version: 1.1
+ * @description: Centraliza las operaciones de administración avanzada del backend.
+ *               Provee funcionalidades para la gestión de flujos de trabajo (pedidos/citas)
+ *               y supervisión administrativa del sistema.
+ * ══════════════════════════════════════════════════════════════════════════════
  */
 package dao;
 
@@ -9,25 +15,28 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * Esta clase contiene métodos para la supervisión de citas, pedidos y la gestión global de usuarios.
+ * Clase de Acceso a Datos (DAO) especializada en perfiles administrativos.
+ * Implementa la lógica de negocio para la sincronización de estados entre citas y pedidos.
  */
 public class AdminDAO {
 
     /**
-     * Cambia el estado de una cita y sincroniza el estado del pedido asociado.
+     * Transiciona el estado de una cita y aplica reglas de negocio para sincronizar 
+     * el estado del pedido vinculado automáticamente.
      * 
-     * @param citaId ID de la cita a actualizar
-     * @param nuevoEstado Nuevo estado de la cita
-     * @throws Exception Si ocurre un error
+     * @param citaId      ID único de la cita en el sistema.
+     * @param nuevoEstado Categoría de destino: 'programada', 'confirmada', 'completada' o 'cancelada'.
+     * @return El ID del usuario propietario del pedido para fines de notificación.
+     * @throws Exception Si ocurre una inconsistencia en la base de datos o fallo JDBC.
      */
     public int cambiarEstadoCita(int citaId, String nuevoEstado) throws Exception {
         Connection con = null;
         int usuarioId = -1;
         try {
             con = ConectionDB.getConexion();
-            con.setAutoCommit(false);
+            con.setAutoCommit(false); // Transacción para asegurar la atomicidad cita-pedido
 
-            // 0. Obtener ID del usuario
+            // Paso 0: Identificación del usuario destinatario
             String sqlUser = "SELECT p.usuario_id FROM PEDIDOS p JOIN CITAS c ON p.pedido_id = c.pedido_id WHERE c.cita_id = ?";
             try (PreparedStatement psU = con.prepareStatement(sqlUser)) {
                 psU.setInt(1, citaId);
@@ -36,7 +45,7 @@ public class AdminDAO {
                 }
             }
 
-            // 1. Actualizar estado de la cita
+            // Paso 1: Persistencia del nuevo estado de la cita
             String sqlCita = "UPDATE CITAS SET cita_estado = ? WHERE cita_id = ?";
             try (PreparedStatement ps = con.prepareStatement(sqlCita)) {
                 ps.setString(1, nuevoEstado);
@@ -44,7 +53,7 @@ public class AdminDAO {
                 ps.executeUpdate();
             }
 
-            // 2. Determinar estado del pedido según estado de la cita
+            // Paso 2: Mapeo lógico de estados (Admin Logic)
             String estadoPedido = null;
             if ("pendiente".equalsIgnoreCase(nuevoEstado) || "programada".equalsIgnoreCase(nuevoEstado)) {
                 estadoPedido = "pendiente";
@@ -56,7 +65,7 @@ public class AdminDAO {
                 estadoPedido = "cancelado";
             }
 
-            // 3. Actualizar estado del pedido asociado
+            // Paso 3: Sincronización del estado del pedido padre
             if (estadoPedido != null) {
                 String sqlPedido = "UPDATE PEDIDOS SET pedido_estado = ? WHERE pedido_id IN (SELECT pedido_id FROM CITAS WHERE cita_id = ?)";
                 try (PreparedStatement ps = con.prepareStatement(sqlPedido)) {
@@ -66,7 +75,7 @@ public class AdminDAO {
                 }
             }
 
-            con.commit();
+            con.commit(); // Consolidación de la sincronización
             return usuarioId;
 
         } catch (SQLException e) {
@@ -85,24 +94,34 @@ public class AdminDAO {
     }
 
     /**
-     * Lista y filtra pedidos según su estado y búsqueda.
+     * Realiza una búsqueda avanzada de órdenes de pedido aplicando filtros dinámicos.
+     * Incorpora datos del cliente y estado de la cita mediante JOINs.
+     * 
+     * @param search       Texto a buscar en nombres de clientes o números de pedido.
+     * @param estadoPedido Categoría de filtrado (null para traer todos los activos).
+     * @return Lista de mapas con la información consolidada para la vista administrativa.
+     * @throws Exception Error de base de datos.
      */
     public List<Map<String, Object>> obtenerPedidosFiltrados(String search, String estadoPedido) throws Exception {
+        // Construcción dinámica del query SQL según parámetros presentes
         StringBuilder sql = new StringBuilder(
                 "SELECT p.pedido_id, p.pedido_estado, p.pedido_total, p.pedido_fecha, "
-                        + "u.user_nombre, u.user_email, "
-                        + "c.cita_fecha_hora, c.cita_estado "
-                        + "FROM PEDIDOS p "
-                        + "INNER JOIN USUARIOS u ON p.usuario_id = u.user_id "
-                        + "LEFT JOIN CITAS c ON p.pedido_id = c.pedido_id "
-                        + "WHERE 1=1 ");
+                         + "u.user_nombre, u.user_email, "
+                         + "c.cita_fecha_hora, c.cita_estado "
+                         + "FROM PEDIDOS p "
+                         + "INNER JOIN USUARIOS u ON p.usuario_id = u.user_id "
+                         + "LEFT JOIN CITAS c ON p.pedido_id = c.pedido_id "
+                         + "WHERE 1=1 ");
 
+        // Filtro por estado del pedido
         if (estadoPedido != null && !estadoPedido.isEmpty()) {
             sql.append(" AND p.pedido_estado = ? ");
         } else {
+            // Default: Solo traer transacciones pertinentes (activas o finalizadas sin entregar)
             sql.append(" AND p.pedido_estado IN ('pendiente','confirmado','en_proceso','terminado') ");
         }
 
+        // Filtro de búsqueda textual (Full name o ID)
         if (search != null && !search.trim().isEmpty()) {
             sql.append(" AND (u.user_nombre LIKE ? OR p.pedido_id LIKE ?) ");
         }
@@ -144,7 +163,12 @@ public class AdminDAO {
     }
 
     /**
-     * Actualiza el estado de un pedido y retorna el usuarioId asociado.
+     * Actualiza manualmente el estado de una orden sin afectar la cita.
+     * 
+     * @param pedidoId    ID único del pedido.
+     * @param nuevoEstado Estado de destino ('cancelado', 'terminado', 'entregado').
+     * @return El ID del usuario asociado para fines administrativos.
+     * @throws Exception Error JDBC.
      */
     public int actualizarEstadoPedido(int pedidoId, String nuevoEstado) throws Exception {
         String sql = "UPDATE PEDIDOS SET pedido_estado = ? WHERE pedido_id = ?";
@@ -152,6 +176,7 @@ public class AdminDAO {
         int usuarioId = -1;
 
         try (Connection con = ConectionDB.getConexion()) {
+            // Localización del propietario
             try (PreparedStatement psU = con.prepareStatement(sqlUser)) {
                 psU.setInt(1, pedidoId);
                 try (ResultSet rs = psU.executeQuery()) {
@@ -159,6 +184,7 @@ public class AdminDAO {
                 }
             }
             
+            // Ejecución del cambio de categoría
             try (PreparedStatement ps = con.prepareStatement(sql)) {
                 ps.setString(1, nuevoEstado);
                 ps.setInt(2, pedidoId);
@@ -178,9 +204,15 @@ public class AdminDAO {
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Obtiene el detalle completo de un pedido, incluyendo cliente, cita y personalización.
+     * Recupera el expediente completo de un pedido fusionando múltiples entidades:
+     * Cliente, Cita, Detalle de Servicio y Personalización Técnica.
+     * 
+     * @param pedidoId ID único de la orden.
+     * @return Map con toda la metadata necesaria para la vista de detalle del administrador.
+     * @throws Exception Si falla la unión de tablas (JOINs) o la ejecución SQL.
      */
     public Map<String, Object> obtenerDetallePedido(int pedidoId) throws Exception {
+        // Query de alta complejidad que consolida el flujo completo de la orden
         String sql = "SELECT p.pedido_estado, p.pedido_total, " +
                      "u.user_nombre, u.user_email, u.user_ubicacion_direccion, " +
                      "c.cita_fecha_hora, c.cita_estado, c.cita_motivo, c.cita_notas, " +
@@ -200,6 +232,7 @@ public class AdminDAO {
             ps.setInt(1, pedidoId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    // Mapeo estructurado para facilitar la renderización en el JSP
                     Map<String, Object> d = new LinkedHashMap<>();
                     d.put("estado", rs.getString("pedido_estado"));
                     d.put("total", rs.getDouble("pedido_total"));
@@ -224,9 +257,15 @@ public class AdminDAO {
     }
 
     /**
-     * Registra si el cliente asistió o no a la cita agendada.
+     * Registra el seguimiento de presencia física del cliente.
+     * Agrega una bitácora de asistencia a las notas de la cita.
+     * 
+     * @param citaId     ID de la cita.
+     * @param asistencia Texto descriptivo (ej: 'Asistió', 'No asistió').
+     * @throws Exception Error JDBC.
      */
     public void actualizarAsistenciaCita(int citaId, String asistencia) throws Exception {
+        // Concatenación segura en las notas existentes para no perder información previa
         String sql = "UPDATE CITAS SET cita_notas = CONCAT(IFNULL(cita_notas,''), ' | Asistencia: ', ?) WHERE cita_id = ?";
 
         try (Connection con = ConectionDB.getConexion();
@@ -246,7 +285,11 @@ public class AdminDAO {
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Elimina un usuario del sistema (borrado físico).
+     * Ejecuta la remoción definitiva de una cuenta de usuario.
+     * @important Se recomienda usar UsuarioDAO.eliminarUsuarioSeguro para manejar dependencias.
+     * 
+     * @param userId ID del usuario a eliminar.
+     * @throws Exception Si el usuario tiene dependencias de integridad activas.
      */
     public void eliminarUsuario(int userId) throws Exception {
         String sql = "DELETE FROM USUARIOS WHERE user_id = ?";
@@ -260,7 +303,10 @@ public class AdminDAO {
     }
 
     /**
-     * Elimina un servicio/arreglo del catálogo (borrado físico).
+     * Remueve físicamente un registro del catálogo de arreglos/servicios.
+     * 
+     * @param servicioId ID del arreglo.
+     * @throws Exception Error SQL.
      */
     public void eliminarServicio(int servicioId) throws Exception {
         String sql = "DELETE FROM ARREGLOS WHERE arreglo_id = ?";
@@ -274,7 +320,12 @@ public class AdminDAO {
     }
 
     /**
-     * Obtiene la lista de usuarios clientes, opcionalmente filtrada por búsqueda.
+     * Obtiene el censo de usuarios registrados con el rol de CLIENTE.
+     * Permite filtrado de seguridad por correspondencia parcial de nombre o correo.
+     * 
+     * @param busqueda Criterio textual de búsqueda.
+     * @return Lista de perfiles de clientes con su contacto telefónico principal.
+     * @throws Exception Error de base de datos.
      */
     public List<Map<String, Object>> obtenerUsuarios(String busqueda) throws Exception {
         StringBuilder sql = new StringBuilder(
@@ -283,6 +334,7 @@ public class AdminDAO {
                         + "LEFT JOIN TELEFONOS t ON u.user_id = t.user_id AND t.telefono_es_principal = true "
                         + "WHERE u.rol_id = 2 ");
 
+        // Inyección dinámica de filtros de búsqueda
         if (busqueda != null && !busqueda.trim().isEmpty()) {
             sql.append("AND (u.user_nombre LIKE ? OR u.user_email LIKE ?) ");
         }
@@ -316,7 +368,10 @@ public class AdminDAO {
     }
 
     /**
-     * Cuenta el número de pedidos en estados activos (pendiente, confirmado, en taller).
+     * Cuantifica la carga de trabajo actual del taller.
+     * 
+     * @return Número de pedidos en estados 'pendiente', 'confirmado' o 'en_proceso'.
+     * @throws Exception Error de red o base de datos.
      */
     public int contarPedidosActivos() throws Exception {
         String sql = "SELECT COUNT(*) FROM PEDIDOS WHERE pedido_estado IN ('pendiente','confirmado','en_proceso')";
@@ -330,7 +385,10 @@ public class AdminDAO {
     }
 
     /**
-     * Cuenta el número de citas programadas para el día de hoy.
+     * Calcula el volumen de compromisos presenciales para la jornada actual.
+     * 
+     * @return Conteo de citas cuya fecha coincide con el día de hoy (excluyendo canceladas).
+     * @throws Exception Error SQL.
      */
     public int contarCitasHoy() throws Exception {
         String sql = "SELECT COUNT(*) FROM CITAS WHERE DATE(cita_fecha_hora) = CURDATE() AND cita_estado != 'cancelada'";
@@ -344,7 +402,10 @@ public class AdminDAO {
     }
 
     /**
-     * Cuenta el total histórico de citas registradas.
+     * Recupera el total acumulado de interacciones agendadas desde el inicio de operaciones.
+     * 
+     * @return Total histórico de registros en la tabla CITAS.
+     * @throws Exception Error JDBC.
      */
     public int contarTodasLasCitas() throws Exception {
         String sql = "SELECT COUNT(*) FROM CITAS";
@@ -358,9 +419,15 @@ public class AdminDAO {
     }
 
     /**
-     * Obtiene una lista de citas filtradas por fecha o nombre del cliente.
+     * Ejecuta una consulta compleja para el seguimiento de la agenda administrativa.
+     * 
+     * @param fFecha   Filtro ISO de fecha (opcional).
+     * @param fCliente Fragmento del nombre del cliente para búsqueda (opcional).
+     * @return Lista de citas con datos descriptivos del cliente y el pedido.
+     * @throws Exception Error de base de datos.
      */
     public List<Map<String, Object>> obtenerCitasFiltradas(String fFecha, String fCliente) throws Exception {
+        // Query con múltiples JOINs para presentar una vista unificada de la agenda
         StringBuilder sql = new StringBuilder(
             "SELECT c.cita_id, u.user_nombre AS cliente, c.cita_estado AS estado, c.cita_notas AS notas, c.cita_fecha_hora AS fechaHora, c.cita_motivo AS motivo " +
             "FROM CITAS c " +
@@ -369,6 +436,7 @@ public class AdminDAO {
             "WHERE 1=1 "
         );
 
+        // Agregación condicional de cláusulas WHERE
         if (fFecha != null && !fFecha.isEmpty()) sql.append(" AND DATE(c.cita_fecha_hora) = ? ");
         if (fCliente != null && !fCliente.trim().isEmpty()) sql.append(" AND u.user_nombre LIKE ? ");
 
@@ -401,16 +469,23 @@ public class AdminDAO {
     }
 
     /**
-     * Obtiene todas las citas registradas en el sistema.
+     * Recupera el histórico total de citas sin aplicar criterios de exclusión.
+     * 
+     * @return Colección completa de citas registradas.
+     * @throws Exception Error SQL.
      */
     public List<Map<String, Object>> obtenerTodasLasCitas() throws Exception {
         return obtenerCitasFiltradas(null, null);
     }
 
     /**
-     * Obtiene los 10 pedidos más recientes que están activos.
+     * Obtiene una vista rápida de las últimas 10 transacciones del sistema.
+     * 
+     * @return Lista de pedidos recientes con su estado y vinculación de cita.
+     * @throws Exception Error SQL.
      */
     public List<Map<String, Object>> obtenerPedidosRecientes() throws Exception {
+        // Query optimizada para el feed de actividad del dashboard
         String sql = "SELECT p.pedido_id, p.pedido_estado, u.user_nombre, c.cita_estado, c.cita_fecha_hora " +
                      "FROM PEDIDOS p " +
                      "INNER JOIN USUARIOS u ON p.usuario_id = u.user_id " +
@@ -438,7 +513,10 @@ public class AdminDAO {
     }
 
     /**
-     * Obtiene las citas programadas para el día de hoy.
+     * Recupera el listado de compromisos para el día actual.
+     * 
+     * @return Lista de citas con hora, motivo y nombre del cliente.
+     * @throws Exception Error JDBC.
      */
     public List<Map<String, Object>> obtenerCitasHoy() throws Exception {
         String sql = "SELECT c.cita_id, u.user_nombre AS cliente, c.cita_estado AS estado, c.cita_notas AS notas, c.cita_motivo AS motivo, c.cita_fecha_hora AS fechaHora " +
@@ -469,7 +547,11 @@ public class AdminDAO {
     }
 
     /**
-     * Obtiene todas las personalizaciones (pedidos especiales) realizadas por un usuario específico.
+     * Obtiene el historial de requerimientos técnicos especiales de un cliente.
+     * 
+     * @param userId ID del usuario.
+     * @return Lista de personalizaciones con descripción, materiales y servicio base.
+     * @throws Exception Error de base de datos.
      */
     public List<Map<String, Object>> obtenerPersonalizacionesPorUsuario(int userId) throws Exception {
         String sql = "SELECT p.personalizacion_id, p.descripcion, p.material_tela, p.imagen_referencia, " +
@@ -503,7 +585,12 @@ public class AdminDAO {
     }
 
     /**
-     * Obtiene la información detallada de un usuario por su ID.
+     * Recupera el perfil administrativo de un usuario específico.
+     * Vincula el número telefónico principal para contacto directo.
+     * 
+     * @param userId ID del usuario.
+     * @return Map con nombre, email, dirección y teléfono principal.
+     * @throws Exception Error de base de datos.
      */
     public Map<String, Object> obtenerUsuarioPorId(int userId) throws Exception {
         String sql = "SELECT u.user_id, u.user_nombre, u.user_email, u.user_ubicacion_direccion, t.telefono_numero " +
@@ -532,10 +619,15 @@ public class AdminDAO {
     }
 
     /**
-     * Obtiene todas las personalizaciones del sistema con información del cliente y servicio.
-     * @param busqueda Filtro opcional por nombre de cliente o servicio.
+     * Centraliza el catálogo global de solicitudes de personalización del sistema.
+     * Incorpora filtros por cliente o tipo de servicio para auditoría.
+     * 
+     * @param busqueda Término de búsqueda opcional.
+     * @return Lista consolidada de personalizaciones enviadas por todos los usuarios.
+     * @throws Exception Error SQL.
      */
     public List<Map<String, Object>> obtenerPersonalizacionesGenerales(String busqueda) throws Exception {
+        // Query de auditoría integral
         StringBuilder sql = new StringBuilder(
             "SELECT p.personalizacion_id, p.descripcion, p.material_tela, p.estado, p.fecha_creacion, " +
             "u.user_nombre AS cliente, u.user_id, s.servicio_nombre AS servicio " +
